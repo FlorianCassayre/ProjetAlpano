@@ -67,7 +67,7 @@ public class AzimuthTest
             int aDeg = rng.nextInt(10_000) - 5_000;
             double aRad = toRadians(aDeg);
             double canonicalARad = canonicalize(aRad);
-            System.out.println(canonicalARad);
+
             assertTrue(0 <= canonicalARad && canonicalARad < scalb(PI, 1));
             int canonicalADeg = (int) round(toDegrees(canonicalARad));
             if(canonicalADeg == 360)

@@ -38,7 +38,7 @@ public interface Math2
      */
     static double haversin(double x)
     {
-        return Math.pow(Math.sin(x / 2), 2);
+        return sq(Math.sin(x / 2));
     }
 
     /**
