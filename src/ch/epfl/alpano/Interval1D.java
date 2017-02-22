@@ -86,20 +86,38 @@ public final class Interval1D
         }
     }
 
+    /**
+     * Returns the bounding union of two intervals.
+     * @param that the other interval
+     * @return the bouding union
+     */
     public Interval1D boundingUnion(Interval1D that)
     {
-        throw new NotImplementedException();
-
+        return new Interval1D(Math.min(this.includedFrom, that.includedFrom), Math.max(this.includedTo, that.includedTo));
     }
 
+    /**
+     * Checks if two intervals are unionable (their union create another interval).
+     * @param that the other interval
+     * @return true if they are unionable, false else
+     */
     public boolean isUnionableWith(Interval1D that)
     {
-        throw new NotImplementedException();
+        return sizeOfIntersectionWith(that) != 0;
     }
 
+    /**
+     * Returns the union of two intervals.
+     * @param that the other interval
+     * @return the union
+     * @throws IllegalArgumentException if the intervals are not unionable
+     */
     public Interval1D union(Interval1D that)
     {
-        throw new NotImplementedException();
+        if(!isUnionableWith(that))
+            throw new IllegalArgumentException();
+
+        return boundingUnion(that);
     }
 
     @Override

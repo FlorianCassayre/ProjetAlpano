@@ -47,6 +47,55 @@ public class IntervalTest
     }
 
     @Test
+    public void testBoundingUnion()
+    {
+        final Interval1D interval1 = new Interval1D(1, 4);
+        final Interval1D interval2 = new Interval1D(3, 8);
+        final Interval1D interval3 = new Interval1D(5, 6);
+
+        final Interval1D expected1 = new Interval1D(1, 8);
+        final Interval1D expected2 = new Interval1D(1, 6);
+        final Interval1D expected3 = new Interval1D(3, 8);
+
+        assertEquals(expected1, interval1.boundingUnion(interval2));
+        assertEquals(expected2, interval1.boundingUnion(interval3));
+        assertEquals(expected3, interval2.boundingUnion(interval3));
+    }
+
+    @Test
+    public void testIsUnionable()
+    {
+        final Interval1D interval1 = new Interval1D(1, 4);
+        final Interval1D interval2 = new Interval1D(3, 8);
+        final Interval1D interval3 = new Interval1D(5, 6);
+
+        assertTrue(interval1.isUnionableWith(interval2));
+        assertTrue(interval2.isUnionableWith(interval1));
+
+        assertFalse(interval1.isUnionableWith(interval3));
+        assertFalse(interval3.isUnionableWith(interval1));
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void testUnionIllegalArgument()
+    {
+        final Interval1D interval1 = new Interval1D(0, 2);
+        final Interval1D interval2 = new Interval1D(5, 7);
+
+        interval1.union(interval2);
+    }
+
+    @Test
+    public void testUnion()
+    {
+        final Interval1D interval1 = new Interval1D(0, 2);
+        final Interval1D interval2 = new Interval1D(1, 4);
+
+        final Interval1D expected = new Interval1D(0, 4);
+        assertEquals(expected, interval1.union(interval2));
+    }
+
+    @Test
     public void testEqualsHashCode()
     {
         final Interval1D interval1 = new Interval1D(27, 48);
