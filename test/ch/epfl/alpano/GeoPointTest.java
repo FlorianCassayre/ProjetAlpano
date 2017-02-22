@@ -10,6 +10,14 @@ public class GeoPointTest
     private static final GeoPoint MOSCOW = new GeoPoint(37.623, 55.753);
 
     @Test
+    public void testLongitudeLatitude()
+    {
+        final GeoPoint point = new GeoPoint(2.333, 48.866);
+        assertEquals(2.333, point.longitude(), 1E-3);
+        assertEquals(48.866, point.latitude(), 1E-3);
+    }
+
+    @Test
     public void testAzimuthToLausanneMoscow()
     {
         final double expected = Azimuth.canonicalize(Math.toRadians(-52.95));
