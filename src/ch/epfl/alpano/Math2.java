@@ -1,5 +1,7 @@
 package ch.epfl.alpano;
 
+import java.util.function.DoubleUnaryOperator;
+
 /**
  * An utility interface containing useful mathematical functions.
  */

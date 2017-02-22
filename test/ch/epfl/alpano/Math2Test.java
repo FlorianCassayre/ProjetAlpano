@@ -240,7 +240,7 @@ public class Math2Test
     }
 }
 
-class Sin implements DoubleUnaryOperator, ch.epfl.alpano.DoubleUnaryOperator
+class Sin implements DoubleUnaryOperator
 {
     @Override
     public double applyAsDouble(double x)
