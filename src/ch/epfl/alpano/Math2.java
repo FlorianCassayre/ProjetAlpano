@@ -82,31 +82,37 @@ public interface Math2
         return lerp(d1, d2, y);
     }
 
+    /**
+     * Finds the lower bound of the first interval containing a zero for the specified function.
+     * @param f the function
+     * @param minX the lower bound
+     * @param maxX the upper bound
+     * @param dX the interval size
+     * @return the lower bound of the interval if a root was found, <code>Double.POSITIVE_INFINITY</code> else
+     */
     static double firstIntervalContainingRoot(DoubleUnaryOperator f, double minX, double maxX, double dX)
     {
-        if(f.applyAsDouble(minX) * f.applyAsDouble(maxX) > 0)
-            return Double.POSITIVE_INFINITY;
-
-        while(maxX - minX > dX)
+        double m = minX;
+        while(m <= maxX)
         {
-            final double m = (minX + maxX) / 2.0;
-            final double fa = f.applyAsDouble(minX);
-            final double fm = f.applyAsDouble(m);
+            if(f.applyAsDouble(m) * f.applyAsDouble(m + dX) <= 0)
+                return m;
 
-            if(fa * fm > 0)
-            {
-                minX = m;
-            }
-            else
-            {
-                maxX = m;
-            }
+            m += dX;
         }
 
-        //System.out.println(minX + " " + maxX);
-        return (minX + maxX) / 2.0 - dX;
+        return Double.POSITIVE_INFINITY;
     }
 
+    /**
+     * Finds the lower bound of the first interval containing a zero for the specified function.
+     * @param f the function
+     * @param x1 the lower bound
+     * @param x2 the upper bound
+     * @param epsilon the interval max size
+     * @return the lower bound
+     * @throws IllegalArgumentException if no root were found
+     */
     static double improveRoot(DoubleUnaryOperator f, double x1, double x2, double epsilon)
     {
         if(f.applyAsDouble(x1) * f.applyAsDouble(x2) > 0)
