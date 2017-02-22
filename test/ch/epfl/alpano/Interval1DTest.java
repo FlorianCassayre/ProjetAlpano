@@ -67,11 +67,10 @@ public class Interval1DTest
     {
         final Interval1D interval1 = new Interval1D(1, 4);
         final Interval1D interval2 = new Interval1D(3, 8);
-        final Interval1D interval3 = new Interval1D(5, 6);
+        final Interval1D interval3 = new Interval1D(6, 7);
 
         assertTrue(interval1.isUnionableWith(interval2));
         assertTrue(interval2.isUnionableWith(interval1));
-
         assertFalse(interval1.isUnionableWith(interval3));
         assertFalse(interval3.isUnionableWith(interval1));
     }
@@ -88,8 +87,8 @@ public class Interval1DTest
     @Test
     public void testUnion()
     {
-        final Interval1D interval1 = new Interval1D(0, 2);
-        final Interval1D interval2 = new Interval1D(1, 4);
+        final Interval1D interval1 = new Interval1D(0, 1);
+        final Interval1D interval2 = new Interval1D(2, 4);
 
         final Interval1D expected = new Interval1D(0, 4);
         assertEquals(expected, interval1.union(interval2));

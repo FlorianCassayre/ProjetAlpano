@@ -101,7 +101,7 @@ public final class Interval1D
      */
     public boolean isUnionableWith(Interval1D that)
     {
-        return sizeOfIntersectionWith(that) != 0;
+        return this.size() + that.size() - this.sizeOfIntersectionWith(that) == this.boundingUnion(that).size();
     }
 
     /**

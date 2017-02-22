@@ -43,7 +43,7 @@ public final class Interval2D
     }
 
     /**
-     * Checks if the (x, y) pair is contained in the intervals.
+     * Checks if the (x, y) pair is contained in the two-dimensional interval
      * @param x the x-coordinate
      * @param y the y-coordinate
      * @return true if the pair is contained, false else
@@ -52,6 +52,12 @@ public final class Interval2D
     {
         return iX.contains(x) && iY.contains(y);
     }
+
+    /**
+     * Returns the size of the two-dimensional interval;
+     * @return the size of the two-dimensional interval
+     */
+    public int size(){ return iX.size() * iY.size(); }
 
     /**
      * Calculates the size of the intersection.
@@ -74,7 +80,7 @@ public final class Interval2D
     }
 
     /**
-     * Checks if two intervals are unionable (their union create another interval).
+     * Checks if two intervals are "unionable" (their union create another interval).
      * @param that the other interval
      * @return the union
      */
