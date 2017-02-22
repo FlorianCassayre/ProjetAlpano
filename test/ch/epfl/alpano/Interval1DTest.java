@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-public class IntervalTest
+public class Interval1DTest
 {
     @Test (expected = IllegalArgumentException.class)
     public void testIllegalArgument()
