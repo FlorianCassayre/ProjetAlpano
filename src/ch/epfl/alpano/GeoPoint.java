@@ -25,6 +25,9 @@ public final class GeoPoint
      */
     public GeoPoint(double longitude, double latitude)
     {
+        Preconditions.checkArgument(longitude >= -PI && longitude <= PI);
+        Preconditions.checkArgument(latitude >= -PI / 2.0 && latitude <= PI / 2.0);
+
         this.longitude = longitude;
         this.latitude = latitude;
     }
@@ -52,7 +55,7 @@ public final class GeoPoint
      */
     public double distanceTo(GeoPoint that)
     {
-        return Azimuth.canonicalize(2 * asin(sqrt(haversin(toRadians(this.latitude - that.latitude)) + cos(toRadians(this.latitude)) * cos(toRadians(that.latitude)) * haversin(toRadians(this.longitude - that.longitude))))) * Distance.EARTH_RADIUS;
+        return Azimuth.canonicalize(2 * asin(sqrt(haversin(this.latitude - that.latitude) + cos(this.latitude) * cos(that.latitude) * haversin(this.longitude - that.longitude)))) * Distance.EARTH_RADIUS;
     }
 
     /**
@@ -62,12 +65,12 @@ public final class GeoPoint
      */
     public double azimuthTo(GeoPoint that)
     {
-        return Azimuth.canonicalize(atan(sin(toRadians(this.longitude - that.longitude)) * cos(toRadians(that.latitude)) / (cos(toRadians(this.latitude)) * sin(toRadians(that.latitude)) - sin(toRadians(this.latitude)) * cos(toRadians(that.latitude)) * cos(toRadians(this.longitude - that.longitude)))));
+        return Azimuth.canonicalize(atan(sin(this.longitude - that.longitude) * cos(that.latitude) / (cos(this.latitude) * sin(that.latitude) - sin(this.latitude) * cos(that.latitude) * cos(this.longitude - that.longitude))));
     }
 
     @Override
     public String toString()
     {
-        return String.format(LOCALE, "(%.4f,%.4f)", longitude, latitude);
+        return String.format(LOCALE, "(%.4f,%.4f)", toDegrees(longitude), toDegrees(latitude));
     }
 }
