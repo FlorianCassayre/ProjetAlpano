@@ -32,7 +32,7 @@ public class GeoPointTest
     @Test
     public void testAzimuthToLausanneMoscow()
     {
-        final double expected = Azimuth.canonicalize(Math.toRadians(-52.95));
+        final double expected = Azimuth.canonicalize(Math.toRadians(52.95));
         final double actual = LAUSANNE.azimuthTo(MOSCOW);
         assertEquals(expected, actual, 1E-4);
     }
