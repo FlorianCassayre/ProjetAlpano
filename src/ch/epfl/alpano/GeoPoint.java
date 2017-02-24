@@ -65,7 +65,7 @@ public final class GeoPoint
      */
     public double azimuthTo(GeoPoint that)
     {
-        return Azimuth.fromMath(Azimuth.canonicalize(atan(sin(this.longitude - that.longitude) * cos(that.latitude) / (cos(this.latitude) * sin(that.latitude) - sin(this.latitude) * cos(that.latitude) * cos(this.longitude - that.longitude)))));
+        return Azimuth.fromMath(Azimuth.canonicalize(atan2(sin(this.longitude - that.longitude) * cos(that.latitude), (cos(this.latitude) * sin(that.latitude) - sin(this.latitude) * cos(that.latitude) * cos(this.longitude - that.longitude)))));
     }
 
     @Override

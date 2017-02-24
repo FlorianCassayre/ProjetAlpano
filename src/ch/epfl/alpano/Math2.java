@@ -117,8 +117,7 @@ public interface Math2
      */
     static double improveRoot(DoubleUnaryOperator f, double x1, double x2, double epsilon)
     {
-        if(f.applyAsDouble(x1) * f.applyAsDouble(x2) > 0)
-            throw new IllegalArgumentException();
+        Preconditions.checkArgument(f.applyAsDouble(x1) * f.applyAsDouble(x2) <= 0);
 
         while(x2 - x1 > epsilon)
         {

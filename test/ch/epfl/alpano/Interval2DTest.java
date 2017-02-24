@@ -61,8 +61,8 @@ public class Interval2DTest
     }
 
 
-    @Test (expected = NullPointerException.class)
-    public void testUnionNullPointer()
+    @Test (expected = IllegalArgumentException.class)
+    public void testUnionIllegalArgument()
     {
         final Interval2D interval1 = new Interval2D(new Interval1D(0, 2), new Interval1D(1,2));
         final Interval2D interval2 = new Interval2D(new Interval1D(5, 7), new Interval1D(0,1));

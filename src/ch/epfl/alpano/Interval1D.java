@@ -15,7 +15,7 @@ public final class Interval1D
      */
     public Interval1D(int includedFrom, int includedTo)
     {
-        Preconditions.checkArgument(includedTo < includedFrom);
+        Preconditions.checkArgument(includedTo >= includedFrom);
 
         this.includedFrom = includedFrom;
         this.includedTo = includedTo;
@@ -111,8 +111,7 @@ public final class Interval1D
      */
     public Interval1D union(Interval1D that)
     {
-        if(!isUnionableWith(that))
-            throw new IllegalArgumentException();
+        Preconditions.checkArgument(isUnionableWith(that));
 
         return boundingUnion(that);
     }

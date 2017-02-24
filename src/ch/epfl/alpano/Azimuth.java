@@ -22,7 +22,7 @@ public interface Azimuth
      */
     static double canonicalize(double azimuth)
     {
-        return (azimuth % Math2.PI2 + Math2.PI2) % Math2.PI2;
+        return Math2.floorMod(azimuth, Math2.PI2);
     }
 
     /**
@@ -32,8 +32,7 @@ public interface Azimuth
      */
     static double toMath(double azimuth)
     {
-        if(!isCanonical(azimuth))
-            throw new IllegalArgumentException();
+        Preconditions.checkArgument(isCanonical(azimuth));
 
         return canonicalize(-azimuth);
     }
@@ -45,8 +44,7 @@ public interface Azimuth
      */
     static double fromMath(double azimuth)
     {
-        if(!isCanonical(azimuth))
-            throw new IllegalArgumentException();
+        Preconditions.checkArgument(isCanonical(azimuth));
 
         return canonicalize(-azimuth);
     }
@@ -62,8 +60,7 @@ public interface Azimuth
      */
     static String toOctantString(double azimuth, String n, String e, String s, String w)
     {
-        if(!isCanonical(azimuth))
-            throw new IllegalArgumentException();
+        Preconditions.checkArgument(isCanonical(azimuth));
 
         final String[] cardinals = {n, e, s, w};
 

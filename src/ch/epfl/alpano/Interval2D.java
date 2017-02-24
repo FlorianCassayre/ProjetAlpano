@@ -97,8 +97,7 @@ public final class Interval2D
      */
     public Interval2D union(Interval2D that)
     {
-        if(!isUnionableWith(that))
-            throw new NullPointerException();
+        Preconditions.checkArgument(isUnionableWith(that));
 
         return boundingUnion(that);
     }
