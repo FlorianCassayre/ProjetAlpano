@@ -15,8 +15,7 @@ public final class Interval1D
      */
     public Interval1D(int includedFrom, int includedTo)
     {
-        if(includedTo < includedFrom)
-            throw new IllegalArgumentException();
+        Preconditions.checkArgument(includedTo < includedFrom);
 
         this.includedFrom = includedFrom;
         this.includedTo = includedTo;
