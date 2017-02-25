@@ -13,7 +13,7 @@ import static java.lang.Math.*;
 public final class GeoPoint
 {
     /**
-     * Locale for number formatting.
+     * Default locale for english number formatting.
      */
     private static final Locale LOCALE = null;
 
