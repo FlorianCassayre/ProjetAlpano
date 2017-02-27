@@ -2,7 +2,6 @@ package ch.epfl.alpano.dem;
 
 import ch.epfl.alpano.Interval2D;
 import ch.epfl.alpano.Math2;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * Represents a discrete DTM (Digital Terrain Model).
