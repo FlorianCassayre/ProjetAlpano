@@ -73,10 +73,10 @@ public class Interval2DTest
     @Test
     public void testUnion()
     {
-        final Interval2D interval1 = new Interval2D(new Interval1D(0, 2), new Interval1D(1, 2));
-        final Interval2D interval2 = new Interval2D(new Interval1D(1, 4), new Interval1D(2, 4));
+        final Interval2D interval1 = new Interval2D(new Interval1D(0, 5), new Interval1D(1, 3));
+        final Interval2D interval2 = new Interval2D(new Interval1D(0, 5), new Interval1D(1, 3));
 
-        final Interval2D expected = new Interval2D(new Interval1D(0, 4), new Interval1D(1, 4));
+        final Interval2D expected = new Interval2D(new Interval1D(0, 5), new Interval1D(1, 3));
         assertEquals(expected, interval1.union(interval2));
     }
 

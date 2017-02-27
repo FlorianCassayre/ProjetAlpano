@@ -68,11 +68,14 @@ public class Interval1DTest
         final Interval1D interval1 = new Interval1D(1, 4);
         final Interval1D interval2 = new Interval1D(3, 8);
         final Interval1D interval3 = new Interval1D(6, 7);
+        final Interval1D interval4 = new Interval1D(8, 9);
 
         assertTrue(interval1.isUnionableWith(interval2));
         assertTrue(interval2.isUnionableWith(interval1));
         assertFalse(interval1.isUnionableWith(interval3));
         assertFalse(interval3.isUnionableWith(interval1));
+        assertTrue(interval3.isUnionableWith(interval4));
+        assertTrue(interval4.isUnionableWith(interval3));
     }
 
     @Test (expected = IllegalArgumentException.class)
