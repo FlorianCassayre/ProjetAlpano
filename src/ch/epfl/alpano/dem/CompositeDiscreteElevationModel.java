@@ -1,7 +1,6 @@
 package ch.epfl.alpano.dem;
 
 import ch.epfl.alpano.Interval2D;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Objects;
 
@@ -32,13 +31,16 @@ final class CompositeDiscreteElevationModel implements DiscreteElevationModel
     @Override
     public Interval2D extent()
     {
-        throw new NotImplementedException();
+        return dem1.extent().union(dem2.extent());
     }
 
     @Override
     public double elevationSample(int x, int y)
     {
-        throw new NotImplementedException();
+        if(dem1.extent().contains(x, y))
+            return dem1.elevationSample(x, y);
+        else
+            return dem2.elevationSample(x, y);
     }
 
     @Override
