@@ -80,6 +80,17 @@ public class Interval2DTest
         assertEquals(expected, interval1.union(interval2));
     }
 
+    @Test
+    public void testUnion2()
+    {
+        final Interval2D interval1 = new Interval2D(new Interval1D(1, 2), new Interval1D(2, 4));
+        final Interval2D interval2 = new Interval2D(new Interval1D(2, 2), new Interval1D(3, 4));
+        final Interval2D interval3 = new Interval2D(new Interval1D(2, 2), new Interval1D(3, 3));
+
+        assertEquals(interval1, interval1.union(interval2));
+        assertEquals(interval2, interval2.union(interval3));
+    }
+
 
     @Test
     public void testToString()
