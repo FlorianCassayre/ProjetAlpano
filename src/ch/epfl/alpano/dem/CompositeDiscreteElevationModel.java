@@ -39,8 +39,10 @@ final class CompositeDiscreteElevationModel implements DiscreteElevationModel
     {
         if(dem1.extent().contains(x, y))
             return dem1.elevationSample(x, y);
-        else
+        else if(dem2.extent().contains(x, y))
             return dem2.elevationSample(x, y);
+
+        throw new IllegalArgumentException();
     }
 
     @Override
