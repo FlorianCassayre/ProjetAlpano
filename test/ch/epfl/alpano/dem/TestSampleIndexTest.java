@@ -1,12 +1,14 @@
 package ch.epfl.alpano.dem;
 
-import static org.junit.Assert.*;
-
+import ch.epfl.alpano.Interval2D;
 import ch.epfl.alpano.Math2;
 import org.junit.Test;
 
-public class TestSampleIndex
-{
+import static ch.epfl.alpano.dem.DiscreteElevationModel.sampleIndex;
+import static junit.framework.TestCase.assertEquals;
+
+public class TestSampleIndexTest {
+
     @Test
     public void testSampleIndex()
     {
