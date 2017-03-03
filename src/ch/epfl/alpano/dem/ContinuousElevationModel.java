@@ -1,5 +1,6 @@
 package ch.epfl.alpano.dem;
 
+import ch.epfl.alpano.Distance;
 import ch.epfl.alpano.GeoPoint;
 import ch.epfl.alpano.Math2;
 
@@ -10,6 +11,11 @@ import java.util.Objects;
  */
 public final class ContinuousElevationModel
 {
+    /**
+     * The derivative step
+     */
+    private static final double D = Distance.toMeters(1 / DiscreteElevationModel.SAMPLES_PER_RADIAN);
+
     private final DiscreteElevationModel dem;
 
     /**
@@ -72,13 +78,10 @@ public final class ContinuousElevationModel
      */
     private double slopeAt(int longitudeIndex, int latitudeIndex)
     {
-        // FIXME: the result isn't quite exactly as expected (see slope.png)
-        final int d = 1; // The derivative step
-
         final double z = elevationAt(longitudeIndex, latitudeIndex);
-        final double za = elevationAt(longitudeIndex + d, latitudeIndex) - z;
-        final double zb = elevationAt(longitudeIndex, latitudeIndex + d) - z;
+        final double za = elevationAt(longitudeIndex + 1, latitudeIndex) - z;
+        final double zb = elevationAt(longitudeIndex, latitudeIndex + 1) - z;
 
-        return Math.acos(d / (Math.sqrt(Math2.sq(za) + Math2.sq(zb) + Math2.sq(d))));
+        return Math.acos(D / (Math.sqrt(Math2.sq(za) + Math2.sq(zb) + Math2.sq(D))));
     }
 }
