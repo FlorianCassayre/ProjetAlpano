@@ -51,7 +51,7 @@ public final class DrawDEM {
         ImageIO.write(slI, "png", new File("slope.png"));
     }
 
-    private static int gray(double v) {
+    protected static int gray(double v) {
         double clampedV = max(0, min(v, 1));
         int gray = (int) (255.9999 * clampedV);
         return (gray << 16) | (gray << 8) | gray;
