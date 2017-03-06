@@ -1,16 +1,70 @@
 package ch.epfl.alpano.dem;
 
 import ch.epfl.alpano.Interval2D;
+import ch.epfl.alpano.Preconditions;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.nio.channels.FileChannel;
+import java.util.Objects;
 
 public final class HgtDiscreteElevationModel implements DiscreteElevationModel
 {
+    private static final int SAMPLES_COUNT = 12967201;
+    private static final int HGT_FILE_LENGTH = SAMPLES_COUNT * 2;
+
+    private final FileChannel channel;
+
     public HgtDiscreteElevationModel(File file)
     {
-        // TODO: IllegalArgumentException
-        throw new NotImplementedException();
+        final String name = file.getName();
+
+        Preconditions.checkArgument(name.length() == 11); // The length must be equal to 11
+        Preconditions.checkArgument(name.endsWith(".hgt")); // The extension must be exactly ".hgt"
+
+        final char ns = name.charAt(0), ew = name.charAt(3);
+
+        Preconditions.checkArgument((ns == 'N' || ns == 'S') && (ew == 'E' || ew == 'W')); // The letters must be N or S, and E or W
+
+        final boolean signLatitude = ns == 'N', signLongitude = ew == 'E';
+
+        final int latitude = getAsPositiveInteger(name.substring(1, 3)), longitude = getAsPositiveInteger(name.substring(4, 6)); // There must be 2 and 3 digits
+
+        Preconditions.checkArgument(file.length() == HGT_FILE_LENGTH); // The file length must be exactly 25 934 402 bytes
+
+        try
+        {
+            this.channel = new FileInputStream(file).getChannel();
+        }
+        catch(FileNotFoundException e)
+        {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * Return the positive integer representation of a string.
+     * @param str the positive integer as string
+     * @throws IllegalArgumentException if the string is not a positive integer
+     * @return the integer
+     */
+    private static int getAsPositiveInteger(String str)
+    {
+        for(char c : str.toCharArray())
+            if(!(c >= '0' && c <= '9'))
+                throw new IllegalArgumentException();
+
+        try
+        {
+            return Integer.parseInt(str);
+        }
+        catch(NumberFormatException e) // Catched if the integer is too big
+        {
+            throw new IllegalArgumentException();
+        }
     }
 
     @Override
