@@ -15,4 +15,4 @@ out/
 # Maven
 log/
 target/
-/res/actual/
+/res/actual/*
