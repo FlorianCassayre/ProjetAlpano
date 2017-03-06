@@ -69,6 +69,10 @@ public final class Interval1D
         {
             return this.size();
         }
+        else if(this.contains(that.includedFrom) && this.contains(that.includedTo))
+        {
+            return that.size();
+        }
         else if(that.contains(this.includedFrom) && !that.contains(this.includedTo))
         {
             return that.includedTo - this.includedFrom + 1;

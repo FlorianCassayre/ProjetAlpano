@@ -44,6 +44,15 @@ public class Interval1DTest
         assertEquals(1, new Interval1D(0, 3).sizeOfIntersectionWith(new Interval1D(3, 5)));
         assertEquals(2, new Interval1D(0, 2).sizeOfIntersectionWith(new Interval1D(1, 5)));
         assertEquals(4, new Interval1D(0, 3).sizeOfIntersectionWith(new Interval1D(-1, 5)));
+
+        assertEquals(1, new Interval1D(1, 1).sizeOfIntersectionWith(new Interval1D(0, 2)));
+        assertEquals(1, new Interval1D(0, 2).sizeOfIntersectionWith(new Interval1D(1, 1)));
+        assertEquals(1, new Interval1D(0, 1).sizeOfIntersectionWith(new Interval1D(-3, 0)));
+        assertEquals(1, new Interval1D(-3, 0).sizeOfIntersectionWith(new Interval1D(0, 1)));
+        assertEquals(1, new Interval1D(0, 0).sizeOfIntersectionWith(new Interval1D(0, 0)));
+        assertEquals(1, new Interval1D(9, 9).sizeOfIntersectionWith(new Interval1D(9, 9)));
+        assertEquals(0, new Interval1D(0, 4).sizeOfIntersectionWith(new Interval1D(5, 7)));
+        assertEquals(0, new Interval1D(5, 7).sizeOfIntersectionWith(new Interval1D(0, 4)));
     }
 
     @Test
