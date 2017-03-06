@@ -47,8 +47,8 @@ public final class DrawDEM {
             }
         }
 
-        ImageIO.write(elI, "png", new File("elevation.png"));
-        ImageIO.write(slI, "png", new File("slope.png"));
+        ImageIO.write(elI, "png", new File("res/actual/elevation.png"));
+        ImageIO.write(slI, "png", new File("res/actual/slope.png"));
     }
 
     protected static int gray(double v) {
