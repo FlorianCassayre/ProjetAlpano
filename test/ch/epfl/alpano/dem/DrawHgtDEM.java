@@ -15,8 +15,9 @@ import static ch.epfl.alpano.dem.DrawDEM.gray;
 import static ch.epfl.alpano.dem.DrawDEM.gray;
 import static java.awt.image.BufferedImage.TYPE_INT_RGB;
 
-final class DrawHgtDEM {
-    final static File HGT_FILE = new File("N46E006.hgt");
+final class DrawHgtDEM
+{
+    final static File HGT_FILE = new File("res/data/N46E006.hgt");
     final static double ORIGIN_LON = toRadians(6.25);
     final static double ORIGIN_LAT = toRadians(46.25);
     final static double WIDTH = toRadians(0.5);
@@ -24,29 +25,27 @@ final class DrawHgtDEM {
     final static double MIN_ELEVATION = 200;
     final static double MAX_ELEVATION = 1_500;
 
-    public static void main(String[] as) throws Exception {
-        DiscreteElevationModel dDEM =
-                new HgtDiscreteElevationModel(HGT_FILE);
-        ContinuousElevationModel cDEM =
-                new ContinuousElevationModel(dDEM);
+    public static void main(String[] as) throws Exception
+    {
+        DiscreteElevationModel dDEM = new HgtDiscreteElevationModel(HGT_FILE);
+        ContinuousElevationModel cDEM = new ContinuousElevationModel(dDEM);
 
         double step = WIDTH / (IMAGE_SIZE - 1);
-        BufferedImage i = new BufferedImage(IMAGE_SIZE,
-                IMAGE_SIZE,
-                TYPE_INT_RGB);
-        for (int x = 0; x < IMAGE_SIZE; ++x) {
+        BufferedImage i = new BufferedImage(IMAGE_SIZE, IMAGE_SIZE, TYPE_INT_RGB);
+
+        for(int x = 0; x < IMAGE_SIZE; ++x)
+        {
             double lon = ORIGIN_LON + x * step;
-            for (int y = 0; y < IMAGE_SIZE; ++y) {
+            for(int y = 0; y < IMAGE_SIZE; ++y)
+            {
                 double lat = ORIGIN_LAT + y * step;
                 GeoPoint p = new GeoPoint(lon, lat);
-                double el =
-                        (cDEM.elevationAt(p) - MIN_ELEVATION)
-                                / (MAX_ELEVATION - MIN_ELEVATION);
+                double el = (cDEM.elevationAt(p) - MIN_ELEVATION) / (MAX_ELEVATION - MIN_ELEVATION);
                 i.setRGB(x, IMAGE_SIZE - 1 - y, gray(el));
             }
         }
         dDEM.close();
 
-        ImageIO.write(i, "png", new File("dem.png"));
+        ImageIO.write(i, "png", new File("res/actual/dem.png"));
     }
 }
