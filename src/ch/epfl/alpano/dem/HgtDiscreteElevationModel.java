@@ -17,7 +17,8 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel
     private static final int HGT_FILE_LENGTH = SAMPLES_COUNT * 2;
 
     private final int latitudeIndex, longitudeIndex;
-    private final FileChannel channel;
+    private final FileInputStream stream;
+    private final ShortBuffer buffer;
 
     /**
      * Creates a new instance.
@@ -26,9 +27,6 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel
      */
     public HgtDiscreteElevationModel(File file)
     {
-        if(!file.exists())
-            throw new IllegalArgumentException();
-
         final String name = file.getName();
 
         Preconditions.checkArgument(name.length() == 11); // The length must be equal to 11
@@ -49,7 +47,8 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel
 
         try
         {
-            this.channel = new FileInputStream(file).getChannel();
+            this.stream = new FileInputStream(file);
+            this.buffer = stream.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, HGT_FILE_LENGTH).asShortBuffer();
         }
         catch(IOException e)
         {
@@ -88,24 +87,14 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel
     @Override
     public double elevationSample(int x, int y)
     {
-        final int i = 2 * (x + y * SAMPLES_PER_DEGREE);
+        final int i = x + y * SAMPLES_PER_DEGREE;
 
-        try
-        {
-            final ShortBuffer buffer = channel.map(FileChannel.MapMode.READ_ONLY, i, 2).asShortBuffer();
-            final short data = buffer.get();
-            return (double) data;
-        }
-        catch(IOException e)
-        {
-            e.printStackTrace();
-            throw new IllegalStateException();
-        }
+        return (double) buffer.get(i);
     }
 
     @Override
     public void close() throws Exception
     {
-        channel.close();
+        stream.close();
     }
 }

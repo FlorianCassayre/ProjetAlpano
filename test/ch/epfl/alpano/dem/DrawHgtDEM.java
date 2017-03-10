@@ -40,6 +40,7 @@ final class DrawHgtDEM
             {
                 double lat = ORIGIN_LAT + y * step;
                 GeoPoint p = new GeoPoint(lon, lat);
+
                 double el = (cDEM.elevationAt(p) - MIN_ELEVATION) / (MAX_ELEVATION - MIN_ELEVATION);
                 i.setRGB(x, IMAGE_SIZE - 1 - y, gray(el));
             }
