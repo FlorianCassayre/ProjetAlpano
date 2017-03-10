@@ -1,6 +1,7 @@
 package ch.epfl.alpano.dem;
 
 import ch.epfl.alpano.*;
+import static java.lang.Math.*;
 
 import java.util.Objects;
 
@@ -48,20 +49,22 @@ public final class ElevationProfile
      */
     public double elevationAt(double x)
     {
-        isInBounds(x);
-        throw new UnsupportedOperationException();
+        return elevationModel.elevationAt(positionAt(x));
     }
 
     public GeoPoint positionAt(double x)
     {
         isInBounds(x);
 
-        throw new UnsupportedOperationException();
+        final double angle = Distance.toRadians(x);
+        final double longitude = asin(sin(origin.longitude()) * cos(angle) + cos(origin.longitude()) * sin(angle) * cos(Azimuth.toMath(azimuth)));
+        final double latitude = ((origin.latitude() - asin(sin(Azimuth.toMath(azimuth)) * sin(angle) / cos(longitude)) + PI) % Math2.PI2) - PI;
+
+        return new GeoPoint(longitude, latitude);
     }
 
     public double slopeAt(double x)
     {
-        isInBounds(x);
-        throw new UnsupportedOperationException();
+        return elevationModel.slopeAt(positionAt(x));
     }
 }
