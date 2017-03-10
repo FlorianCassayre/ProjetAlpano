@@ -56,10 +56,9 @@ public final class ElevationProfile
     {
         isInBounds(x);
 
-        final double angle = Distance.toRadians(x);
+        final double angle = Azimuth.canonicalize(Distance.toRadians(x));
         final double longitude = asin(sin(origin.longitude()) * cos(angle) + cos(origin.longitude()) * sin(angle) * cos(Azimuth.toMath(azimuth)));
         final double latitude = ((origin.latitude() - asin(sin(Azimuth.toMath(azimuth)) * sin(angle) / cos(longitude)) + PI) % Math2.PI2) - PI;
-
         return new GeoPoint(longitude, latitude);
     }
 

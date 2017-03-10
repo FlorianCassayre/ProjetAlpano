@@ -10,7 +10,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
-import static ch.epfl.alpano.Distance.toRadians;
 import static java.awt.image.BufferedImage.TYPE_INT_RGB;
 
 final class DrawElevationProfile
@@ -18,9 +17,9 @@ final class DrawElevationProfile
     final static File HGT_FILE = new File("res/data/N46E006.hgt");
     final static double MAX_ELEVATION = 1_500;
     final static int LENGTH = 111_000;
-    final static double AZIMUTH = toRadians(27.97);
-    final static double LONGITUDE = toRadians(6.15432);
-    final static double LATITUDE = toRadians(46.20562);
+    final static double AZIMUTH = Math.toRadians(27.97);
+    final static double LONGITUDE = Math.toRadians(6.15432);
+    final static double LATITUDE = Math.toRadians(46.20562);
     final static int WIDTH = 800, HEIGHT = 100;
 
     public static void main(String[] as) throws Exception
