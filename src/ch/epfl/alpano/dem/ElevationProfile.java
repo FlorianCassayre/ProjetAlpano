@@ -1,7 +1,6 @@
 package ch.epfl.alpano.dem;
 
 import ch.epfl.alpano.GeoPoint;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public final class ElevationProfile
 {
@@ -9,24 +8,24 @@ public final class ElevationProfile
     {
         // TODO: IllegalArgumentException
         // TODO: NullPointerException
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     public double elevationAt(double x)
     {
         // TODO: IllegalArgumentException
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     public GeoPoint positionAt(double x)
     {
         // TODO: IllegalArgumentException
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     public double slopeAt(double x)
     {
         // TODO: IllegalArgumentException
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 }
