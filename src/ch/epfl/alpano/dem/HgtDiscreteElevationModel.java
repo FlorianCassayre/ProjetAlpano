@@ -38,7 +38,7 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel
 
         final boolean signLatitude = ns == 'N', signLongitude = ew == 'E';
 
-        final int latitude = getAsPositiveInteger(name.substring(1, 3)), longitude = getAsPositiveInteger(name.substring(4, 6)); // There must be 2 and 3 digits
+        final int latitude = getAsPositiveInteger(name.substring(1, 3)), longitude = getAsPositiveInteger(name.substring(4, 7)); // There must be 2 and 3 digits
 
         this.latitudeIndex = (signLatitude ? 1 : -1) * latitude * DiscreteElevationModel.SAMPLES_PER_DEGREE;
         this.longitudeIndex = (signLongitude ? 1 : -1) * longitude * DiscreteElevationModel.SAMPLES_PER_DEGREE;
@@ -81,19 +81,19 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel
     @Override
     public Interval2D extent()
     {
-        return new Interval2D(new Interval1D(0, SAMPLES_PER_DEGREE - 1), new Interval1D(0, SAMPLES_PER_DEGREE - 1));
+        return new Interval2D(new Interval1D(longitudeIndex, longitudeIndex + SAMPLES_PER_DEGREE - 1), new Interval1D(latitudeIndex, latitudeIndex + SAMPLES_PER_DEGREE - 1));
     }
 
     @Override
     public double elevationSample(int x, int y)
     {
-        final int i = x + y * SAMPLES_PER_DEGREE;
+        final int i = (x - longitudeIndex) + (SAMPLES_PER_DEGREE - y + latitudeIndex) * (SAMPLES_PER_DEGREE + 1);
 
         return (double) buffer.get(i);
     }
 
     @Override
-    public void close() throws Exception
+    public void close() throws IOException
     {
         stream.close();
     }

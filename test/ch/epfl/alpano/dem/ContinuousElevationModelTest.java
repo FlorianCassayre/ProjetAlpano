@@ -1,5 +1,6 @@
 package ch.epfl.alpano.dem;
 
+import ch.epfl.test.Utils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -31,7 +32,7 @@ public class ContinuousElevationModelTest
         final BufferedImage expected = ImageIO.read(new File("res/expected/elevation.png"));
         final BufferedImage actual = ImageIO.read(new File("res/actual/elevation.png"));
 
-        testAreSame(expected, actual);
+        Utils.testAreSame(expected, actual);
     }
 
     @Test
@@ -40,24 +41,6 @@ public class ContinuousElevationModelTest
         final BufferedImage expected = ImageIO.read(new File("res/expected/slope.png"));
         final BufferedImage actual = ImageIO.read(new File("res/actual/slope.png"));
 
-        testAreSame(expected, actual);
-    }
-
-    private void testAreSame(BufferedImage expected, BufferedImage actual)
-    {
-        testHaveSameDimensions(expected, actual);
-
-        for(int y = 0; y < expected.getHeight(); y++)
-        {
-            for(int x = 0; x < expected.getWidth(); x++)
-            {
-                assertEquals(expected.getRGB(x, y), actual.getRGB(x, y));
-            }
-        }
-    }
-
-    private void testHaveSameDimensions(BufferedImage expected, BufferedImage actual)
-    {
-        assertTrue(expected.getWidth() == actual.getWidth() && expected.getHeight() == actual.getHeight());
+        Utils.testAreSame(expected, actual);
     }
 }
