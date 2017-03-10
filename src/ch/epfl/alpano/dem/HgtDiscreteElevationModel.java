@@ -43,6 +43,9 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel
 
         final int latitude = getAsPositiveInteger(name.substring(1, 3)), longitude = getAsPositiveInteger(name.substring(4, 7)); // There must be 2 and 3 digits
 
+        Preconditions.checkArgument(latitude >= 0 && latitude < 90);
+        Preconditions.checkArgument(longitude >= 0 && longitude < 180);
+
         this.latitudeIndex = (signLatitude ? 1 : -1) * latitude * DiscreteElevationModel.SAMPLES_PER_DEGREE;
         this.longitudeIndex = (signLongitude ? 1 : -1) * longitude * DiscreteElevationModel.SAMPLES_PER_DEGREE;
 
