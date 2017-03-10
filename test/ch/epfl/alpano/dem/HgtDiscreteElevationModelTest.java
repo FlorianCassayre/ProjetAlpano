@@ -3,6 +3,7 @@ package ch.epfl.alpano.dem;
 import ch.epfl.test.Utils;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -22,6 +23,12 @@ public class HgtDiscreteElevationModelTest
         {
             e.printStackTrace();
         }
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidFile()
+    {
+        final HgtDiscreteElevationModel hgt = new HgtDiscreteElevationModel(new File(""));
     }
 
     @Test

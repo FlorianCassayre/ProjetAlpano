@@ -27,6 +27,9 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel
      */
     public HgtDiscreteElevationModel(File file)
     {
+        if(!file.exists())
+            throw new IllegalArgumentException();
+
         final String name = file.getName();
 
         Preconditions.checkArgument(name.length() == 11); // The length must be equal to 11
