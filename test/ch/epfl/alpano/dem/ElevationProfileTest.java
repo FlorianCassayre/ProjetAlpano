@@ -1,5 +1,6 @@
 package ch.epfl.alpano.dem;
 
+import ch.epfl.alpano.Distance;
 import ch.epfl.alpano.GeoPoint;
 import ch.epfl.test.Utils;
 import org.junit.BeforeClass;
@@ -37,11 +38,37 @@ public class ElevationProfileTest
     }
 
     @Test
-    public void testPositionAt(){
-        final ElevationProfile profile = new ElevationProfile(new ContinuousElevationModel(new HgtDiscreteElevationModel(new File("res/data/N46E006.hgt"))), new GeoPoint(Math.toRadians(6),Math.toRadians(46)),Math.toRadians(45),9999);
+    public void testPositionAtWithExactValue()
+    {
+        final ElevationProfile profile = new ElevationProfile(new ContinuousElevationModel(new HgtDiscreteElevationModel(new File("res/data/N46E006.hgt"))), new GeoPoint(Math.toRadians(6), Math.toRadians(46)), Math.toRadians(45), 100000);
         final double expectedLongitude = Math.toRadians(6.09385);
         final double expectedLatitude = Math.toRadians(46.06508);
-        assertEquals(expectedLongitude,profile.positionAt(10240).longitude(),1e-2);
-        assertEquals(expectedLatitude,profile.positionAt(10240).latitude(),1e-2);
+
+        final GeoPoint actual = profile.positionAt(10240);
+
+        assertEquals(expectedLongitude, actual.longitude(), 1.0 / DiscreteElevationModel.SAMPLES_PER_RADIAN);
+        assertEquals(expectedLatitude, actual.latitude(), 1.0 / DiscreteElevationModel.SAMPLES_PER_RADIAN);
+    }
+
+    @Test
+    public void testPositionAtWithOtherValues()
+    {
+        final double[] distances = new double[] {0, 4096, 8192, 12288, 102400};
+        final double[] expectedLongitudes = new double[] {6.00000, 6.03751, 6.07506, 6.11265, 6.94857};
+        final double[] expectedLatitudes = new double[] {46.00000, 46.02604, 46.05207, 46.07809, 46.64729};
+
+        final ElevationProfile profile = new ElevationProfile(new ContinuousElevationModel(new HgtDiscreteElevationModel(new File("res/data/N46E006.hgt"))), new GeoPoint(Math.toRadians(6), Math.toRadians(46)), Math.toRadians(45), 100000);
+        for(int i = 0; i < distances.length; i++)
+        {
+            final double distance = distances[i];
+            final double expectedLongitude = Math.toRadians(expectedLongitudes[i]);
+            final double expectedLatitude = Math.toRadians(expectedLatitudes[i]);
+
+            final GeoPoint actual = profile.positionAt(distance);
+
+            assertEquals(expectedLongitude, actual.longitude(), 1.0 / DiscreteElevationModel.SAMPLES_PER_RADIAN);
+            assertEquals(expectedLatitude, actual.latitude(), 1.0 / DiscreteElevationModel.SAMPLES_PER_RADIAN);
+        }
+
     }
 }
