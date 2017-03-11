@@ -1,4 +1,4 @@
-package ch.epfl.alpano.dem;
+package ch.epfl.alpano.dem.draw;
 
 import ch.epfl.alpano.GeoPoint;
 import ch.epfl.alpano.dem.ContinuousElevationModel;
@@ -12,7 +12,7 @@ import java.io.File;
 
 import static java.awt.image.BufferedImage.TYPE_INT_RGB;
 
-final class DrawElevationProfile
+public final class DrawElevationProfile
 {
     final static File HGT_FILE = new File("res/data/N46E006.hgt");
     final static double MAX_ELEVATION = 1_500;

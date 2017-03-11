@@ -1,4 +1,4 @@
-package ch.epfl.alpano.dem;
+package ch.epfl.alpano.dem.draw;
 
 import ch.epfl.alpano.GeoPoint;
 import ch.epfl.alpano.dem.ContinuousElevationModel;
@@ -9,12 +9,9 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
-import static ch.epfl.alpano.dem.DrawDEM.gray;
-
-import static ch.epfl.alpano.dem.DrawDEM.gray;
 import static java.awt.image.BufferedImage.TYPE_INT_RGB;
 
-final class DrawHgtDEM
+public final class DrawHgtDEM
 {
     final static File HGT_FILE = new File("res/data/N46E006.hgt");
     final static double ORIGIN_LON = Math.toRadians(6.25);
@@ -40,7 +37,7 @@ final class DrawHgtDEM
                 double lat = ORIGIN_LAT + y * step;
                 GeoPoint p = new GeoPoint(lon, lat);
                 double el = (cDEM.elevationAt(p) - MIN_ELEVATION) / (MAX_ELEVATION - MIN_ELEVATION);
-                i.setRGB(x, IMAGE_SIZE - 1 - y, gray(el));
+                i.setRGB(x, IMAGE_SIZE - 1 - y, DrawDEM.gray(el));
             }
         }
         dDEM.close();

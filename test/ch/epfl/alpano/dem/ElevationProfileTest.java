@@ -1,7 +1,7 @@
 package ch.epfl.alpano.dem;
 
-import ch.epfl.alpano.Distance;
 import ch.epfl.alpano.GeoPoint;
+import ch.epfl.alpano.dem.draw.DrawElevationProfile;
 import ch.epfl.test.Utils;
 import org.junit.BeforeClass;
 import org.junit.Test;

@@ -1,4 +1,4 @@
-package ch.epfl.alpano;
+package ch.epfl.alpano.correction;
 
 import ch.epfl.alpano.GeoPoint;
 import ch.epfl.alpano.Interval1D;

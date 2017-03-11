@@ -1,9 +1,9 @@
 package ch.epfl.alpano.dem;
 
+import ch.epfl.alpano.dem.draw.DrawHgtDEM;
 import ch.epfl.test.Utils;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

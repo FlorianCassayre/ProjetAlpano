@@ -52,6 +52,11 @@ public final class ElevationProfile
         return elevationModel.elevationAt(positionAt(x));
     }
 
+    /**
+     * Returns the position of a point located at the specified distance from the origin.
+     * @param x the distance from the origin
+     * @return the position
+     */
     public GeoPoint positionAt(double x)
     {
         isInBounds(x);
@@ -63,6 +68,11 @@ public final class ElevationProfile
         return new GeoPoint(longitude, latitude);
     }
 
+    /**
+     * Returns the slope at a point located at the specified distance from the origin.
+     * @param x the distance from the origin
+     * @return the slope at this position
+     */
     public double slopeAt(double x)
     {
         return elevationModel.slopeAt(positionAt(x));

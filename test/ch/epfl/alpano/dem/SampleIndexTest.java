@@ -7,7 +7,8 @@ import org.junit.Test;
 import static ch.epfl.alpano.dem.DiscreteElevationModel.sampleIndex;
 import static junit.framework.TestCase.assertEquals;
 
-public class TestSampleIndexTest {
+public class SampleIndexTest
+{
 
     @Test
     public void testSampleIndex()
