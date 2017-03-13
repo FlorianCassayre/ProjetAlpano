@@ -1,5 +1,7 @@
 package ch.epfl.alpano;
 
+import java.util.Objects;
+
 public final class PanoramaParameters
 {
     private final GeoPoint observerPosition;
@@ -10,11 +12,21 @@ public final class PanoramaParameters
 
     public PanoramaParameters(GeoPoint observerPosition, int observerElevation, double centerAzimuth, double horizontalFieldOfView, int maxDistance, int width, int height)
     {
-        // TODO NullPointerException
+        this.observerElevation = observerElevation;
 
-        // TODO IllegalArgumentException
+        Objects.requireNonNull(observerPosition);
+        this.observerPosition = observerPosition;
 
-        throw new UnsupportedOperationException();
+        Preconditions.checkArgument(Azimuth.isCanonical(centerAzimuth));
+        this.centerAzimuth = centerAzimuth;
+
+        Preconditions.checkArgument(horizontalFieldOfView > 0 && horizontalFieldOfView <= Math2.PI2);
+        this.horizontalFieldOfView = horizontalFieldOfView;
+
+        Preconditions.checkArgument(maxDistance > 0 && width > 0 && height > 0);
+        this.width = width;
+        this.height = height;
+        this.maxDistance = maxDistance;
     }
 
     public GeoPoint observerPosition()
@@ -39,7 +51,7 @@ public final class PanoramaParameters
 
     public double verticalFieldOfView()
     {
-        throw new UnsupportedOperationException();
+        return horizontalFieldOfView*(height - 1)/(width - 1);
     }
 
     public int maxDistance()
@@ -57,10 +69,13 @@ public final class PanoramaParameters
         return height;
     }
 
+    /*
     public double azimuthForX(double x)
     {
-        throw new UnsupportedOperationException();
+        Preconditions.checkArgument(x >=0 | x < width );
+        //TODO
     }
+
 
     public double xForAzimuth(double a)
     {
@@ -69,8 +84,10 @@ public final class PanoramaParameters
 
     public double altitudeForY(double y)
     {
-        throw new UnsupportedOperationException();
+        Preconditions.checkArgument(y >=0 | y < height );
+        //TODO
     }
+*/
 
     public double yForAltitude(double a)
     {
