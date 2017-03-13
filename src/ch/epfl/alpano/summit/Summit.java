@@ -33,6 +33,6 @@ public final class Summit
     @Override
     public String toString()
     {
-        throw new UnsupportedOperationException();
+        return name + " " + position.toString() + " " + elevation;
     }
 }
