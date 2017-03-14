@@ -51,7 +51,7 @@ public final class PanoramaParameters
 
     public double verticalFieldOfView()
     {
-        return horizontalFieldOfView*(height - 1)/(width - 1);
+        return horizontalFieldOfView * (height - 1) / (width - 1);
     }
 
     public int maxDistance()
@@ -69,11 +69,12 @@ public final class PanoramaParameters
         return height;
     }
 
-    /*
     public double azimuthForX(double x)
     {
-        Preconditions.checkArgument(x >=0 | x < width );
+        Preconditions.checkArgument(x >= 0 | x < width);
         //TODO
+
+        throw new UnsupportedOperationException();
     }
 
 
@@ -84,10 +85,11 @@ public final class PanoramaParameters
 
     public double altitudeForY(double y)
     {
-        Preconditions.checkArgument(y >=0 | y < height );
-        //TODO
+        Preconditions.checkArgument(y >= 0 | y < height);
+        // >TODO
+
+        throw new UnsupportedOperationException();
     }
-*/
 
     public double yForAltitude(double a)
     {

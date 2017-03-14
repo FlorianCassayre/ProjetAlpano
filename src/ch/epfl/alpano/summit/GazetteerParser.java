@@ -5,6 +5,7 @@ import ch.epfl.alpano.Preconditions;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -37,7 +38,9 @@ public final class GazetteerParser
 
     private static Summit readSummit(String str)
     {
-        final String[] parts = str.split("[^ ]( )"); // FIXME
+        final String[] parts = str.trim().split(" +");
+
+        Preconditions.checkArgument(parts.length >= 7);
 
         final double longitude = readAngle(parts[0], true);
         final double latitude = readAngle(parts[1], false);
@@ -46,70 +49,46 @@ public final class GazetteerParser
 
         final int elevation = Integer.parseInt(parts[2].trim());
 
-        final String name = parts[6];
+        StringBuilder builder = new StringBuilder();
+        for(int i = 6; i < parts.length; i++)
+        {
+            builder.append(parts[i]);
+            if(i < parts.length - 1)
+                builder.append(" ");
+        }
 
-        return new Summit(name, position, elevation);
+        return new Summit(builder.toString(), position, elevation);
     }
 
     private static double readAngle(String str, boolean base180)
     {
         final String[] parts = str.split(":");
 
-        final int degrees = base180 ? readThreeDigits(parts[0], 180, true) : readTwoDigits(parts[0], 90, true);
-        final int minutes = readTwoDigits(parts[1], 60, false);
-        final int seconds = readTwoDigits(parts[2], 60, false);
+        Preconditions.checkArgument(parts.length == 3);
 
-        return Math.toRadians(degrees / (base180 ? 180.0 : 90.0) + minutes / 60.0 + seconds / 3600.0);
+        final int degrees = readDigits(parts[0], base180 ? 180 : 90);
+        final int minutes = readDigits(parts[1], 60);
+        final int seconds = readDigits(parts[2], 60);
+
+        return Math.toRadians(degrees + minutes / 60.0 + seconds / 3600.0);
     }
 
-    private static int readThreeDigits(String str, int max, boolean leadingSpaceAllowed)
+    private static int readDigits(String str, int max)
     {
-        Preconditions.checkArgument(str.length() == 3);
-        final int d1;
-        final int d2;
-        final int d3 = digitToInt(str.charAt(2));
+        Preconditions.checkArgument(str.length() < 10); // Checks for overflow
 
-        if(str.charAt(0) == ' ' && leadingSpaceAllowed)
+        int exponent = 1;
+        int sum = 0;
+
+        for(int i = str.length() - 1; i >= 0; i--)
         {
-            d1 = 0;
-            if(str.charAt(1) == ' ')
-            {
-                d2 = 0;
-            }
-            else
-            {
-                d2 = digitToInt(str.charAt(1));
-            }
-        }
-        else
-        {
-            d1 = digitToInt(str.charAt(0));
-            d2 = digitToInt(str.charAt(1));
+            sum += digitToInt(str.charAt(i)) * exponent;
+            exponent *= 10;
         }
 
-        final int value = d1 * 100 + d2 * 10 + d3;
+        Preconditions.checkArgument(sum < max);
 
-        Preconditions.checkArgument(value >= 0 && value < max);
-
-        return value;
-    }
-
-    private static int readTwoDigits(String str, int max, boolean leadingSpaceAllowed)
-    {
-        Preconditions.checkArgument(str.length() == 2);
-        final int d1;
-        final int d2 = digitToInt(str.charAt(1));
-
-        if(str.charAt(0) == ' ' && leadingSpaceAllowed)
-            d1 = 0;
-        else
-            d1 = digitToInt(str.charAt(0));
-
-        final int value = d1 * 10 + d2;
-
-        Preconditions.checkArgument(value >= 0 && value < max);
-
-        return value;
+        return sum;
     }
 
     private static int digitToInt(char c)
