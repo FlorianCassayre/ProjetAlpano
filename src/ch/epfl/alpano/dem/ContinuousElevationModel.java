@@ -24,15 +24,13 @@ public final class ContinuousElevationModel
      */
     public ContinuousElevationModel(DiscreteElevationModel dem)
     {
-        Objects.requireNonNull(dem);
-
-        this.dem = dem;
+        this.dem = Objects.requireNonNull(dem);
     }
 
     /**
      * Returns the value of the elevation at the given {@link GeoPoint}.
      * @param p the point
-     * @return the value of the elevation
+     * @return the value of the elevation, or 0 if the point is out of the bounds
      */
     public double elevationAt(GeoPoint p)
     {
@@ -47,7 +45,7 @@ public final class ContinuousElevationModel
      * Returns the value of the elevation at the given point.
      * @param longitudeIndex the longitude index
      * @param latitudeIndex the latitude index
-     * @return the value of the elevation
+     * @return the value of the elevation, or 0 if the point is out of the bounds
      */
     private double elevationAt(int longitudeIndex, int latitudeIndex)
     {
@@ -59,7 +57,7 @@ public final class ContinuousElevationModel
     /**
      * Returns the value of the slope at the given {@link GeoPoint}.
      * @param p the point
-     * @return the value of the slope
+     * @return the value of the slope, or 0 if the point is out of the bounds
      */
     public double slopeAt(GeoPoint p)
     {
@@ -71,10 +69,10 @@ public final class ContinuousElevationModel
     }
 
     /**
-     * Returns the value of the slope at the given integer index coordinates
+     * Returns the value of the slope at the given integer index coordinates.
      * @param longitudeIndex the longitude index
      * @param latitudeIndex the latitude index
-     * @return the value of the slope
+     * @return the value of the slope, or 0 if the point is out of the bounds
      */
     private double slopeAt(int longitudeIndex, int latitudeIndex)
     {

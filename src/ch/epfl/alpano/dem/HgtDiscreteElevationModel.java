@@ -92,6 +92,8 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel
     @Override
     public double elevationSample(int x, int y)
     {
+        Preconditions.checkArgument(extent().contains(x, y));
+
         final int i = (x - longitudeIndex) + (SAMPLES_PER_DEGREE - y + latitudeIndex) * (SAMPLES_PER_DEGREE + 1);
 
         return (double) buffer.get(i);

@@ -34,7 +34,6 @@ public final class ElevationProfile
      * Checks if the position is in the bounds of the profile
      * @param x the position to test
      * @return true if the position is in the bounds, false else
-     * @throws IllegalArgumentException if the position is not in the bounds
      */
     private boolean isInBounds(double x)
     {
@@ -45,7 +44,7 @@ public final class ElevationProfile
      * Gives the altitude of the field at a given position
      * @param x the position given
      * @return the altitude
-     * @throws IllegalArgumentException if position is not in the bounds
+     * @throws IllegalArgumentException if the position is out of the bounds
      */
     public double elevationAt(double x)
     {
@@ -56,10 +55,11 @@ public final class ElevationProfile
      * Returns the position of a point located at the specified distance from the origin.
      * @param x the distance from the origin
      * @return the position
+     * @throws IllegalArgumentException if the position is out of the bounds
      */
     public GeoPoint positionAt(double x)
     {
-        isInBounds(x);
+        Preconditions.checkArgument(isInBounds(x));
 
         final double angle = Distance.toRadians(x);
         final double latitude = asin(sin(origin.latitude()) * cos(angle) + cos(origin.latitude()) * sin(angle) * cos(Azimuth.toMath(azimuth)));
@@ -72,6 +72,7 @@ public final class ElevationProfile
      * Returns the slope at a point located at the specified distance from the origin.
      * @param x the distance from the origin
      * @return the slope at this position
+     * @throws IllegalArgumentException if the position is out of the bounds
      */
     public double slopeAt(double x)
     {

@@ -57,7 +57,7 @@ public class ElevationProfileTest
         final double[] expectedLongitudes = new double[] {6.00000, 6.03751, 6.07506, 6.11265, 6.94857};
         final double[] expectedLatitudes = new double[] {46.00000, 46.02604, 46.05207, 46.07809, 46.64729};
 
-        final ElevationProfile profile = new ElevationProfile(new ContinuousElevationModel(new HgtDiscreteElevationModel(new File("res/data/N46E006.hgt"))), new GeoPoint(Math.toRadians(6), Math.toRadians(46)), Math.toRadians(45), 100000);
+        final ElevationProfile profile = new ElevationProfile(new ContinuousElevationModel(new HgtDiscreteElevationModel(new File("res/data/N46E006.hgt"))), new GeoPoint(Math.toRadians(6), Math.toRadians(46)), Math.toRadians(45), 102400);
         for(int i = 0; i < distances.length; i++)
         {
             final double distance = distances[i];

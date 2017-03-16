@@ -15,6 +15,7 @@ final class CompositeDiscreteElevationModel implements DiscreteElevationModel
      * Creates a composite elevation model from two discrete models.
      * @param dem1 the first model
      * @param dem2 the second model
+     * @throws IllegalArgumentException if the models are not unionable
      */
     public CompositeDiscreteElevationModel(DiscreteElevationModel dem1, DiscreteElevationModel dem2)
     {
