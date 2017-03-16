@@ -41,6 +41,8 @@ public final class GazetteerParser
             }
         }
 
+        reader.close();
+
         return Collections.unmodifiableList(list);
     }
 

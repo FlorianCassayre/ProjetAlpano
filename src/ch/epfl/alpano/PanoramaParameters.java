@@ -13,6 +13,17 @@ public final class PanoramaParameters
     private final int maxDistance;
     private final int width, height;
 
+    /**
+     * Constructs a new instance of a panorama view.
+     * See <a href="https://i.cassayre.me/20170315135322.png">this schematic</a> for full details.
+     * @param observerPosition the observer's position
+     * @param observerElevation the observer's elevation
+     * @param centerAzimuth the horizontal azimuth (in radians)
+     * @param horizontalFieldOfView the horizontal field of view (in radians)
+     * @param maxDistance the maximal view distance
+     * @param width the width of the panorama
+     * @param height the height of the panorama
+     */
     public PanoramaParameters(GeoPoint observerPosition, int observerElevation, double centerAzimuth, double horizontalFieldOfView, int maxDistance, int width, int height)
     {
         this.observerElevation = observerElevation;
@@ -105,13 +116,12 @@ public final class PanoramaParameters
 
     public double azimuthForX(double x)
     {
-        Preconditions.checkArgument(x >= 0 | x < width); // TODO check "height minus one" => x < width OR x <= width - 1 ?
+        Preconditions.checkArgument(x >= 0 | x <= width - 1);
 
         // TODO
 
         throw new UnsupportedOperationException();
     }
-
 
     public double xForAzimuth(double a)
     {
@@ -120,7 +130,7 @@ public final class PanoramaParameters
 
     public double altitudeForY(double y)
     {
-        Preconditions.checkArgument(y >= 0 | y < height); // TODO same as azimuthForX(...)
+        Preconditions.checkArgument(y >= 0 | y <= height - 1);
 
         // TODO
 
@@ -132,13 +142,25 @@ public final class PanoramaParameters
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Checks if the coordinates are located in the interval.
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @return <code>true</code> if the coordinates are valid, <code>false</code> else
+     */
     boolean isValidSampleIndex(int x, int y)
     {
-        throw new UnsupportedOperationException();
+        return x >= 0 && x < width && y >= 0 && y < height;
     }
 
+    /**
+     * Returns the linear representation of these coordinates.
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @return the linear representation of these coordinates
+     */
     int linearSampleIndex(int x, int y)
     {
-        throw new UnsupportedOperationException();
+        return x + (y * width);
     }
 }

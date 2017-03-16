@@ -3,7 +3,6 @@ package ch.epfl.alpano.dem;
 import ch.epfl.alpano.Interval1D;
 import ch.epfl.alpano.Interval2D;
 import ch.epfl.alpano.Preconditions;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.File;
 import java.io.FileInputStream;
