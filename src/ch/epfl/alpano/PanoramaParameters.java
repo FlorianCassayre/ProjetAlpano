@@ -16,19 +16,20 @@ public final class PanoramaParameters
     /**
      * Constructs a new instance of a panorama view.
      * See <a href="https://i.cassayre.me/20170315135322.png">this schematic</a> for full details.
-     * @param observerPosition the observer's position
-     * @param observerElevation the observer's elevation
-     * @param centerAzimuth the horizontal azimuth (in radians)
+     * @param observerPosition      the observer's position
+     * @param observerElevation     the observer's elevation
+     * @param centerAzimuth         the horizontal azimuth (in radians)
      * @param horizontalFieldOfView the horizontal field of view (in radians)
-     * @param maxDistance the maximal view distance
-     * @param width the width of the panorama
-     * @param height the height of the panorama
+     * @param maxDistance           the maximal view distance
+     * @param width                 the width of the panorama
+     * @param height                the height of the panorama
      */
     public PanoramaParameters(GeoPoint observerPosition, int observerElevation, double centerAzimuth, double horizontalFieldOfView, int maxDistance, int width, int height)
     {
         this.observerElevation = observerElevation;
 
-        this.observerPosition = Objects.requireNonNull(observerPosition);;
+        this.observerPosition = Objects.requireNonNull(observerPosition);
+        ;
 
         Preconditions.checkArgument(Azimuth.isCanonical(centerAzimuth));
         this.centerAzimuth = centerAzimuth;
@@ -125,7 +126,7 @@ public final class PanoramaParameters
     public double xForAzimuth(double a)
     {
         Preconditions.checkArgument(Azimuth.isCanonical(a));
-        Preconditions.checkArgument(a >= 0 && a <= Azimuth.toMath((width - 1) / 2.0));
+        Preconditions.checkArgument(Math.abs(Math2.angularDistance(centerAzimuth, a)) * 2 <= horizontalFieldOfView);
 
         final double delta = horizontalFieldOfView / (width - 1);
         return (a - centerAzimuth) / delta + width / 2.0;
@@ -142,8 +143,7 @@ public final class PanoramaParameters
     public double yForAltitude(double a)
     {
         Preconditions.checkArgument(Azimuth.isCanonical(a));
-        Preconditions.checkArgument(a >= 0 && a <= Azimuth.toMath((height - 1) / 2.0));
-
+        Preconditions.checkArgument(Math.abs(Math2.angularDistance(centerAzimuth, a)) * 2 <= verticalFieldOfView());
         final double delta = horizontalFieldOfView / (height - 1);
         return (a - centerAzimuth) / delta + height / 2.0;
     }
