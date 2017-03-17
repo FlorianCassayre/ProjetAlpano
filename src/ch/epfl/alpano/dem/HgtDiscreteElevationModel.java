@@ -16,7 +16,6 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel
     private static final int HGT_FILE_LENGTH = SAMPLES_COUNT * 2;
 
     private final int latitudeIndex, longitudeIndex;
-    private final FileInputStream stream;
     private final ShortBuffer buffer;
 
     /**
@@ -50,9 +49,8 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel
 
         Preconditions.checkArgument(file.length() == HGT_FILE_LENGTH); // The file length must be exactly 25 934 402 bytes
 
-        try
+        try(FileInputStream stream = new FileInputStream(file))
         {
-            this.stream = new FileInputStream(file);
             this.buffer = stream.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, HGT_FILE_LENGTH).asShortBuffer();
         }
         catch(IOException e)
@@ -102,6 +100,5 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel
     @Override
     public void close() throws IOException
     {
-        stream.close();
     }
 }
