@@ -2,6 +2,8 @@ package ch.epfl.alpano.summit;
 
 import ch.epfl.alpano.GeoPoint;
 
+import java.util.Objects;
+
 /**
  * Represents a point of interest (a peak for instance).
  */
@@ -13,8 +15,8 @@ public final class Summit
 
     public Summit(String name, GeoPoint position, int elevation)
     {
-        this.name = name;
-        this.position = position;
+        this.name = Objects.requireNonNull(name);
+        this.position = Objects.requireNonNull(position);
         this.elevation = elevation;
     }
 
