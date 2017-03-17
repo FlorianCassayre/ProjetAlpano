@@ -118,28 +118,34 @@ public final class PanoramaParameters
     {
         Preconditions.checkArgument(x >= 0 | x <= width - 1);
 
-        // TODO
-
-        throw new UnsupportedOperationException();
+        final double delta = horizontalFieldOfView / (width - 1);
+        return Azimuth.canonicalize(centerAzimuth + (x - width / 2.0) * delta);
     }
 
     public double xForAzimuth(double a)
     {
-        throw new UnsupportedOperationException();
+        Preconditions.checkArgument(Azimuth.isCanonical(a));
+        Preconditions.checkArgument(a >= 0 && a <= Azimuth.toMath((width - 1) / 2.0));
+
+        final double delta = horizontalFieldOfView / (width - 1);
+        return (a - centerAzimuth) / delta + width / 2.0;
     }
 
     public double altitudeForY(double y)
     {
         Preconditions.checkArgument(y >= 0 | y <= height - 1);
 
-        // TODO
-
-        throw new UnsupportedOperationException();
+        final double delta = horizontalFieldOfView / (height - 1);
+        return Azimuth.canonicalize(centerAzimuth + (y - height / 2.0) * delta);
     }
 
     public double yForAltitude(double a)
     {
-        throw new UnsupportedOperationException();
+        Preconditions.checkArgument(Azimuth.isCanonical(a));
+        Preconditions.checkArgument(a >= 0 && a <= Azimuth.toMath((height - 1) / 2.0));
+
+        final double delta = horizontalFieldOfView / (height - 1);
+        return (a - centerAzimuth) / delta + height / 2.0;
     }
 
     /**
