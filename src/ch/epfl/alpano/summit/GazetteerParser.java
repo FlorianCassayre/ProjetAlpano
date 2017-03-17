@@ -29,18 +29,17 @@ public final class GazetteerParser
         final BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 
         String line;
-        while((line = reader.readLine()) != null)
+        try
         {
-            try
+            while((line = reader.readLine()) != null)
             {
                 list.add(readSummit(line));
             }
-            catch(IllegalArgumentException e)
-            {
-                throw new IOException(e);
-            }
         }
-
+        catch(IllegalArgumentException e)
+        {
+            throw new IOException(e);
+        }
         reader.close();
 
         return Collections.unmodifiableList(list);
@@ -78,7 +77,7 @@ public final class GazetteerParser
 
     /**
      * Reads an angle encoded in the format <code>degrees:minutes:seconds</code>.
-     * @param str the string
+     * @param str     the string
      * @param base180 <code>true</code> if the degrees are expressed in base 180, <code>false</code> if in base 90
      * @return the angle in radians
      * @throws IllegalArgumentException if the format is incorrect
