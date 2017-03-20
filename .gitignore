@@ -16,3 +16,5 @@ out/
 log/
 target/
 /res/actual/*
+
+rec/*
