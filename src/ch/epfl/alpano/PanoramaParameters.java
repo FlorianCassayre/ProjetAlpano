@@ -16,13 +16,13 @@ public final class PanoramaParameters
     /**
      * Constructs a new instance of a panorama view.
      * See <a href="https://i.cassayre.me/20170315135322.png">this schematic</a> for full details.
-     * @param observerPosition the observer's position
-     * @param observerElevation the observer's elevation
-     * @param centerAzimuth the horizontal azimuth (in radians)
+     * @param observerPosition      the observer's position
+     * @param observerElevation     the observer's elevation
+     * @param centerAzimuth         the horizontal azimuth (in radians)
      * @param horizontalFieldOfView the horizontal field of view (in radians)
-     * @param maxDistance the maximal view distance
-     * @param width the width of the panorama
-     * @param height the height of the panorama
+     * @param maxDistance           the maximal view distance
+     * @param width                 the width of the panorama
+     * @param height                the height of the panorama
      */
     public PanoramaParameters(GeoPoint observerPosition, int observerElevation, double centerAzimuth, double horizontalFieldOfView, int maxDistance, int width, int height)
     {
@@ -151,7 +151,7 @@ public final class PanoramaParameters
         Preconditions.checkArgument(y >= 0 | y <= height - 1);
 
         final double delta = horizontalFieldOfView / (height - 1);
-        return Azimuth.canonicalize(centerAzimuth + (y - height / 2.0) * delta);
+        return (((width - 1) / 2) - y) * delta;
     }
 
     /**
@@ -164,7 +164,7 @@ public final class PanoramaParameters
         Preconditions.checkArgument(Azimuth.isCanonical(a));
         Preconditions.checkArgument(Math.abs(Math2.angularDistance(centerAzimuth, a)) * 2 <= verticalFieldOfView());
         final double delta = horizontalFieldOfView / (height - 1);
-        return (a - centerAzimuth) / delta + height / 2.0;
+        return ((width - 1) / 2) - (a / delta);
     }
 
     /**
