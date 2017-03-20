@@ -114,6 +114,11 @@ public final class PanoramaParameters
         return height;
     }
 
+    /**
+     * Returns the azimuth for a given x coordinate.
+     * @param x the x coordinate
+     * @return the azimuth
+     */
     public double azimuthForX(double x)
     {
         Preconditions.checkArgument(x >= 0 | x <= width - 1);
@@ -122,6 +127,11 @@ public final class PanoramaParameters
         return Azimuth.canonicalize(centerAzimuth + (x - width / 2.0) * delta);
     }
 
+    /**
+     * Returns the x coordinate for a given azimuth.
+     * @param a the azimuth
+     * @return the x coordinate
+     */
     public double xForAzimuth(double a)
     {
         Preconditions.checkArgument(Azimuth.isCanonical(a));
@@ -131,6 +141,11 @@ public final class PanoramaParameters
         return (a - centerAzimuth) / delta + width / 2.0;
     }
 
+    /**
+     * Returns the altitude for the given y coordinate.
+     * @param y the y coordinate
+     * @return the altitude
+     */
     public double altitudeForY(double y)
     {
         Preconditions.checkArgument(y >= 0 | y <= height - 1);
@@ -139,6 +154,11 @@ public final class PanoramaParameters
         return Azimuth.canonicalize(centerAzimuth + (y - height / 2.0) * delta);
     }
 
+    /**
+     * Returns the y coordinate for a given altitude.
+     * @param a the azimuth
+     * @return the y coordinate
+     */
     public double yForAltitude(double a)
     {
         Preconditions.checkArgument(Azimuth.isCanonical(a));

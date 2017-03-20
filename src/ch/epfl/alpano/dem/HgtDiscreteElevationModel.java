@@ -10,6 +10,9 @@ import java.io.IOException;
 import java.nio.ShortBuffer;
 import java.nio.channels.FileChannel;
 
+/**
+ * Represents a discrete elevation model.
+ */
 public final class HgtDiscreteElevationModel implements DiscreteElevationModel
 {
     private static final int SAMPLES_COUNT = 12967201;

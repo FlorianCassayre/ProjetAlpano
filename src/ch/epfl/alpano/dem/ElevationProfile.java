@@ -5,6 +5,9 @@ import static java.lang.Math.*;
 
 import java.util.Objects;
 
+/**
+ * Represents an elevation profile.
+ */
 public final class ElevationProfile
 {
     private final ContinuousElevationModel elevationModel;
