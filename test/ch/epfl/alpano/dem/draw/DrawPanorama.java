@@ -17,7 +17,7 @@ import static java.awt.image.BufferedImage.TYPE_INT_RGB;
 import static java.lang.Math.toRadians;
 
 final class DrawPanorama {
-    final static File HGT_FILE = new File("N46E007.hgt");
+    final static File HGT_FILE = new File("res/data/N46E007.hgt");
 
     final static int IMAGE_WIDTH = 500;
     final static int IMAGE_HEIGHT = 200;
@@ -62,7 +62,7 @@ final class DrawPanorama {
                 }
             }
 
-            ImageIO.write(i, "png", new File("niesen.png"));
+            ImageIO.write(i, "png", new File("res/actual/niesen.png"));
         }
     }
 }
