@@ -16,20 +16,19 @@ public final class PanoramaParameters
     /**
      * Constructs a new instance of a panorama view.
      * See <a href="https://i.cassayre.me/20170315135322.png">this schematic</a> for full details.
-     * @param observerPosition      the observer's position
-     * @param observerElevation     the observer's elevation
-     * @param centerAzimuth         the horizontal azimuth (in radians)
+     * @param observerPosition the observer's position
+     * @param observerElevation the observer's elevation
+     * @param centerAzimuth the horizontal azimuth (in radians)
      * @param horizontalFieldOfView the horizontal field of view (in radians)
-     * @param maxDistance           the maximal view distance
-     * @param width                 the width of the panorama
-     * @param height                the height of the panorama
+     * @param maxDistance the maximal view distance
+     * @param width the width of the panorama
+     * @param height the height of the panorama
      */
     public PanoramaParameters(GeoPoint observerPosition, int observerElevation, double centerAzimuth, double horizontalFieldOfView, int maxDistance, int width, int height)
     {
         this.observerElevation = observerElevation;
 
         this.observerPosition = Objects.requireNonNull(observerPosition);
-        ;
 
         Preconditions.checkArgument(Azimuth.isCanonical(centerAzimuth));
         this.centerAzimuth = centerAzimuth;
