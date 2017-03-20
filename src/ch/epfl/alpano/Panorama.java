@@ -41,7 +41,9 @@ public final class Panorama
 
     public float distanceAt(int x, int y, float d)
     {
-        throw new UnsupportedOperationException();
+        if(parameters.isValidSampleIndex(x, y))
+            return distance[parameters.linearSampleIndex(x, y)];
+        return d;
     }
 
     public float longitudeAt(int x, int y)
