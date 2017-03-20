@@ -1,4 +1,4 @@
-package ch.epfl.alpano.correction;
+package ch.epfl.alpano.correction.dem;
 
 import static ch.epfl.test.TestRandomizer.RANDOM_ITERATIONS;
 import static ch.epfl.test.TestRandomizer.newRandom;
