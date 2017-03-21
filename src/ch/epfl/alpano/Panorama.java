@@ -25,8 +25,6 @@ public final class Panorama
         this.latitudes = latitudes;
         this.elevations = elevations;
         this.slopes = slopes;
-
-        throw new UnsupportedOperationException();
     }
 
     public PanoramaParameters parameters()
