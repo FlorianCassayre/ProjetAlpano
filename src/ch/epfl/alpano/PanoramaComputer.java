@@ -31,10 +31,11 @@ public final class PanoramaComputer
 
         for(int y = 0; y < parameters.height(); y++)
         {
+            final double altitude = parameters.altitudeForY(y);
+
             for(int x = 0; x < parameters.width(); x++)
             {
                 final double azimuth = parameters.azimuthForX(x);
-                final double altitude = parameters.altitudeForY(y);
 
                 final ElevationProfile profile = new ElevationProfile(dem, parameters.observerPosition(), azimuth, parameters.maxDistance());
 
@@ -54,8 +55,6 @@ public final class PanoramaComputer
                     builder.setElevationAt(x, y, (float) profile.elevationAt(root));
                     builder.setSlopeAt(x, y, (float) profile.slopeAt(root));
                 }
-                else
-                    System.out.println("aaaaaa");
             }
             System.out.println(y);
         }

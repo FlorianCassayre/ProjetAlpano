@@ -150,8 +150,8 @@ public final class PanoramaParameters
     {
         Preconditions.checkArgument(y >= 0 | y <= height - 1);
 
-        final double delta = horizontalFieldOfView / (height - 1);
-        return (((width - 1) / 2) - y) * delta;
+        final double delta = verticalFieldOfView() / (height - 1);
+        return Azimuth.canonicalize(0 + (y - height / 2.0) * delta);
     }
 
     /**
@@ -162,9 +162,10 @@ public final class PanoramaParameters
     public double yForAltitude(double a)
     {
         Preconditions.checkArgument(Azimuth.isCanonical(a));
-        Preconditions.checkArgument(Math.abs(Math2.angularDistance(centerAzimuth, a)) * 2 <= verticalFieldOfView());
-        final double delta = horizontalFieldOfView / (height - 1);
-        return ((width - 1) / 2) - (a / delta);
+        Preconditions.checkArgument(Math.abs(Math2.angularDistance(0, a)) * 2 <= verticalFieldOfView());
+
+        final double delta = verticalFieldOfView() / (height - 1);
+        return (a - 0) / delta + height / 2.0;
     }
 
     /**
