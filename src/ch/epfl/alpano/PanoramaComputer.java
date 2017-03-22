@@ -29,21 +29,23 @@ public final class PanoramaComputer
 
         final int searchInterval = 64, dichotomyStep = 4;
 
-        for(int y = 0; y < parameters.height(); y++)
+        for(int x = 0; x < parameters.width(); x++)
         {
-            final double altitude = parameters.altitudeForY(y);
+            final double azimuth = parameters.azimuthForX(x);
 
-            for(int x = 0; x < parameters.width(); x++)
+            final ElevationProfile profile = new ElevationProfile(dem, parameters.observerPosition(), azimuth, parameters.maxDistance());
+
+            double lastRoot = 0;
+
+            for(int y = parameters.height() - 1; y >= 0; y--)
             {
-                final double azimuth = parameters.azimuthForX(x);
-
-                final ElevationProfile profile = new ElevationProfile(dem, parameters.observerPosition(), azimuth, parameters.maxDistance());
+                final double altitude = parameters.altitudeForY(y);
 
                 final DoubleUnaryOperator function = rayToGroundDistance(profile, parameters.observerElevation(), altitude);
 
-                final double firstInterval = Math2.firstIntervalContainingRoot(function, 0, parameters.maxDistance() - searchInterval, searchInterval);
+                final double firstInterval = Math2.firstIntervalContainingRoot(function, lastRoot, parameters.maxDistance() - searchInterval, searchInterval);
 
-                if(firstInterval != Double.POSITIVE_INFINITY) // FIXME
+                if(firstInterval != Double.POSITIVE_INFINITY)
                 {
                     final double root = Math2.improveRoot(function, firstInterval, firstInterval + searchInterval, dichotomyStep);
 
@@ -54,9 +56,14 @@ public final class PanoramaComputer
                     builder.setLatitudeAt(x, y, (float) position.latitude());
                     builder.setElevationAt(x, y, (float) profile.elevationAt(root));
                     builder.setSlopeAt(x, y, (float) profile.slopeAt(root));
+
+                    lastRoot = root;
+                }
+                else
+                {
+                    break;
                 }
             }
-            System.out.println(y);
         }
 
         return builder.build();
