@@ -16,7 +16,7 @@ import static ch.epfl.alpano.dem.draw.DrawDEM.gray;
 import static java.awt.image.BufferedImage.TYPE_INT_RGB;
 import static java.lang.Math.toRadians;
 
-final class DrawPanorama {
+public final class DrawPanorama {
     final static File HGT_FILE = new File("res/data/N46E007.hgt");
 
     final static int IMAGE_WIDTH = 500;

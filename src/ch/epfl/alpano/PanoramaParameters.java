@@ -151,7 +151,7 @@ public final class PanoramaParameters
         Preconditions.checkArgument(y >= 0 | y <= height - 1);
 
         final double delta = verticalFieldOfView() / (height - 1);
-        return Azimuth.canonicalize(0 + (y - height / 2.0) * delta);
+        return Azimuth.canonicalize(0 + (height / 2.0 - y) * delta);
     }
 
     /**
@@ -165,7 +165,7 @@ public final class PanoramaParameters
         Preconditions.checkArgument(Math.abs(Math2.angularDistance(0, a)) * 2 <= verticalFieldOfView());
 
         final double delta = verticalFieldOfView() / (height - 1);
-        return (a - 0) / delta + height / 2.0;
+        return (0 - a) / delta + height / 2.0;
     }
 
     /**
