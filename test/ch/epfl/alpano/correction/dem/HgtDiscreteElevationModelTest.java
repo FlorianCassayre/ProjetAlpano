@@ -50,7 +50,7 @@ public class HgtDiscreteElevationModelTest {
         Files.walkFileTree(FAKE_HGT_DIR, new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                Files.delete(file);
+                file.toFile().delete();
                 return FileVisitResult.CONTINUE;
             }
 
@@ -58,7 +58,7 @@ public class HgtDiscreteElevationModelTest {
             public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
                 if (exc != null)
                     throw exc;
-                Files.delete(dir);
+                dir.toFile().delete();
                 return FileVisitResult.CONTINUE;
             }
         });
