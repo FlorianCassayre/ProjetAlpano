@@ -124,7 +124,7 @@ public final class PanoramaParameters
         Preconditions.checkArgument(x >= 0 | x <= width - 1);
 
         final double delta = horizontalFieldOfView / (width - 1);
-        return Azimuth.canonicalize(centerAzimuth + (x - width / 2.0) * delta);
+        return Azimuth.canonicalize(centerAzimuth + (x - (width - 1) / 2.0) * delta);
     }
 
     /**
@@ -138,7 +138,7 @@ public final class PanoramaParameters
         Preconditions.checkArgument(Math.abs(Math2.angularDistance(centerAzimuth, a)) * 2 <= horizontalFieldOfView);
 
         final double delta = horizontalFieldOfView / (width - 1);
-        return (a - centerAzimuth) / delta + width / 2.0;
+        return (a - centerAzimuth) / delta + (width - 1) / 2.0;
     }
 
     /**
@@ -151,7 +151,7 @@ public final class PanoramaParameters
         Preconditions.checkArgument(y >= 0 | y <= height - 1);
 
         final double delta = verticalFieldOfView() / (height - 1);
-        return Azimuth.canonicalize(0 + (height / 2.0 - y) * delta);
+        return Azimuth.canonicalize(0 + ((height - 1) / 2.0 - y) * delta);
     }
 
     /**
@@ -165,7 +165,7 @@ public final class PanoramaParameters
         Preconditions.checkArgument(Math.abs(Math2.angularDistance(0, a)) * 2 <= verticalFieldOfView());
 
         final double delta = verticalFieldOfView() / (height - 1);
-        return (0 - a) / delta + height / 2.0;
+        return (0 - a) / delta + (height - 1) / 2.0;
     }
 
     /**
