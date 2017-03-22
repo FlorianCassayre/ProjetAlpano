@@ -13,6 +13,10 @@ public final class PanoramaComputer
 {
     private final ContinuousElevationModel dem;
 
+    /**
+     * Creates a new instance from a continuous elevation model (DEM).
+     * @param dem the continuous elevation model
+     */
     public PanoramaComputer(ContinuousElevationModel dem)
     {
         this.dem = Objects.requireNonNull(dem);
