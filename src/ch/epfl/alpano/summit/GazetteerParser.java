@@ -77,7 +77,7 @@ public final class GazetteerParser
 
     /**
      * Reads an angle encoded in the format <code>degrees:minutes:seconds</code>.
-     * @param str     the string
+     * @param str the string
      * @param base180 <code>true</code> if the degrees are expressed in base 180, <code>false</code> if in base 90
      * @return the angle in radians
      * @throws IllegalArgumentException if the format is incorrect

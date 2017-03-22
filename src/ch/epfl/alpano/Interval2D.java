@@ -57,7 +57,10 @@ public final class Interval2D
      * Returns the size of the two-dimensional interval;
      * @return the size of the two-dimensional interval
      */
-    public int size(){ return iX.size() * iY.size(); }
+    public int size()
+    {
+        return iX.size() * iY.size();
+    }
 
     /**
      * Calculates the size of the intersection.

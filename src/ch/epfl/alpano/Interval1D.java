@@ -11,7 +11,7 @@ public final class Interval1D
 
     /**
      * @param includedFrom the smallest element of the interval
-     * @param includedTo   the largest element of the interval
+     * @param includedTo the largest element of the interval
      */
     public Interval1D(int includedFrom, int includedTo)
     {

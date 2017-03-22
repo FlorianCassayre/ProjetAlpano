@@ -65,8 +65,8 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel
     /**
      * Return the positive integer representation of a string.
      * @param str the positive integer as string
-     * @throws IllegalArgumentException if the string is not a positive integer
      * @return the integer
+     * @throws IllegalArgumentException if the string is not a positive integer
      */
     private static int getAsPositiveInteger(String str)
     {

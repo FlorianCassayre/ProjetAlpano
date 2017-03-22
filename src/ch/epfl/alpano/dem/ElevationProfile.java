@@ -1,6 +1,7 @@
 package ch.epfl.alpano.dem;
 
 import ch.epfl.alpano.*;
+
 import static java.lang.Math.*;
 
 import java.util.Objects;
