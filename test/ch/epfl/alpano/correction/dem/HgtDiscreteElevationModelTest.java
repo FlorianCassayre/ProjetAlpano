@@ -99,7 +99,6 @@ public class HgtDiscreteElevationModelTest {
         createHgtDemWithFileNamed("S03W078.hgt");
     }
 
-    @Test
     public void extentMatchesFileName() throws Exception {
         int[] lons = new int[] { 1, 7 };
         int[] lats = new int[] { 1, 47 };

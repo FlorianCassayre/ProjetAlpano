@@ -55,7 +55,7 @@ public final class PanoramaComputer
 
                     final GeoPoint position = profile.positionAt(root);
 
-                    builder.setDistanceAt(x, y, (float) root);
+                    builder.setDistanceAt(x, y, (float) (root / Math.cos(altitude)));
                     builder.setLongitudeAt(x, y, (float) position.longitude());
                     builder.setLatitudeAt(x, y, (float) position.latitude());
                     builder.setElevationAt(x, y, (float) profile.elevationAt(root));
