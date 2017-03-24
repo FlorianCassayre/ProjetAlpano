@@ -153,9 +153,11 @@ public final class Panorama
          * @param y the y coordinate
          * @param distance the distance
          * @return this instance
+         * @throws IllegalStateException if built has already been called
          */
         public Builder setDistanceAt(int x, int y, float distance)
         {
+            checkBuilt();
             distances[linearSampleIndex(x, y)] = distance;
             return this;
         }
@@ -166,9 +168,11 @@ public final class Panorama
          * @param y the y coordinate
          * @param longitude the longitude
          * @return this instance
+         * @throws IllegalStateException if built has already been called
          */
         public Builder setLongitudeAt(int x, int y, float longitude)
         {
+            checkBuilt();
             longitudes[linearSampleIndex(x, y)] = longitude;
             return this;
         }
@@ -179,9 +183,11 @@ public final class Panorama
          * @param y the y coordinate
          * @param latitude the latitude
          * @return this instance
+         * @throws IllegalStateException if built has already been called
          */
         public Builder setLatitudeAt(int x, int y, float latitude)
         {
+            checkBuilt();
             latitudes[linearSampleIndex(x, y)] = latitude;
             return this;
         }
@@ -192,9 +198,11 @@ public final class Panorama
          * @param y the y coordinate
          * @param elevation the elevation
          * @return this instance
+         * @throws IllegalStateException if built has already been called
          */
         public Builder setElevationAt(int x, int y, float elevation)
         {
+            checkBuilt();
             elevations[linearSampleIndex(x, y)] = elevation;
             return this;
         }
@@ -205,9 +213,11 @@ public final class Panorama
          * @param y the y coordinate
          * @param slope the slope
          * @return this instance
+         * @throws IllegalStateException if built has already been called
          */
         public Builder setSlopeAt(int x, int y, float slope)
         {
+            checkBuilt();
             slopes[linearSampleIndex(x, y)] = slope;
             return this;
         }
@@ -216,15 +226,23 @@ public final class Panorama
          * Builds the panorama.
          * This method can only be called once.
          * @return an instance of {@link Panorama}
-         * @throws IllegalStateException if the method has already been called
+         * @throws IllegalStateException if built has already been called
          */
         public Panorama build()
         {
-            if(built)
-                throw new IllegalStateException();
-
+            checkBuilt();
             built = true;
             return new Panorama(parameters, distances, longitudes, latitudes, elevations, slopes);
+        }
+
+        /**
+         * Check if build has been called
+         * @throws IllegalStateException if built has already been called
+         */
+        private void checkBuilt()
+        {
+            if(built)
+                throw new IllegalStateException();
         }
 
         /**
