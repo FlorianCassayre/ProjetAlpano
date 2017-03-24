@@ -121,7 +121,7 @@ public final class PanoramaParameters
      */
     public double azimuthForX(double x)
     {
-        Preconditions.checkArgument(x >= 0 | x <= width - 1);
+        Preconditions.checkArgument(x >= 0 && x <= width - 1);
 
         final double delta = horizontalFieldOfView / (width - 1);
         return Azimuth.canonicalize(centerAzimuth + (x - (width - 1) / 2.0) * delta);
@@ -148,21 +148,20 @@ public final class PanoramaParameters
      */
     public double altitudeForY(double y)
     {
-        Preconditions.checkArgument(y >= 0 | y <= height - 1);
+        Preconditions.checkArgument(y >= 0 && y <= height - 1);
 
         final double delta = verticalFieldOfView() / (height - 1);
-        return Azimuth.canonicalize(0 + ((height - 1) / 2.0 - y) * delta);
+        return 0 + ((height - 1) / 2.0 - y) * delta;
     }
 
     /**
      * Returns the y coordinate for a given altitude.
-     * @param a the azimuth
+     * @param a the altitude
      * @return the y coordinate
      */
     public double yForAltitude(double a)
     {
-        Preconditions.checkArgument(Azimuth.isCanonical(a));
-        Preconditions.checkArgument(Math.abs(Math2.angularDistance(0, a)) * 2 <= verticalFieldOfView());
+        Preconditions.checkArgument(Math.abs(Math2.angularDistance(0, a)) * 2 <= verticalFieldOfView() + 1E-10);
 
         final double delta = verticalFieldOfView() / (height - 1);
         return (0 - a) / delta + (height - 1) / 2.0;
