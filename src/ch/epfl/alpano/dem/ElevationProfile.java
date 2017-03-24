@@ -15,6 +15,10 @@ public final class ElevationProfile
     private final GeoPoint origin;
     private final double azimuth, length;
 
+    private static final int INTERVAL = 4096;
+
+    private final GeoPoint[] points;
+
     /**
      * Creates an elevation profile following a circle arc
      * @param elevationModel the continuous MNT
@@ -32,6 +36,19 @@ public final class ElevationProfile
 
         Preconditions.checkArgument(length > 0);
         this.length = length;
+
+
+        final int size = (int) Math.ceil(length / INTERVAL + 1);
+        this.points = new GeoPoint[size];
+
+        for(int i = 0; i < size; i++)
+        {
+            final double angle = Distance.toRadians(i * INTERVAL);
+            final double latitude = asin(sin(origin.latitude()) * cos(angle) + cos(origin.latitude()) * sin(angle) * cos(Azimuth.toMath(azimuth)));
+            final double longitude = ((origin.longitude() - asin(sin(Azimuth.toMath(azimuth)) * sin(angle) / cos(latitude)) + PI) % Math2.PI2) - PI;
+
+            points[i] = new GeoPoint(longitude, latitude);
+        }
     }
 
     /**
@@ -65,11 +82,11 @@ public final class ElevationProfile
     {
         Preconditions.checkArgument(isInBounds(x));
 
-        final double angle = Distance.toRadians(x);
-        final double latitude = asin(sin(origin.latitude()) * cos(angle) + cos(origin.latitude()) * sin(angle) * cos(Azimuth.toMath(azimuth)));
-        final double longitude = ((origin.longitude() - asin(sin(Azimuth.toMath(azimuth)) * sin(angle) / cos(latitude)) + PI) % Math2.PI2) - PI;
+        final GeoPoint low = points[(int) Math.floor(x / INTERVAL)];
+        final GeoPoint up = points[(int) Math.ceil(x / INTERVAL)];
+        final double g = (x % INTERVAL) / INTERVAL;
 
-        return new GeoPoint(longitude, latitude);
+        return new GeoPoint(Math2.lerp(low.longitude(), up.longitude(), g), Math2.lerp(low.latitude(), up.latitude(), g));
     }
 
     /**
