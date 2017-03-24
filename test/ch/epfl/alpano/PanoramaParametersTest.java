@@ -52,11 +52,11 @@ public class PanoramaParametersTest
     {
         final PanoramaParameters parameters = createPanorama();
 
-        assertEquals(0, parameters.yForAltitude(parameters.verticalFieldOfView() / 2.0), 1E-10);
+        assertEquals(0, parameters.yForAltitude(parameters.verticalFieldOfView() / 2.0 - 1E-12), 1E-8);
         assertEquals(399.5, parameters.yForAltitude(Math.toRadians(0)), 1E-10);
-        assertEquals(799, parameters.yForAltitude(-parameters.verticalFieldOfView() / 2.0), 1E-10);
+        assertEquals(799, parameters.yForAltitude(-parameters.verticalFieldOfView() / 2.0 + 1E-12), 1E-8);
 
-        assertEquals(119.85, parameters.yForAltitude(0.7 * parameters.verticalFieldOfView() / 2.0), 1E-10);
+        assertEquals(119.85, parameters.yForAltitude(0.7 * parameters.verticalFieldOfView() / 2.0), 1E-8);
     }
 
     @Test(expected = IllegalArgumentException.class)

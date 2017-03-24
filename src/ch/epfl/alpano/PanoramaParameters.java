@@ -161,7 +161,7 @@ public final class PanoramaParameters
      */
     public double yForAltitude(double a)
     {
-        Preconditions.checkArgument(Math.abs(Math2.angularDistance(0, a)) * 2 <= verticalFieldOfView() + 1E-10);
+        Preconditions.checkArgument(Math.abs(Math2.angularDistance(0, a)) * 2 <= verticalFieldOfView());
 
         final double delta = verticalFieldOfView() / (height - 1);
         return (0 - a) / delta + (height - 1) / 2.0;
