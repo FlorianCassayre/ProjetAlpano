@@ -1,6 +1,7 @@
 package ch.epfl.alpano.dem;
 
 import ch.epfl.alpano.Interval2D;
+import ch.epfl.alpano.Preconditions;
 
 import java.util.Objects;
 
@@ -19,14 +20,10 @@ final class CompositeDiscreteElevationModel implements DiscreteElevationModel
      */
     public CompositeDiscreteElevationModel(DiscreteElevationModel dem1, DiscreteElevationModel dem2)
     {
-        Objects.requireNonNull(dem1);
-        Objects.requireNonNull(dem2);
+        Preconditions.checkArgument(dem1.extent().isUnionableWith(dem2.extent()), "The two models must be unionable");
 
-        if(!dem1.extent().isUnionableWith(dem2.extent()))
-            throw new IllegalArgumentException();
-
-        this.dem1 = dem1;
-        this.dem2 = dem2;
+        this.dem1 = Objects.requireNonNull(dem1);
+        this.dem2 = Objects.requireNonNull(dem2);
     }
 
     @Override
@@ -43,7 +40,7 @@ final class CompositeDiscreteElevationModel implements DiscreteElevationModel
         else if(dem2.extent().contains(x, y))
             return dem2.elevationSample(x, y);
 
-        throw new IllegalArgumentException();
+        throw new IllegalArgumentException("(" + x + "," + y + ")");
     }
 
     @Override

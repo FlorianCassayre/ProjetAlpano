@@ -32,7 +32,7 @@ public interface Azimuth
      */
     static double toMath(double azimuth)
     {
-        Preconditions.checkArgument(isCanonical(azimuth));
+        Preconditions.checkArgument(isCanonical(azimuth), "The specified azimuth is not canonical: " + azimuth);
 
         return canonicalize(-azimuth);
     }
@@ -44,7 +44,7 @@ public interface Azimuth
      */
     static double fromMath(double azimuth)
     {
-        Preconditions.checkArgument(isCanonical(azimuth));
+        Preconditions.checkArgument(isCanonical(azimuth), "The specified azimuth is not canonical: " + azimuth);
 
         return canonicalize(-azimuth);
     }
@@ -60,7 +60,7 @@ public interface Azimuth
      */
     static String toOctantString(double azimuth, String n, String e, String s, String w)
     {
-        Preconditions.checkArgument(isCanonical(azimuth));
+        Preconditions.checkArgument(isCanonical(azimuth), "The specified azimuth is not canonical: " + azimuth);
 
         final String[] cardinals = {n, e, s, w};
 

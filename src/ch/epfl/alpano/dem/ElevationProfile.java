@@ -31,10 +31,10 @@ public final class ElevationProfile
         this.elevationModel = Objects.requireNonNull(elevationModel);
         this.origin = Objects.requireNonNull(origin);
 
-        Preconditions.checkArgument(Azimuth.isCanonical(azimuth));
+        Preconditions.checkArgument(Azimuth.isCanonical(azimuth), "The azimuth must be canonical: " + azimuth);
         this.azimuth = azimuth;
 
-        Preconditions.checkArgument(length > 0);
+        Preconditions.checkArgument(length > 0, "The length must be strictly positive: " + length);
         this.length = length;
 
 
@@ -80,7 +80,7 @@ public final class ElevationProfile
      */
     public GeoPoint positionAt(double x)
     {
-        Preconditions.checkArgument(isInBounds(x));
+        Preconditions.checkArgument(isInBounds(x), "x is out of the bounds: " + x);
 
         final GeoPoint low = points[(int) Math.floor(x / INTERVAL)];
         final GeoPoint up = points[(int) Math.ceil(x / INTERVAL)];

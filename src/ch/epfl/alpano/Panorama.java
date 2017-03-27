@@ -17,11 +17,11 @@ public final class Panorama
 
         final int size = parameters.width() * parameters.height();
 
-        Preconditions.checkArgument(distances.length == size);
-        Preconditions.checkArgument(longitudes.length == size);
-        Preconditions.checkArgument(latitudes.length == size);
-        Preconditions.checkArgument(elevations.length == size);
-        Preconditions.checkArgument(slopes.length == size);
+        Preconditions.checkArgument(distances.length == size, "Illegal distances array size: " + distances.length);
+        Preconditions.checkArgument(longitudes.length == size, "Illegal longitudes array size: " + longitudes.length);
+        Preconditions.checkArgument(latitudes.length == size, "Illegal latitudes array size: " + latitudes.length);
+        Preconditions.checkArgument(elevations.length == size, "Illegal elevations array size: " + elevations.length);
+        Preconditions.checkArgument(slopes.length == size, "Illegal slopes array size: " + slopes.length);
 
         this.distance = distances;
         this.longitudes = longitudes;
@@ -117,7 +117,7 @@ public final class Panorama
     private int linearSampleIndex(int x, int y)
     {
         if(!parameters.isValidSampleIndex(x, y))
-            throw new IndexOutOfBoundsException();
+            throw new IndexOutOfBoundsException("(" + x + "," + y + ")");
 
         return parameters.linearSampleIndex(x, y);
     }
@@ -242,7 +242,7 @@ public final class Panorama
         private void checkBuilt()
         {
             if(built)
-                throw new IllegalStateException();
+                throw new IllegalStateException("build() has already been called.");
         }
 
         /**
@@ -254,7 +254,7 @@ public final class Panorama
         private int linearSampleIndex(int x, int y)
         {
             if(!parameters.isValidSampleIndex(x, y))
-                throw new IndexOutOfBoundsException();
+                throw new IndexOutOfBoundsException("(" + x + "," + y + ")");
 
             return parameters.linearSampleIndex(x, y);
         }

@@ -30,13 +30,13 @@ public final class PanoramaParameters
 
         this.observerPosition = Objects.requireNonNull(observerPosition);
 
-        Preconditions.checkArgument(Azimuth.isCanonical(centerAzimuth));
+        Preconditions.checkArgument(Azimuth.isCanonical(centerAzimuth), "centerAzimuth must be canonical: " + centerAzimuth);
         this.centerAzimuth = centerAzimuth;
 
-        Preconditions.checkArgument(horizontalFieldOfView > 0 && horizontalFieldOfView <= Math2.PI2);
+        Preconditions.checkArgument(horizontalFieldOfView > 0 && horizontalFieldOfView <= Math2.PI2, "horizontalFieldOfView must be in ]0,2π]: " + horizontalFieldOfView);
         this.horizontalFieldOfView = horizontalFieldOfView;
 
-        Preconditions.checkArgument(maxDistance > 0 && width > 0 && height > 0);
+        Preconditions.checkArgument(maxDistance > 0 && width > 0 && height > 0, "maxDistance, width and height must be stricly positive: " + maxDistance + ", " + width + ", " + height);
         this.width = width;
         this.height = height;
         this.maxDistance = maxDistance;
@@ -121,7 +121,7 @@ public final class PanoramaParameters
      */
     public double azimuthForX(double x)
     {
-        Preconditions.checkArgument(x >= 0 && x <= width - 1);
+        Preconditions.checkArgument(x >= 0 && x <= width - 1, "Illegal x coordinate: " + x);
 
         final double delta = horizontalFieldOfView / (width - 1);
         return Azimuth.canonicalize(centerAzimuth + (x - (width - 1) / 2.0) * delta);
@@ -134,8 +134,8 @@ public final class PanoramaParameters
      */
     public double xForAzimuth(double a)
     {
-        Preconditions.checkArgument(Azimuth.isCanonical(a));
-        Preconditions.checkArgument(Math.abs(Math2.angularDistance(centerAzimuth, a)) * 2 <= horizontalFieldOfView);
+        Preconditions.checkArgument(Azimuth.isCanonical(a), "The azimuth must be canonical: " + a);
+        Preconditions.checkArgument(Math.abs(Math2.angularDistance(centerAzimuth, a)) * 2 <= horizontalFieldOfView, "The azimuth is out of the bounds: " + a);
 
         final double delta = horizontalFieldOfView / (width - 1);
         return (a - centerAzimuth) / delta + (width - 1) / 2.0;
@@ -148,7 +148,7 @@ public final class PanoramaParameters
      */
     public double altitudeForY(double y)
     {
-        Preconditions.checkArgument(y >= 0 && y <= height - 1);
+        Preconditions.checkArgument(y >= 0 && y <= height - 1, "Illegal y coordinate: " + y);
 
         final double delta = verticalFieldOfView() / (height - 1);
         return 0 + ((height - 1) / 2.0 - y) * delta;
@@ -161,7 +161,7 @@ public final class PanoramaParameters
      */
     public double yForAltitude(double a)
     {
-        Preconditions.checkArgument(Math.abs(Math2.angularDistance(0, a)) * 2 <= verticalFieldOfView());
+        Preconditions.checkArgument(Math.abs(Math2.angularDistance(0, a)) * 2 <= verticalFieldOfView(), "The azimuth is out of the bounds: " + a);
 
         final double delta = verticalFieldOfView() / (height - 1);
         return (0 - a) / delta + (height - 1) / 2.0;

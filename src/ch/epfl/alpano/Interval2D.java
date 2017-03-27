@@ -17,11 +17,8 @@ public final class Interval2D
      */
     public Interval2D(Interval1D iX, Interval1D iY)
     {
-        if(iX == null || iY == null)
-            throw new NullPointerException();
-
-        this.iX = iX;
-        this.iY = iY;
+        this.iX = Objects.requireNonNull(iX);
+        this.iY = Objects.requireNonNull(iY);
     }
 
     /**
@@ -100,7 +97,7 @@ public final class Interval2D
      */
     public Interval2D union(Interval2D that)
     {
-        Preconditions.checkArgument(isUnionableWith(that));
+        Preconditions.checkArgument(isUnionableWith(that), "The provided interval must be unionable with this one: " + that + ", " + this);
 
         return boundingUnion(that);
     }

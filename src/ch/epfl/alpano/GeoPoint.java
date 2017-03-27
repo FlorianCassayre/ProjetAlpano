@@ -25,8 +25,8 @@ public final class GeoPoint
      */
     public GeoPoint(double longitude, double latitude)
     {
-        Preconditions.checkArgument(longitude >= -PI && longitude <= PI);
-        Preconditions.checkArgument(latitude >= -PI / 2.0 && latitude <= PI / 2.0);
+        Preconditions.checkArgument(longitude >= -PI && longitude <= PI, "The longitude must belong to [-π,π]: " + longitude);
+        Preconditions.checkArgument(latitude >= -PI / 2.0 && latitude <= PI / 2.0, "The latitude must belong to [-π/2,π/2]: " + latitude);
 
         this.longitude = longitude;
         this.latitude = latitude;

@@ -55,7 +55,7 @@ public final class GazetteerParser
     {
         final String[] parts = str.trim().split(" +");
 
-        Preconditions.checkArgument(parts.length >= 7);
+        Preconditions.checkArgument(parts.length >= 7, "The line does not match the summit format: " + str);
 
         final double longitude = readAngle(parts[0], true);
         final double latitude = readAngle(parts[1], false);
@@ -86,7 +86,7 @@ public final class GazetteerParser
     {
         final String[] parts = str.split(":");
 
-        Preconditions.checkArgument(parts.length == 3);
+        Preconditions.checkArgument(parts.length == 3, "The angle must be 3 characters long: " + parts.length);
 
         final int degrees = readDigits(parts[0], base180 ? 180 : 90);
         final int minutes = readDigits(parts[1], 60);
@@ -104,7 +104,7 @@ public final class GazetteerParser
      */
     private static int readDigits(String str, int max)
     {
-        Preconditions.checkArgument(str.length() < 10); // Checks for overflow
+        Preconditions.checkArgument(str.length() < 10, "The specified number is too big: " + str); // Checks for overflow
 
         int exponent = 1;
         int sum = 0;
@@ -115,7 +115,7 @@ public final class GazetteerParser
             exponent *= 10;
         }
 
-        Preconditions.checkArgument(sum < max);
+        Preconditions.checkArgument(sum < max, "The integer is too big: " + str);
 
         return sum;
     }

@@ -22,7 +22,7 @@ public interface Distance
      */
     static double toRadians(double distanceInMeters)
     {
-        Preconditions.checkArgument(distanceInMeters >= 0 && distanceInMeters < EARTH_PERIMETER + 1E3);
+        Preconditions.checkArgument(distanceInMeters >= 0 && distanceInMeters < EARTH_PERIMETER + 1E3, "The distance must belong to [0,EARTH_PERIMETER]: " + distanceInMeters);
 
         return distanceInMeters / EARTH_RADIUS;
     }
@@ -34,7 +34,7 @@ public interface Distance
      */
     static double toMeters(double distanceInRadians)
     {
-        Preconditions.checkArgument(0 <= distanceInRadians && distanceInRadians < 2 * Math.PI + 1E-3);
+        Preconditions.checkArgument(0 <= distanceInRadians && distanceInRadians < 2 * Math.PI + 1E-3, "The angle must belong to [0,2π]: " + distanceInRadians);
 
         return EARTH_RADIUS * distanceInRadians;
     }
