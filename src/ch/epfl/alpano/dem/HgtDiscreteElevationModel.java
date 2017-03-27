@@ -77,7 +77,7 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel
         {
             return Integer.parseInt(str);
         }
-        catch(NumberFormatException e) // Catched if the integer is too big
+        catch(NumberFormatException e) // Caught if the integer is too big
         {
             throw new IllegalArgumentException("The specified integer is too big.");
         }

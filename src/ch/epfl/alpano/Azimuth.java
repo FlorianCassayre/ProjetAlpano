@@ -32,7 +32,7 @@ public interface Azimuth
      */
     static double toMath(double azimuth)
     {
-        Preconditions.checkArgument(isCanonical(azimuth), "The specified azimuth is not canonical: " + azimuth);
+        Preconditions.checkArgument(isCanonical(azimuth), "The azimuth must be canonical: " + azimuth);
 
         return canonicalize(-azimuth);
     }
@@ -44,7 +44,7 @@ public interface Azimuth
      */
     static double fromMath(double azimuth)
     {
-        Preconditions.checkArgument(isCanonical(azimuth), "The specified azimuth is not canonical: " + azimuth);
+        Preconditions.checkArgument(isCanonical(azimuth), "The azimuth must be canonical: " + azimuth);
 
         return canonicalize(-azimuth);
     }
