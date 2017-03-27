@@ -65,26 +65,7 @@ public final class Interval1D
      */
     public int sizeOfIntersectionWith(Interval1D that)
     {
-        if(that.contains(this.includedFrom) && that.contains(this.includedTo))
-        {
-            return this.size();
-        }
-        else if(this.contains(that.includedFrom) && this.contains(that.includedTo))
-        {
-            return that.size();
-        }
-        else if(that.contains(this.includedFrom) && !that.contains(this.includedTo))
-        {
-            return that.includedTo - this.includedFrom + 1;
-        }
-        else if(!that.contains(this.includedFrom) && that.contains(this.includedTo))
-        {
-            return this.includedTo - that.includedFrom + 1;
-        }
-        else
-        {
-            return 0;
-        }
+        return Math.max(Math.min(this.includedTo, that.includedTo) - Math.max(this.includedFrom, that.includedFrom) + 1, 0);
     }
 
     /**
