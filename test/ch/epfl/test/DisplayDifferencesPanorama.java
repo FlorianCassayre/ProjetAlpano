@@ -10,8 +10,8 @@ public class DisplayDifferencesPanorama
 {
     public static void main(String[] args) throws IOException
     {
-        final BufferedImage expected = ImageIO.read(new File("res/expected/niesen.png"));
-        final BufferedImage actual = ImageIO.read(new File("res/actual/niesen.png"));
+        final BufferedImage expected = ImageIO.read(new File("res/expected/niesen-shaded.png"));
+        final BufferedImage actual = ImageIO.read(new File("res/actual/niesen-shaded.png"));
 
         for(int y = 0; y < expected.getHeight(); y++)
         {
@@ -22,7 +22,7 @@ public class DisplayDifferencesPanorama
 
                 if(!(a.getRed() == b.getRed() && a.getGreen() == b.getGreen() && a.getBlue() == b.getBlue()))
                 {
-                    actual.setRGB(x, y, Color.RED.getRGB());
+                    actual.setRGB(x, y, new Color(255, 83, 211).getRGB());
                 }
             }
         }

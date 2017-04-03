@@ -59,4 +59,14 @@ public interface ChannelPainter
     {
         return (x, y) -> Math.max(Math.max(panorama.distanceAt(x, y - 1, 0), panorama.distanceAt(x + 1, y, 0)), Math.max(panorama.distanceAt(x, y + 1, 0), panorama.distanceAt(x - 1, y, 0))) - panorama.distanceAt(x, y);
     }
+
+    static ChannelPainter distanceAt(Panorama panorama)
+    {
+        return panorama::distanceAt;
+    }
+
+    static ChannelPainter slopeAt(Panorama panorama)
+    {
+        return panorama::slopeAt;
+    }
 }
