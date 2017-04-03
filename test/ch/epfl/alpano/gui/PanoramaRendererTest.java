@@ -48,7 +48,7 @@ public class PanoramaRendererTest
 
 
     @BeforeClass
-    public static void createImage() throws IOException
+    public static void createImage1() throws IOException
     {
         DiscreteElevationModel dDEM =
                 new HgtDiscreteElevationModel(HGT_FILE);
@@ -72,11 +72,43 @@ public class PanoramaRendererTest
         ImageIO.write(SwingFXUtils.fromFXImage(i, null), "png", new File("res/actual/niesen-profile.png"));
     }
 
+    @BeforeClass
+    public static void createImage2() throws IOException
+    {
+        DiscreteElevationModel dDEM =
+                new HgtDiscreteElevationModel(HGT_FILE);
+        ContinuousElevationModel cDEM =
+                new ContinuousElevationModel(dDEM);
+        Panorama p = new PanoramaComputer(cDEM)
+                .computePanorama(PARAMS);
+
+        ChannelPainter h = ChannelPainter.maxDistanceToNeighbors(p).div(100_000).cycling().mul(360);
+        ChannelPainter s = ChannelPainter.maxDistanceToNeighbors(p).div(200_000).clamped().inverted();
+        ChannelPainter b = ChannelPainter.maxDistanceToNeighbors(p).mul(2).div((float) Math.PI).inverted().mul(0.7f).add(0.3f);
+
+        ChannelPainter distance = p::distanceAt;
+        ChannelPainter opacity = distance.map(d -> d == Float.POSITIVE_INFINITY ? 0 : 1);
+
+        ImagePainter l = ImagePainter.hsb(h, s, b, opacity);
+
+        Image i = PanoramaRenderer.renderPanorama(p, l);
+        ImageIO.write(SwingFXUtils.fromFXImage(i, null), "png", new File("res/actual/niesen-shaded.png"));
+    }
+
     @Test
-    public void testAreSame() throws IOException
+    public void testAreSame1() throws IOException
     {
         final BufferedImage expected = ImageIO.read(new File("res/expected/niesen-profile.png"));
         final BufferedImage actual = ImageIO.read(new File("res/actual/niesen-profile.png"));
+
+        Utils.testAreSame(expected, actual);
+    }
+
+    @Test
+    public void testAreSame2() throws IOException
+    {
+        final BufferedImage expected = ImageIO.read(new File("res/expected/niesen-shaded.png"));
+        final BufferedImage actual = ImageIO.read(new File("res/actual/niesen-shaded.png"));
 
         Utils.testAreSame(expected, actual);
     }
