@@ -45,7 +45,7 @@ public final class PanoramaComputer
             {
                 final double altitude = parameters.altitudeForY(y);
 
-                final DoubleUnaryOperator function = rayToGroundDistance(profile, parameters.observerElevation(), altitude);
+                final DoubleUnaryOperator function = rayToGroundDistance(profile, parameters.observerElevation(), Math.tan(altitude));
 
                 final double firstInterval = Math2.firstIntervalContainingRoot(function, lastRoot, parameters.maxDistance() - searchInterval, searchInterval);
 
@@ -84,6 +84,6 @@ public final class PanoramaComputer
     {
         final double refraction = 0.13;
 
-        return x -> ray0 + x * Math.tan(raySlope) - profile.elevationAt(x) + (1 - refraction) / (2 * Distance.EARTH_RADIUS) * Math2.sq(x);
+        return x -> ray0 + x * raySlope - profile.elevationAt(x) + (1 - refraction) / (2 * Distance.EARTH_RADIUS) * Math2.sq(x);
     }
 }
