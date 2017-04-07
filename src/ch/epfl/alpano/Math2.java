@@ -117,7 +117,7 @@ public interface Math2
      */
     static double improveRoot(DoubleUnaryOperator f, double x1, double x2, double epsilon)
     {
-        Preconditions.checkArgument(f.applyAsDouble(x1) * f.applyAsDouble(x2) <= 0, "This function does not have any root");
+        Preconditions.checkArgument(f.applyAsDouble(x1) * f.applyAsDouble(x2) <= 0, "This function does not have any root.");
 
         while(x2 - x1 > epsilon)
         {

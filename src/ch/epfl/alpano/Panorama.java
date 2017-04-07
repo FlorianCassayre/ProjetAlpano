@@ -17,11 +17,11 @@ public final class Panorama
 
         final int size = parameters.width() * parameters.height();
 
-        Preconditions.checkArgument(distances.length == size, "Illegal distances array size: " + distances.length);
-        Preconditions.checkArgument(longitudes.length == size, "Illegal longitudes array size: " + longitudes.length);
-        Preconditions.checkArgument(latitudes.length == size, "Illegal latitudes array size: " + latitudes.length);
-        Preconditions.checkArgument(elevations.length == size, "Illegal elevations array size: " + elevations.length);
-        Preconditions.checkArgument(slopes.length == size, "Illegal slopes array size: " + slopes.length);
+        Preconditions.checkArgument(distances.length == size, "Illegal distances array size.");
+        Preconditions.checkArgument(longitudes.length == size, "Illegal longitudes array size.");
+        Preconditions.checkArgument(latitudes.length == size, "Illegal latitudes array size.");
+        Preconditions.checkArgument(elevations.length == size, "Illegal elevations array size.");
+        Preconditions.checkArgument(slopes.length == size, "Illegal slopes array size.");
 
         this.distance = distances;
         this.longitudes = longitudes;

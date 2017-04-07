@@ -28,28 +28,28 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel
      */
     public HgtDiscreteElevationModel(File file)
     {
-        Preconditions.checkArgument(file.exists(), "The specified file does not exist");
+        Preconditions.checkArgument(file.exists(), "The specified file does not exist.");
 
         final String name = file.getName();
 
-        Preconditions.checkArgument(name.length() == 11, "The file name must match the required length of 11: " + name.length()); // The length must be equal to 11
-        Preconditions.checkArgument(name.endsWith(".hgt"), "The file extension must match the required extension .hgt"); // The extension must be exactly ".hgt"
+        Preconditions.checkArgument(name.length() == 11, "The file name must match the required length of 11."); // The length must be equal to 11
+        Preconditions.checkArgument(name.endsWith(".hgt"), "The file extension must match the required extension .hgt."); // The extension must be exactly ".hgt"
 
         final char ns = name.charAt(0), ew = name.charAt(3);
 
-        Preconditions.checkArgument((ns == 'N' || ns == 'S') && (ew == 'E' || ew == 'W'), "The directions must be N/S and E/W: " + ns + ", " + ew); // The letters must be N or S, and E or W
+        Preconditions.checkArgument((ns == 'N' || ns == 'S') && (ew == 'E' || ew == 'W'), "The directions must be N/S and E/W."); // The letters must be N or S, and E or W
 
         final boolean signLatitude = ns == 'N', signLongitude = ew == 'E';
 
         final int latitude = getAsPositiveInteger(name.substring(1, 3)), longitude = getAsPositiveInteger(name.substring(4, 7)); // There must be 2 and 3 digits
 
-        Preconditions.checkArgument(latitude >= 0 && latitude < 90, "The latitude must be in [0,90[: " + latitude);
-        Preconditions.checkArgument(longitude >= 0 && longitude < 180, "The longitude must be in [0,180[: " + longitude);
+        Preconditions.checkArgument(latitude >= 0 && latitude < 90, "The latitude must be in [0,90[.");
+        Preconditions.checkArgument(longitude >= 0 && longitude < 180, "The longitude must be in [0,180[.");
 
         this.latitudeIndex = (signLatitude ? 1 : -1) * latitude * DiscreteElevationModel.SAMPLES_PER_DEGREE;
         this.longitudeIndex = (signLongitude ? 1 : -1) * longitude * DiscreteElevationModel.SAMPLES_PER_DEGREE;
 
-        Preconditions.checkArgument(file.length() == HGT_FILE_LENGTH, "The file length must be exactly 25 934 402 bytes: " + file.length()); // The file length must be exactly 25 934 402 bytes
+        Preconditions.checkArgument(file.length() == HGT_FILE_LENGTH, "The file length must be exactly 25 934 402 bytes."); // The file length must be exactly 25 934 402 bytes
 
         try(FileInputStream stream = new FileInputStream(file))
         {
@@ -57,7 +57,7 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel
         }
         catch(IOException e)
         {
-            throw new IllegalArgumentException("Exception while reading the file");
+            throw new IllegalArgumentException("Exception while reading the file.");
         }
     }
 
@@ -70,8 +70,7 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel
     private static int getAsPositiveInteger(String str)
     {
         for(char c : str.toCharArray())
-            if(!(c >= '0' && c <= '9'))
-                throw new IllegalArgumentException("Character is not a digit: " + c);
+            Preconditions.checkArgument(c >= '0' && c <= '9', "Character must be a digit.");
 
         try
         {
@@ -92,7 +91,7 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel
     @Override
     public double elevationSample(int x, int y)
     {
-        Preconditions.checkArgument(extent().contains(x, y), "The sample is out of the bound: " + x + ", " + y);
+        Preconditions.checkArgument(extent().contains(x, y), "The sample is out of the bound.");
 
         final int i = (x - longitudeIndex) + (SAMPLES_PER_DEGREE - y + latitudeIndex) * (SAMPLES_PER_DEGREE + 1);
 

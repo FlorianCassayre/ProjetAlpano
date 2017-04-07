@@ -97,7 +97,7 @@ public final class Interval2D
      */
     public Interval2D union(Interval2D that)
     {
-        Preconditions.checkArgument(isUnionableWith(that), "The provided interval must be unionable with this one: " + that + ", " + this);
+        Preconditions.checkArgument(isUnionableWith(that), "The provided interval must be unionable with this one.");
 
         return boundingUnion(that);
     }

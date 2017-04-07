@@ -15,7 +15,7 @@ public final class Interval1D
      */
     public Interval1D(int includedFrom, int includedTo)
     {
-        Preconditions.checkArgument(includedTo >= includedFrom, "includedTo must be greater or equal to includedFrom: " + includedFrom + ", " + includedTo);
+        Preconditions.checkArgument(includedTo >= includedFrom, "includedTo must be greater or equal to includedFrom.");
 
         this.includedFrom = includedFrom;
         this.includedTo = includedTo;
@@ -96,7 +96,7 @@ public final class Interval1D
      */
     public Interval1D union(Interval1D that)
     {
-        Preconditions.checkArgument(isUnionableWith(that), "The provided interval must be unionable with this one: " + that + ", " + this);
+        Preconditions.checkArgument(isUnionableWith(that), "The provided interval must be unionable with this one.");
 
         return boundingUnion(that);
     }
