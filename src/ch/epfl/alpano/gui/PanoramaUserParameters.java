@@ -48,11 +48,11 @@ public final class PanoramaUserParameters
     public PanoramaParameters panoramaParameters()
     {
         return new PanoramaParameters(
-                new GeoPoint(observerLongitude(), observerLatitude()),
+                new GeoPoint(observerLongitude() / 10_000.0, observerLatitude() / 10_000.0),
                 observerElevation(),
-                centerAzimuth(),
-                horizontalFieldOfView(),
-                maxDistance(),
+                Math.toRadians(centerAzimuth()),
+                Math.toRadians(horizontalFieldOfView()),
+                maxDistance() * 1_000,
                 width(),
                 height()
         );
