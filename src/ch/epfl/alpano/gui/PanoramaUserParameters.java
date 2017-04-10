@@ -1,0 +1,132 @@
+package ch.epfl.alpano.gui;
+
+import ch.epfl.alpano.GeoPoint;
+import ch.epfl.alpano.PanoramaParameters;
+
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.Map;
+
+public final class PanoramaUserParameters
+{
+    private final Map<UserParameter, Integer> userParameters;
+
+    public PanoramaUserParameters(Map<UserParameter, Integer> userParameters)
+    {
+        final Map<UserParameter, Integer> map = new EnumMap<>(userParameters);
+
+        map.replaceAll(UserParameter::sanitize);
+
+        // TODO check
+
+        this.userParameters = Collections.unmodifiableMap(map);
+    }
+
+    public PanoramaUserParameters(int observerLongitude, int observerLatitude, int observerElevation, int centerAzimuth, int horizontalFieldOfView, int maxDistance, int width, int height, int supersamplingExponent)
+    {
+        this(new EnumMap<UserParameter, Integer>(UserParameter.class)
+        {
+            {
+                put(UserParameter.OBSERVER_LONGITUDE, observerLongitude);
+                put(UserParameter.OBSERVER_LATITUDE, observerLatitude);
+                put(UserParameter.OBSERVER_ELEVATION, observerElevation);
+                put(UserParameter.CENTER_AZIMUTH, centerAzimuth);
+                put(UserParameter.HORIZONTAL_FIELD_OF_VIEW, horizontalFieldOfView);
+                put(UserParameter.MAX_DISTANCE, maxDistance);
+                put(UserParameter.WIDTH, width);
+                put(UserParameter.HEIGHT, height);
+                put(UserParameter.SUPER_SAMPLING_EXPONENT, supersamplingExponent);
+            }
+        });
+    }
+
+    public Integer get(UserParameter parameter)
+    {
+        return userParameters.get(parameter);
+    }
+
+    public PanoramaParameters panoramaParameters()
+    {
+        return new PanoramaParameters(
+                new GeoPoint(observerLongitude(), observerLatitude()),
+                observerElevation(),
+                centerAzimuth(),
+                horizontalFieldOfView(),
+                maxDistance(),
+                width(),
+                height()
+        );
+    }
+
+    public PanoramaParameters panoramaDisplayParameters()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    public Map<UserParameter, Integer> userParameters()
+    {
+        return userParameters;
+    }
+
+    public int observerLongitude()
+    {
+        return get(UserParameter.OBSERVER_LONGITUDE);
+    }
+
+    public int observerLatitude()
+    {
+        return get(UserParameter.OBSERVER_LATITUDE);
+    }
+
+    public int observerElevation()
+    {
+        return get(UserParameter.OBSERVER_ELEVATION);
+    }
+
+    public int centerAzimuth()
+    {
+        return get(UserParameter.CENTER_AZIMUTH);
+    }
+
+    public int horizontalFieldOfView()
+    {
+        return get(UserParameter.HORIZONTAL_FIELD_OF_VIEW);
+    }
+
+    public int maxDistance()
+    {
+        return get(UserParameter.MAX_DISTANCE);
+    }
+
+    public int width()
+    {
+        return get(UserParameter.WIDTH);
+    }
+
+    public int height()
+    {
+        return get(UserParameter.WIDTH);
+    }
+
+    public int supersamplingExponent()
+    {
+        return get(UserParameter.SUPER_SAMPLING_EXPONENT);
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if(!(o instanceof PanoramaUserParameters))
+            return false;
+
+        final PanoramaUserParameters that = (PanoramaUserParameters) o;
+
+        return this.userParameters.equals(that.userParameters);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return userParameters.hashCode();
+    }
+}
