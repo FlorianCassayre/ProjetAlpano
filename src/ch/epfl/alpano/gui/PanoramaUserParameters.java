@@ -48,7 +48,7 @@ public final class PanoramaUserParameters
     public PanoramaParameters panoramaParameters()
     {
         return new PanoramaParameters(
-                new GeoPoint(observerLongitude() / 10_000.0, observerLatitude() / 10_000.0),
+                new GeoPoint(Math.toRadians(observerLongitude() / 10_000.0), Math.toRadians(observerLatitude() / 10_000.0)),
                 observerElevation(),
                 Math.toRadians(centerAzimuth()),
                 Math.toRadians(horizontalFieldOfView()),
@@ -61,7 +61,7 @@ public final class PanoramaUserParameters
     public PanoramaParameters panoramaDisplayParameters()
     {
         return new PanoramaParameters(
-                new GeoPoint(observerLongitude() / 10_000.0, observerLatitude() / 10_000.0),
+                new GeoPoint(Math.toRadians(observerLongitude() / 10_000.0), Math.toRadians(observerLatitude() / 10_000.0)),
                 observerElevation(),
                 Math.toRadians(centerAzimuth()),
                 Math.toRadians(horizontalFieldOfView()),
