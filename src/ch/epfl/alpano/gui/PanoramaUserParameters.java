@@ -53,14 +53,22 @@ public final class PanoramaUserParameters
                 Math.toRadians(centerAzimuth()),
                 Math.toRadians(horizontalFieldOfView()),
                 maxDistance() * 1_000,
-                width(),
-                height()
+                width() * (1 << supersamplingExponent()),
+                height() * (1 << supersamplingExponent())
         );
     }
 
     public PanoramaParameters panoramaDisplayParameters()
     {
-        throw new UnsupportedOperationException();
+        return new PanoramaParameters(
+                new GeoPoint(observerLongitude() / 10_000.0, observerLatitude() / 10_000.0),
+                observerElevation(),
+                Math.toRadians(centerAzimuth()),
+                Math.toRadians(horizontalFieldOfView()),
+                maxDistance() * 1_000,
+                width(),
+                height()
+        );
     }
 
     public Map<UserParameter, Integer> userParameters()
@@ -105,7 +113,7 @@ public final class PanoramaUserParameters
 
     public int height()
     {
-        return get(UserParameter.WIDTH);
+        return get(UserParameter.HEIGHT);
     }
 
     public int supersamplingExponent()
