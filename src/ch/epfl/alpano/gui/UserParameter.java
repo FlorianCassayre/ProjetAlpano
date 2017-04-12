@@ -23,6 +23,12 @@ public enum UserParameter
         this.max = max;
     }
 
+    /**
+     * Sanitizes the value according to its type.
+     * The new value will verify the inequality <code>min ⩽ value ⩽ max</code>
+     * @param value the value to sanitize
+     * @return the sanitized value
+     */
     public int sanitize(int value)
     {
         return Math.max(Math.min(value, max), min);

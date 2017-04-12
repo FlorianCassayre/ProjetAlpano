@@ -1,5 +1,17 @@
 package ch.epfl.alpano.gui;
 
+/**
+ * A class containing preset panorama parameters examples.
+ * The presets are namely:
+ * <ul>
+ *     <li>Niesen</li>
+ *     <li>Alpes du Jura</li>
+ *     <li>Mont Racine</li>
+ *     <li>Finsteraarhorn</li>
+ *     <li>Tour de Sauvabelin</li>
+ *     <li>Plage du Pélican</li>
+ * </ul>
+ */
 public interface PredefinedPanoramas
 {
     PanoramaUserParameters NIESEN = new PanoramaUserParameters(7_6500, 46_7300, 60, 180, 110, 300, 2500, 800, 0);

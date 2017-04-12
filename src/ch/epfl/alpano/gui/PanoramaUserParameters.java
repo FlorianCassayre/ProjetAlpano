@@ -2,17 +2,27 @@ package ch.epfl.alpano.gui;
 
 import ch.epfl.alpano.GeoPoint;
 import ch.epfl.alpano.PanoramaParameters;
+import ch.epfl.alpano.Preconditions;
 
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 
+/**
+ * Represents user parameters. Provides methods to sanitize the user entered values.
+ */
 public final class PanoramaUserParameters
 {
     private final Map<UserParameter, Integer> userParameters;
 
+    /**
+     * Creates a new instance using an associative map.
+     * @param userParameters the map
+     */
     public PanoramaUserParameters(Map<UserParameter, Integer> userParameters)
     {
+        Preconditions.checkArgument(userParameters.size() == UserParameter.values().length, "The map is missing values.");
+
         final Map<UserParameter, Integer> map = new EnumMap<>(userParameters);
 
         map.replaceAll(UserParameter::sanitize);
@@ -24,6 +34,18 @@ public final class PanoramaUserParameters
         this.userParameters = Collections.unmodifiableMap(map);
     }
 
+    /**
+     * Creates a new instance using explicit parameters.
+     * @param observerLongitude the observer's longitude
+     * @param observerLatitude the observer's latitude
+     * @param observerElevation the observer's elevation
+     * @param centerAzimuth the horizontal azimuth (in radians)
+     * @param horizontalFieldOfView the horizontal field of view (in radians)
+     * @param maxDistance the maximal view distance
+     * @param width the width of the panorama
+     * @param height the height of the panorama
+     * @param supersamplingExponent the supersampling exponent
+     */
     public PanoramaUserParameters(int observerLongitude, int observerLatitude, int observerElevation, int centerAzimuth, int horizontalFieldOfView, int maxDistance, int width, int height, int supersamplingExponent)
     {
         this(new EnumMap<UserParameter, Integer>(UserParameter.class)
@@ -42,11 +64,20 @@ public final class PanoramaUserParameters
         });
     }
 
+    /**
+     * Returns the value of the specified parameter.
+     * @param parameter the parameter
+     * @return the value of this parameter
+     */
     public Integer get(UserParameter parameter)
     {
         return userParameters.get(parameter);
     }
 
+    /**
+     * Creates a new instance of {@link PanoramaParameters} from these parameters, with the supersampling exponent rescaling.
+     * @return a new instance
+     */
     public PanoramaParameters panoramaParameters()
     {
         return new PanoramaParameters(
@@ -60,6 +91,10 @@ public final class PanoramaUserParameters
         );
     }
 
+    /**
+     * Creates a new instance of {@link PanoramaParameters} from these parameters, without the supersampling exponent rescaling (so as the parameters are stored).
+     * @return a new instance
+     */
     public PanoramaParameters panoramaDisplayParameters()
     {
         return new PanoramaParameters(
@@ -73,9 +108,13 @@ public final class PanoramaUserParameters
         );
     }
 
+    /**
+     * Returns a copy of the parameters and their value.
+     * @return a copy of the parameters
+     */
     public Map<UserParameter, Integer> userParameters()
     {
-        return userParameters;
+        return new EnumMap<>(userParameters);
     }
 
     public int observerLongitude()

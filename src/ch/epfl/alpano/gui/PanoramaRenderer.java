@@ -6,8 +6,17 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
+/**
+ * Utility class to render a panorama to an image.
+ */
 public interface PanoramaRenderer
 {
+    /**
+     * Renders a panorama to an image using the given parameters.
+     * @param panorama the panorama
+     * @param painter the image painter
+     * @return the rendered image
+     */
     static Image renderPanorama(Panorama panorama, ImagePainter painter)
     {
         final WritableImage image = new WritableImage(panorama.parameters().width(), panorama.parameters().height());
