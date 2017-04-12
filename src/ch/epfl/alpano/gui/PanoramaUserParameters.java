@@ -17,7 +17,9 @@ public final class PanoramaUserParameters
 
         map.replaceAll(UserParameter::sanitize);
 
-        // TODO check
+        final int maxHorizontalFieldOfView = 170 * (map.get(UserParameter.WIDTH) - 1) / map.get(UserParameter.HORIZONTAL_FIELD_OF_VIEW) + 1;
+
+        map.put(UserParameter.HEIGHT, Math.min(map.get(UserParameter.HEIGHT), maxHorizontalFieldOfView));
 
         this.userParameters = Collections.unmodifiableMap(map);
     }
