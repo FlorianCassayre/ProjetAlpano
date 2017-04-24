@@ -23,7 +23,7 @@ public final class FixedPointStringConverter extends StringConverter<Integer>
         if(i > 0)
             decimal = decimal.movePointRight(i);
         else if(i < 0)
-            decimal = decimal.movePointLeft(i);
+            decimal = decimal.movePointLeft(-i);
 
         return decimal.setScale(0, RoundingMode.HALF_UP).toPlainString();
     }
@@ -36,7 +36,7 @@ public final class FixedPointStringConverter extends StringConverter<Integer>
         if(i > 0)
             decimal = decimal.movePointRight(i);
         else if(i < 0)
-            decimal = decimal.movePointLeft(i);
+            decimal = decimal.movePointLeft(-i);
 
         return decimal.intValueExact();
     }

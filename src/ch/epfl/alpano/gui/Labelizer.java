@@ -21,7 +21,7 @@ public final class Labelizer
         this.summits = Collections.unmodifiableList(new ArrayList<>(summits));
     }
 
-    public Node labels(PanoramaParameters parameters)
+    public List<Node> labels(PanoramaParameters parameters)
     {
         throw new UnsupportedOperationException();
     }
