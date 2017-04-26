@@ -94,8 +94,10 @@ public interface Math2
      */
     static double firstIntervalContainingRoot(DoubleUnaryOperator f, double minX, double maxX, double dX)
     {
+        Preconditions.checkArgument(minX <= maxX && 0 < dX, "minX must be smaller than maxX, dX must be strictly positive.");
+
         double m = minX;
-        while(m <= maxX)
+        while(m <= maxX - dX)
         {
             if(f.applyAsDouble(m) * f.applyAsDouble(m + dX) <= 0)
                 return m;
@@ -122,10 +124,8 @@ public interface Math2
         while(x2 - x1 > epsilon)
         {
             final double m = (x1 + x2) / 2.0;
-            final double fa = f.applyAsDouble(x1);
-            final double fm = f.applyAsDouble(m);
 
-            if(fa * fm > 0)
+            if(f.applyAsDouble(x1) * f.applyAsDouble(m) > 0)
             {
                 x1 = m;
             }

@@ -26,10 +26,9 @@ public final class GazetteerParser
     public static List<Summit> readSummitsFrom(File file) throws IOException
     {
         final List<Summit> list = new ArrayList<>();
-        final BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 
         String line;
-        try
+        try(BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file))))
         {
             while((line = reader.readLine()) != null)
             {
@@ -40,7 +39,6 @@ public final class GazetteerParser
         {
             throw new IOException(e);
         }
-        reader.close();
 
         return Collections.unmodifiableList(list);
     }

@@ -95,7 +95,7 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel
 
         final int i = (x - longitudeIndex) + (SAMPLES_PER_DEGREE - y + latitudeIndex) * (SAMPLES_PER_DEGREE + 1);
 
-        return (double) buffer.get(i);
+        return buffer.get(i);
     }
 
     @Override

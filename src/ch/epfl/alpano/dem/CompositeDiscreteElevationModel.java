@@ -11,6 +11,7 @@ import java.util.Objects;
 final class CompositeDiscreteElevationModel implements DiscreteElevationModel
 {
     private final DiscreteElevationModel dem1, dem2;
+    private final Interval2D union;
 
     /**
      * Creates a composite elevation model from two discrete models.
@@ -24,12 +25,14 @@ final class CompositeDiscreteElevationModel implements DiscreteElevationModel
 
         this.dem1 = Objects.requireNonNull(dem1);
         this.dem2 = Objects.requireNonNull(dem2);
+
+        this.union = dem1.extent().union(dem2.extent());
     }
 
     @Override
     public Interval2D extent()
     {
-        return dem1.extent().union(dem2.extent());
+        return union;
     }
 
     @Override

@@ -12,6 +12,8 @@ public final class PanoramaParameters
     private final double centerAzimuth, horizontalFieldOfView;
     private final int maxDistance;
     private final int width, height;
+    private final double verticalFieldOfView;
+    private final double delta;
 
     /**
      * Constructs a new instance of a panorama view.
@@ -40,6 +42,9 @@ public final class PanoramaParameters
         this.width = width;
         this.height = height;
         this.maxDistance = maxDistance;
+
+        this.verticalFieldOfView = horizontalFieldOfView * (height - 1) / (width - 1);
+        this.delta = horizontalFieldOfView / (width - 1);
     }
 
     /**
@@ -84,7 +89,7 @@ public final class PanoramaParameters
      */
     public double verticalFieldOfView()
     {
-        return horizontalFieldOfView * (height - 1) / (width - 1);
+        return verticalFieldOfView;
     }
 
     /**
@@ -123,7 +128,6 @@ public final class PanoramaParameters
     {
         Preconditions.checkArgument(x >= 0 && x <= width - 1, "Illegal x coordinate.");
 
-        final double delta = horizontalFieldOfView / (width - 1);
         return Azimuth.canonicalize(centerAzimuth + (x - (width - 1) / 2.0) * delta);
     }
 
@@ -137,7 +141,6 @@ public final class PanoramaParameters
         Preconditions.checkArgument(Azimuth.isCanonical(a), "The azimuth must be canonical.");
         Preconditions.checkArgument(Math.abs(Math2.angularDistance(centerAzimuth, a)) * 2 <= horizontalFieldOfView, "The azimuth is out of the bounds.");
 
-        final double delta = horizontalFieldOfView / (width - 1);
         return (a - centerAzimuth) / delta + (width - 1) / 2.0;
     }
 
@@ -148,10 +151,12 @@ public final class PanoramaParameters
      */
     public double altitudeForY(double y)
     {
-        Preconditions.checkArgument(y >= 0 && y <= height - 1, "Illegal y coordinate.");
+        final double yMax = height - 1;
 
-        final double delta = verticalFieldOfView() / (height - 1);
-        return 0 + ((height - 1) / 2.0 - y) * delta;
+        Preconditions.checkArgument(y >= 0 && y <= yMax, "Illegal y coordinate.");
+
+        final double delta = verticalFieldOfView() / yMax;
+        return 0 + (yMax / 2.0 - y) * delta;
     }
 
     /**

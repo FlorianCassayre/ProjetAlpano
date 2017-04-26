@@ -12,8 +12,7 @@ import java.util.Objects;
 public final class ElevationProfile
 {
     private final ContinuousElevationModel elevationModel;
-    private final GeoPoint origin;
-    private final double azimuth, length;
+    private final double length;
 
     private static final int INTERVAL = 4096;
 
@@ -29,10 +28,8 @@ public final class ElevationProfile
     public ElevationProfile(ContinuousElevationModel elevationModel, GeoPoint origin, double azimuth, double length)
     {
         this.elevationModel = Objects.requireNonNull(elevationModel);
-        this.origin = Objects.requireNonNull(origin);
 
         Preconditions.checkArgument(Azimuth.isCanonical(azimuth), "The azimuth must be canonical.");
-        this.azimuth = azimuth;
 
         Preconditions.checkArgument(length > 0, "The length must be strictly positive.");
         this.length = length;

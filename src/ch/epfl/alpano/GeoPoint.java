@@ -55,7 +55,7 @@ public final class GeoPoint
      */
     public double distanceTo(GeoPoint that)
     {
-        return Azimuth.canonicalize(2 * asin(sqrt(haversin(this.latitude - that.latitude) + cos(this.latitude) * cos(that.latitude) * haversin(this.longitude - that.longitude)))) * Distance.EARTH_RADIUS;
+        return Distance.toMeters(Azimuth.canonicalize(2 * asin(sqrt(haversin(this.latitude - that.latitude) + cos(this.latitude) * cos(that.latitude) * haversin(this.longitude - that.longitude)))));
     }
 
     /**

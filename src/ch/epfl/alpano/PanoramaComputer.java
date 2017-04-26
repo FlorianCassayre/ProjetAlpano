@@ -11,6 +11,9 @@ import java.util.function.DoubleUnaryOperator;
  */
 public final class PanoramaComputer
 {
+    private static final int SEARCH_INTERVAL = 64;
+    private static final int DICHOTOMY_STEP = 4;
+
     private final ContinuousElevationModel dem;
 
     /**
@@ -31,8 +34,6 @@ public final class PanoramaComputer
     {
         final Panorama.Builder builder = new Panorama.Builder(parameters);
 
-        final int searchInterval = 64, dichotomyStep = 4;
-
         for(int x = 0; x < parameters.width(); x++)
         {
             final double azimuth = parameters.azimuthForX(x);
@@ -47,11 +48,11 @@ public final class PanoramaComputer
 
                 final DoubleUnaryOperator function = rayToGroundDistance(profile, parameters.observerElevation(), Math.tan(altitude));
 
-                final double firstInterval = Math2.firstIntervalContainingRoot(function, lastRoot, parameters.maxDistance() - searchInterval, searchInterval);
+                final double firstInterval = Math2.firstIntervalContainingRoot(function, lastRoot, parameters.maxDistance() - SEARCH_INTERVAL, SEARCH_INTERVAL);
 
                 if(firstInterval != Double.POSITIVE_INFINITY)
                 {
-                    final double root = Math2.improveRoot(function, firstInterval, firstInterval + searchInterval, dichotomyStep);
+                    final double root = Math2.improveRoot(function, firstInterval, firstInterval + SEARCH_INTERVAL, DICHOTOMY_STEP);
 
                     final GeoPoint position = profile.positionAt(root);
 
@@ -84,6 +85,8 @@ public final class PanoramaComputer
     {
         final double refraction = 0.13;
 
-        return x -> ray0 + x * raySlope - profile.elevationAt(x) + (1 - refraction) / (2 * Distance.EARTH_RADIUS) * Math2.sq(x);
+        final double d = (1 - refraction) / (2 * Distance.EARTH_RADIUS);
+
+        return x -> ray0 + x * raySlope - profile.elevationAt(x) + d * Math2.sq(x);
     }
 }
