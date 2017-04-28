@@ -21,11 +21,11 @@ public final class FixedPointStringConverter extends StringConverter<Integer>
         BigDecimal decimal = new BigDecimal(n);
 
         if(i > 0)
-            decimal = decimal.movePointRight(i);
+            decimal = decimal.movePointLeft(i);
         else if(i < 0)
-            decimal = decimal.movePointLeft(-i);
+            decimal = decimal.movePointRight(-i);
 
-        return decimal.setScale(0, RoundingMode.HALF_UP).toPlainString();
+        return decimal.toPlainString();
     }
 
     @Override
@@ -38,6 +38,6 @@ public final class FixedPointStringConverter extends StringConverter<Integer>
         else if(i < 0)
             decimal = decimal.movePointLeft(-i);
 
-        return decimal.intValueExact();
+        return decimal.setScale(0, RoundingMode.HALF_UP).intValueExact();
     }
 }
