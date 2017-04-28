@@ -1,7 +1,10 @@
 package ch.epfl.alpano.gui;
 
+import ch.epfl.alpano.Math2;
+import ch.epfl.alpano.PanoramaComputer;
 import ch.epfl.alpano.PanoramaParameters;
 import ch.epfl.alpano.dem.ContinuousElevationModel;
+import ch.epfl.alpano.dem.ElevationProfile;
 import ch.epfl.alpano.summit.Summit;
 import javafx.scene.Node;
 import javafx.scene.shape.Line;
@@ -31,12 +34,14 @@ public final class Labelizer
 
         final int yMax = 170;
 
+        //final ElevationProfile profile = new ElevationProfile(cDEM, parameters.observerPosition(), parameters.observerElevation(), )
+        //PanoramaComputer.rayToGroundDistance()
+
         for(Summit summit : getVisibleSummits(parameters))
         {
-            
+            final double azimuth = parameters.observerPosition().azimuthTo(summit.position());
+            final double verticalAngle = Math.atan2(summit.elevation() - parameters.observerElevation(), parameters.observerPosition().distanceTo(summit.position())); // TODO
 
-            final double azimuth = 0.0; // TODO
-            final double verticalAngle = 0.0; // TODO
 
             final double x = parameters.xForAzimuth(azimuth), y = parameters.yForAltitude(verticalAngle);
 
@@ -57,7 +62,14 @@ public final class Labelizer
 
         for(Summit summit : summits)
         {
+            final double azimuth = parameters.observerPosition().azimuthTo(summit.position());
+            final double verticalAngle = Math.atan2(summit.elevation() - parameters.observerElevation(), parameters.observerPosition().distanceTo(summit.position())); // TODO
 
+            if(Math.abs(Math2.angularDistance(parameters.centerAzimuth(), azimuth)) * 2 <= parameters.horizontalFieldOfView()
+                    && Math.abs(Math2.angularDistance(0, verticalAngle)) * 2 <= parameters.verticalFieldOfView())
+            {
+                visible.add(summit);
+            }
         }
 
         return visible;

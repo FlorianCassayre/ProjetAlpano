@@ -1,6 +1,4 @@
 package ch.epfl.alpano.gui;
-import static org.junit.Assert.*;
-
 
 import ch.epfl.alpano.dem.ContinuousElevationModel;
 import ch.epfl.alpano.dem.HgtDiscreteElevationModel;
@@ -12,6 +10,9 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class LabelizerTest
 {
@@ -29,6 +30,8 @@ public class LabelizerTest
 
         final List<Node> nodes = labelizer.labels(PredefinedPanoramas.NIESEN.panoramaDisplayParameters());
 
+        nodes.forEach(System.out::println);
+
         final StringBuilder builder = new StringBuilder();
 
         final String expected = "Text[text=\"FROMBERGHORE (2394 m)\", x=0.0, y=0.0,\n" +
@@ -44,7 +47,7 @@ public class LabelizerTest
 
         final String[] lines = expected.split("\n");
 
-        assertEquals(nodes.size(), lines.length);
+        assertEquals(lines.length, nodes.size());
 
         for(int i = 0; i < nodes.size(); i++)
         {
