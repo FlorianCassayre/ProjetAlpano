@@ -3,6 +3,7 @@ package ch.epfl.alpano.gui;
 import ch.epfl.alpano.Panorama;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -35,7 +36,7 @@ public class PanoramaComputerBean
 
     public ReadOnlyObjectProperty<Panorama> panoramaProperty()
     {
-        throw new UnsupportedOperationException();
+        return new ReadOnlyObjectWrapper<>(panorama);
     }
 
     public Panorama getPanorama()
@@ -45,7 +46,7 @@ public class PanoramaComputerBean
 
     public ReadOnlyObjectProperty<Image> imageProperty()
     {
-        throw new UnsupportedOperationException();
+        return new ReadOnlyObjectWrapper<>(image);
     }
 
     public Image getImage()
@@ -55,7 +56,7 @@ public class PanoramaComputerBean
 
     public ReadOnlyObjectProperty<ObservableList<Node>> labelsProperty()
     {
-        throw new UnsupportedOperationException();
+        return new ReadOnlyObjectWrapper<>(FXCollections.observableArrayList(labels));
     }
 
     public ObservableList<Node> getLabels()

@@ -2,6 +2,7 @@ package ch.epfl.alpano.gui;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleObjectProperty;
 
 public class PanoramaParametersBean
@@ -15,7 +16,7 @@ public class PanoramaParametersBean
 
     public ReadOnlyObjectProperty<PanoramaUserParameters> parametersProperty()
     {
-        throw new UnsupportedOperationException();
+        return new ReadOnlyObjectWrapper<>(parameters);
     }
 
     public ObjectProperty<Integer> observerLongitudeProperty()
