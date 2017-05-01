@@ -1,8 +1,6 @@
 package ch.epfl.alpano.gui;
 
-import ch.epfl.alpano.Math2;
-import ch.epfl.alpano.PanoramaComputer;
-import ch.epfl.alpano.PanoramaParameters;
+import ch.epfl.alpano.*;
 import ch.epfl.alpano.dem.ContinuousElevationModel;
 import ch.epfl.alpano.dem.ElevationProfile;
 import ch.epfl.alpano.summit.Summit;
@@ -12,13 +10,16 @@ import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.function.DoubleUnaryOperator;
 
 public final class Labelizer
 {
+    private static final int MAX_Y = 170;
+    private static final double DISTANCE_THRESHOLD = 200;
+    private static final int HORIZONTAL_LINE_SPACE = 22;
+    private static final int MIN_DISTANCE = 20;
+
     private final ContinuousElevationModel cDEM;
     private final List<Summit> summits;
 
@@ -30,26 +31,53 @@ public final class Labelizer
 
     public List<Node> labels(PanoramaParameters parameters)
     {
-        final List<Node> nodes = new ArrayList<>();
+        final List<Summit> summits = getVisibleSummits(parameters);
 
-        final int yMax = 170;
+        final Set<Double> horizontalCoordinates = new HashSet<>();
 
-        //final ElevationProfile profile = new ElevationProfile(cDEM, parameters.observerPosition(), parameters.observerElevation(), )
-        //PanoramaComputer.rayToGroundDistance()
+        final List<Summit> labelled = new ArrayList<>();
 
-        for(Summit summit : getVisibleSummits(parameters))
+        double maxY = 0;
+
+        for(Summit summit : summits)
         {
             final double azimuth = parameters.observerPosition().azimuthTo(summit.position());
-            final double verticalAngle = Math.atan2(summit.elevation() - parameters.observerElevation(), parameters.observerPosition().distanceTo(summit.position())); // TODO
-
+            final double verticalAngle = Math.atan2(summit.elevation() - parameters.observerElevation(), parameters.observerPosition().distanceTo(summit.position()));
 
             final double x = parameters.xForAzimuth(azimuth), y = parameters.yForAltitude(verticalAngle);
 
-            Text text = new Text(summit.name());
-            text.getTransforms().addAll(new Translate(x, yMax), new Rotate(45, 0, 0));
+            if(y >= MAX_Y
+                    && x >= MIN_DISTANCE && x < parameters.width() - MIN_DISTANCE
+                    && doesNotContainSimilar(horizontalCoordinates, x, MIN_DISTANCE))
+            {
+                if(y > maxY)
+                    maxY = y;
+
+                horizontalCoordinates.add(x);
+                labelled.add(summit);
+            }
+        }
+
+        final List<Node> nodes = new ArrayList<>();
+
+        final double labelsY = Math.round(maxY + HORIZONTAL_LINE_SPACE);
+
+        for(Summit summit : labelled)
+        {
+            final double azimuth = parameters.observerPosition().azimuthTo(summit.position());
+            final double verticalAngle = Math.atan2(summit.elevation() - parameters.observerElevation(), parameters.observerPosition().distanceTo(summit.position()));
+            final double x = Math.round(parameters.xForAzimuth(azimuth)), y = Math.round(parameters.yForAltitude(verticalAngle));
+
+            final StringBuilder builder = new StringBuilder(summit.name());
+            builder.append(" (");
+            builder.append(summit.elevation());
+            builder.append(" m)");
+
+            Text text = new Text(builder.toString());
+            text.getTransforms().addAll(new Translate(x, labelsY), new Rotate(45, 0, 0));
             nodes.add(text);
 
-            Line line = new Line(x, y, x, yMax);
+            Line line = new Line(x, y, x, labelsY);
             nodes.add(line);
         }
 
@@ -63,15 +91,50 @@ public final class Labelizer
         for(Summit summit : summits)
         {
             final double azimuth = parameters.observerPosition().azimuthTo(summit.position());
-            final double verticalAngle = Math.atan2(summit.elevation() - parameters.observerElevation(), parameters.observerPosition().distanceTo(summit.position())); // TODO
+            final double verticalAngle = Math.atan2(summit.elevation() - parameters.observerElevation(), parameters.observerPosition().distanceTo(summit.position()));
+
+            final double distance = parameters.observerPosition().distanceTo(summit.position());
 
             if(Math.abs(Math2.angularDistance(parameters.centerAzimuth(), azimuth)) * 2 <= parameters.horizontalFieldOfView()
-                    && Math.abs(Math2.angularDistance(0, verticalAngle)) * 2 <= parameters.verticalFieldOfView())
+                    && Math.abs(verticalAngle) * 2 <= parameters.verticalFieldOfView()
+                    && distance <= parameters.maxDistance())
             {
-                visible.add(summit);
+                final ElevationProfile profile = new ElevationProfile(cDEM, parameters.observerPosition(), azimuth, parameters.maxDistance());
+
+                final DoubleUnaryOperator functionDistance = PanoramaComputer.rayToGroundDistance(profile, parameters.observerElevation(), 0);
+                final double distanceCurve = functionDistance.applyAsDouble(distance);
+
+                double angle = Math.atan2(-distanceCurve, distance);
+
+                final DoubleUnaryOperator function = PanoramaComputer.rayToGroundDistance(profile, parameters.observerElevation(), angle);
+
+                final double firstInterval = Math2.firstIntervalContainingRoot(function, 0, parameters.maxDistance() - 64, 64);
+
+                if(firstInterval < parameters.maxDistance())
+                {
+                    final GeoPoint peak = profile.positionAt(firstInterval);
+
+                    if(summit.position().distanceTo(peak) <= DISTANCE_THRESHOLD)
+                    {
+                        visible.add(summit);
+                    }
+                }
             }
         }
 
+        visible.sort((Comparator.comparingInt(summit -> (int) parameters.yForAltitude(Math.atan2(summit.elevation() - parameters.observerElevation(), parameters.observerPosition().distanceTo(summit.position()))))));
+
         return visible;
+    }
+
+    private static boolean doesNotContainSimilar(Set<Double> set, double value, double distance)
+    {
+        for(Double d : set)
+        {
+            if(Math.abs(d - value) < distance)
+                return false;
+        }
+
+        return true;
     }
 }
