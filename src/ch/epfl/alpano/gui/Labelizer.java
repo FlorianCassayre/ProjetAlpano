@@ -18,7 +18,9 @@ public final class Labelizer
     private static final int MAX_Y = 170;
     private static final double DISTANCE_THRESHOLD = 200;
     private static final int HORIZONTAL_LINE_SPACE = 22;
+    private static final int RAY_INTERVAL = 64;
     private static final int MIN_DISTANCE = 20;
+    private static final int ROTATION_ANGLE = 45;
 
     private final ContinuousElevationModel cDEM;
     private final List<Summit> summits;
@@ -37,7 +39,7 @@ public final class Labelizer
 
         final List<Summit> labelled = new ArrayList<>();
 
-        double maxY = 0;
+        double maxY = Double.POSITIVE_INFINITY;
 
         for(Summit summit : summits)
         {
@@ -50,7 +52,7 @@ public final class Labelizer
                     && x >= MIN_DISTANCE && x < parameters.width() - MIN_DISTANCE
                     && doesNotContainSimilar(horizontalCoordinates, x, MIN_DISTANCE))
             {
-                if(y > maxY)
+                if(y < maxY)
                     maxY = y;
 
                 horizontalCoordinates.add(x);
@@ -60,7 +62,7 @@ public final class Labelizer
 
         final List<Node> nodes = new ArrayList<>();
 
-        final double labelsY = Math.round(maxY + HORIZONTAL_LINE_SPACE);
+        final double labelsY = Math.round(maxY - HORIZONTAL_LINE_SPACE);
 
         for(Summit summit : labelled)
         {
@@ -68,16 +70,13 @@ public final class Labelizer
             final double verticalAngle = Math.atan2(summit.elevation() - parameters.observerElevation(), parameters.observerPosition().distanceTo(summit.position()));
             final double x = Math.round(parameters.xForAzimuth(azimuth)), y = Math.round(parameters.yForAltitude(verticalAngle));
 
-            final StringBuilder builder = new StringBuilder(summit.name());
-            builder.append(" (");
-            builder.append(summit.elevation());
-            builder.append(" m)");
+            String builder = summit.name() + " (" + summit.elevation() + " m)";
 
-            Text text = new Text(builder.toString());
-            text.getTransforms().addAll(new Translate(x, labelsY), new Rotate(45, 0, 0));
+            Text text = new Text(builder);
+            text.getTransforms().addAll(new Translate(x, labelsY), new Rotate(ROTATION_ANGLE, 0, 0));
             nodes.add(text);
 
-            Line line = new Line(x, y, x, labelsY);
+            Line line = new Line(x, labelsY, x, y);
             nodes.add(line);
         }
 
@@ -108,16 +107,12 @@ public final class Labelizer
 
                 final DoubleUnaryOperator function = PanoramaComputer.rayToGroundDistance(profile, parameters.observerElevation(), angle);
 
-                final double firstInterval = Math2.firstIntervalContainingRoot(function, 0, parameters.maxDistance() - 64, 64);
+                final double firstInterval = Math2.firstIntervalContainingRoot(function, 0, parameters.maxDistance(), RAY_INTERVAL);
 
-                if(firstInterval < parameters.maxDistance())
+                if(firstInterval == Double.POSITIVE_INFINITY
+                        || (firstInterval < parameters.maxDistance() && profile.positionAt(firstInterval).distanceTo(summit.position()) <= DISTANCE_THRESHOLD))
                 {
-                    final GeoPoint peak = profile.positionAt(firstInterval);
-
-                    if(summit.position().distanceTo(peak) <= DISTANCE_THRESHOLD)
-                    {
-                        visible.add(summit);
-                    }
+                    visible.add(summit);
                 }
             }
         }
@@ -130,10 +125,8 @@ public final class Labelizer
     private static boolean doesNotContainSimilar(Set<Double> set, double value, double distance)
     {
         for(Double d : set)
-        {
             if(Math.abs(d - value) < distance)
                 return false;
-        }
 
         return true;
     }

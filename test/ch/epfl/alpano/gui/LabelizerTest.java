@@ -1,9 +1,11 @@
 package ch.epfl.alpano.gui;
 
+import ch.epfl.alpano.PanoramaParameters;
 import ch.epfl.alpano.dem.ContinuousElevationModel;
 import ch.epfl.alpano.dem.HgtDiscreteElevationModel;
 import ch.epfl.alpano.summit.GazetteerParser;
 import ch.epfl.alpano.summit.Summit;
+import ch.epfl.test.ReflexionUtil;
 import de.saxsys.javafx.test.JfxRunner;
 import javafx.scene.Node;
 import org.junit.BeforeClass;
@@ -22,21 +24,59 @@ public class LabelizerTest
 {
     private static final File HGT_FILE = new File("res/data/N46E007.hgt");
     private static final File SUMMIT_FILE = new File("res/data/alps.txt");
+    private static final PanoramaUserParameters PANORAMA = PredefinedPanoramas.NIESEN;
+
+    private static ContinuousElevationModel cDEM;
+    private static List<Summit> summits;
+
+    @BeforeClass
+    public static void loadModel() throws IOException
+    {
+        cDEM = new ContinuousElevationModel(new HgtDiscreteElevationModel(HGT_FILE));
+        summits = GazetteerParser.readSummitsFrom(SUMMIT_FILE);
+    }
 
     @Test
-    public void testForNiesen() throws IOException
+    public void testNiesenVisibleSummits()
     {
-        final ContinuousElevationModel cDEM = new ContinuousElevationModel(new HgtDiscreteElevationModel(HGT_FILE));
-
-        final List<Summit> summits = GazetteerParser.readSummitsFrom(SUMMIT_FILE);
-
         final Labelizer labelizer = new Labelizer(cDEM, summits);
+        final List<Summit> visible = ReflexionUtil.invokeMethod(labelizer, "getVisibleSummits", new Class[] {PanoramaParameters.class}, new Object[] {PANORAMA.panoramaDisplayParameters()});
 
-        final List<Node> nodes = labelizer.labels(PredefinedPanoramas.NIESEN.panoramaDisplayParameters());
+        final String expected = "NIESEN (1223, 157)\n" +
+                "FROMBERGHORE (1437, 190)\n" +
+                "DREISPITZ (595, 258)\n" +
+                "JUNGFRAU (157, 259)\n" +
+                "SCHWALMERE (341, 259)\n" +
+                "FIRST (519, 262)\n" +
+                "BLUEMLISALP (811, 263)\n" +
+                "WYSSI FRAU (767, 263)\n" +
+                "MORGENHORN (735, 263)\n" +
+                "MOENCH (14, 264)";
 
-        //nodes.forEach(System.out::println);
-
+        final int count = 10;
         final StringBuilder builder = new StringBuilder();
+        for(int i = 0; i < count; i++)
+        {
+            final Summit summit = visible.get(i);
+
+            final double azimuth = PANORAMA.panoramaDisplayParameters().observerPosition().azimuthTo(summit.position());
+            final double verticalAngle = Math.atan2(summit.elevation() - PANORAMA.panoramaDisplayParameters().observerElevation(), PANORAMA.panoramaDisplayParameters().observerPosition().distanceTo(summit.position()));
+
+            final int x = (int) Math.round(PANORAMA.panoramaDisplayParameters().xForAzimuth(azimuth)), y = (int) Math.round(PANORAMA.panoramaDisplayParameters().yForAltitude(verticalAngle));
+
+            builder.append(summit.name()).append(" (").append(x).append(", ").append(y).append(")");
+            if(i != count - 1)
+                builder.append("\n");
+        }
+
+        assertEquals(expected, builder.toString());
+    }
+
+    @Test
+    public void testNiesenLabels()
+    {
+        final Labelizer labelizer = new Labelizer(cDEM, summits);
+        final List<Node> nodes = labelizer.labels(PANORAMA.panoramaDisplayParameters());
 
         final String expected = "Text[text=\"FROMBERGHORE (2394 m)\", x=0.0, y=0.0,\n" +
                 "Line[startX=1437.0, startY=170.0, endX=1437.0,endY=190.0,\n" +
@@ -52,9 +92,6 @@ public class LabelizerTest
         final String[] lines = expected.split("\n");
 
         assertTrue(nodes.size() >= 10);
-
-        nodes.forEach(System.out::println);
-        System.out.println();
 
         System.out.println("Size: " + nodes.size());
 
