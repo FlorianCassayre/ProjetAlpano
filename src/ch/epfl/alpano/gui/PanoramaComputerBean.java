@@ -3,64 +3,67 @@ package ch.epfl.alpano.gui;
 import ch.epfl.alpano.Panorama;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 
-import java.util.List;
-
 public class PanoramaComputerBean
 {
-    private Panorama panorama;
-    private PanoramaUserParameters parameters;
-    private Image image;
-    private List<Node> labels;
+    private final ObjectProperty<Panorama> panorama;
+    private final ObjectProperty<PanoramaUserParameters> parameters;
+    private final ObjectProperty<Image> image = new SimpleObjectProperty<>();
+    private final ObjectProperty<ObservableList<Node>> labels = new SimpleObjectProperty<>();
 
-    public ObjectProperty<PanoramaUserParameters> parametersProperty()
+    public PanoramaComputerBean(Panorama panorama, PanoramaUserParameters parameters)
     {
-        return new SimpleObjectProperty<>(parameters);
+        this.panorama = new SimpleObjectProperty<>(panorama);
+        this.parameters = new SimpleObjectProperty<>(parameters);
     }
 
-    public PanoramaUserParameters getParameters()
+    public ObjectProperty<PanoramaUserParameters> parametersProperty()
     {
         return parameters;
     }
 
+    public PanoramaUserParameters getParameters()
+    {
+        return parameters.get();
+    }
+
     public void setParameters(PanoramaUserParameters newParameters)
     {
-        this.parameters = newParameters;
+        parameters.set(newParameters);
     }
 
     public ReadOnlyObjectProperty<Panorama> panoramaProperty()
     {
-        return new ReadOnlyObjectWrapper<>(panorama);
+        return panorama;
     }
 
     public Panorama getPanorama()
     {
-        return panorama;
+        return panorama.get();
     }
 
     public ReadOnlyObjectProperty<Image> imageProperty()
     {
-        return new ReadOnlyObjectWrapper<>(image);
+        return image;
     }
 
     public Image getImage()
     {
-        return image;
+        return image.get();
     }
 
     public ReadOnlyObjectProperty<ObservableList<Node>> labelsProperty()
     {
-        return new ReadOnlyObjectWrapper<>(FXCollections.observableArrayList(labels));
+        return labels;
     }
 
     public ObservableList<Node> getLabels()
     {
-        return FXCollections.unmodifiableObservableList(FXCollections.observableArrayList(labels));
+        return FXCollections.unmodifiableObservableList(labels.get());
     }
 }

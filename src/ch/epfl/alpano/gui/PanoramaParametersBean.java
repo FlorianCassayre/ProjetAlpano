@@ -8,7 +8,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import java.util.EnumMap;
 import java.util.Map;
 
-import static javafx.application.Platform.isFxApplicationThread;
 import static javafx.application.Platform.runLater;
 
 public class PanoramaParametersBean
