@@ -33,59 +33,50 @@ public final class Labelizer
 
     public List<Node> labels(PanoramaParameters parameters)
     {
-        final List<Summit> summits = getVisibleSummits(parameters);
+        final List<PositionalSummit> points = getVisibleSummits(parameters);
 
-        final Set<Double> horizontalCoordinates = new HashSet<>();
+        final Set<Integer> horizontalCoordinates = new HashSet<>();
 
-        final List<Summit> labelled = new ArrayList<>();
+        final List<PositionalSummit> labelled = new ArrayList<>();
 
-        double maxY = Double.POSITIVE_INFINITY;
+        int maxY = Integer.MAX_VALUE;
 
-        for(Summit summit : summits)
+        for(PositionalSummit point : points)
         {
-            final double azimuth = parameters.observerPosition().azimuthTo(summit.position());
-            final double verticalAngle = Math.atan2(summit.elevation() - parameters.observerElevation(), parameters.observerPosition().distanceTo(summit.position()));
-
-            final double x = parameters.xForAzimuth(azimuth), y = parameters.yForAltitude(verticalAngle);
-
-            if(y >= MAX_Y
-                    && x >= MIN_DISTANCE && x < parameters.width() - MIN_DISTANCE
-                    && doesNotContainSimilar(horizontalCoordinates, x, MIN_DISTANCE))
+            if(point.y >= MAX_Y
+                    && point.x >= MIN_DISTANCE && point.x < parameters.width() - MIN_DISTANCE
+                    && doesNotContainSimilar(horizontalCoordinates, point.x, MIN_DISTANCE))
             {
-                if(y < maxY)
-                    maxY = y;
+                if(point.y < maxY)
+                    maxY = point.y;
 
-                horizontalCoordinates.add(x);
-                labelled.add(summit);
+                horizontalCoordinates.add(point.x);
+                labelled.add(point);
             }
         }
 
         final List<Node> nodes = new ArrayList<>();
 
-        final double labelsY = Math.round(maxY - HORIZONTAL_LINE_SPACE);
+        final int labelsY = maxY - MIN_DISTANCE;
 
-        for(Summit summit : labelled)
+        for(PositionalSummit point : labelled)
         {
-            final double azimuth = parameters.observerPosition().azimuthTo(summit.position());
-            final double verticalAngle = Math.atan2(summit.elevation() - parameters.observerElevation(), parameters.observerPosition().distanceTo(summit.position()));
-            final double x = Math.round(parameters.xForAzimuth(azimuth)), y = Math.round(parameters.yForAltitude(verticalAngle));
-
-            String builder = summit.name() + " (" + summit.elevation() + " m)";
+            String builder = point.summit.name() + " (" + point.summit.elevation() + " m)";
 
             Text text = new Text(builder);
-            text.getTransforms().addAll(new Translate(x, labelsY), new Rotate(ROTATION_ANGLE, 0, 0));
+            text.getTransforms().addAll(new Translate(point.x, labelsY), new Rotate(ROTATION_ANGLE, 0, 0));
             nodes.add(text);
 
-            Line line = new Line(x, labelsY, x, y);
+            Line line = new Line(point.x, labelsY, point.x, point.y);
             nodes.add(line);
         }
 
         return nodes;
     }
 
-    private List<Summit> getVisibleSummits(PanoramaParameters parameters)
+    private List<PositionalSummit> getVisibleSummits(PanoramaParameters parameters)
     {
-        final List<Summit> visible = new ArrayList<>();
+        final List<PositionalSummit> visible = new ArrayList<>();
 
         for(Summit summit : summits)
         {
@@ -103,7 +94,7 @@ public final class Labelizer
                 final DoubleUnaryOperator functionDistance = PanoramaComputer.rayToGroundDistance(profile, parameters.observerElevation(), 0);
                 final double distanceCurve = functionDistance.applyAsDouble(distance);
 
-                double angle = Math.atan2(-distanceCurve, distance);
+                final double angle = Math.atan2(-distanceCurve, distance);
 
                 final DoubleUnaryOperator function = PanoramaComputer.rayToGroundDistance(profile, parameters.observerElevation(), angle);
 
@@ -112,22 +103,35 @@ public final class Labelizer
                 if(firstInterval == Double.POSITIVE_INFINITY
                         || (firstInterval < parameters.maxDistance() && profile.positionAt(firstInterval).distanceTo(summit.position()) <= DISTANCE_THRESHOLD))
                 {
-                    visible.add(summit);
+                    visible.add(new PositionalSummit(summit, (int) Math.round(parameters.xForAzimuth(azimuth)), (int) Math.round(parameters.yForAltitude(angle))));
                 }
             }
         }
 
-        visible.sort((Comparator.comparingInt(summit -> (int) parameters.yForAltitude(Math.atan2(summit.elevation() - parameters.observerElevation(), parameters.observerPosition().distanceTo(summit.position()))))));
+        visible.sort((a, b) -> a.y == b.y ? Integer.compare(b.summit.elevation(), a.summit.elevation()) : Integer.compare(a.y, b.y));
 
         return visible;
     }
 
-    private static boolean doesNotContainSimilar(Set<Double> set, double value, double distance)
+    private static boolean doesNotContainSimilar(Set<Integer> set, double value, double distance)
     {
-        for(Double d : set)
-            if(Math.abs(d - value) < distance)
+        for(Integer i : set)
+            if(Math.abs(i - value) < distance)
                 return false;
 
         return true;
+    }
+
+    private static final class PositionalSummit
+    {
+        private final Summit summit;
+        private final int x, y;
+
+        public PositionalSummit(Summit summit, int x, int y)
+        {
+            this.summit = summit;
+            this.x = x;
+            this.y = y;
+        }
     }
 }

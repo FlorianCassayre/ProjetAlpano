@@ -14,6 +14,9 @@ import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -37,10 +40,13 @@ public class LabelizerTest
     }
 
     @Test
-    public void testNiesenVisibleSummits()
+    public void testNiesenVisibleSummits() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchFieldException
     {
         final Labelizer labelizer = new Labelizer(cDEM, summits);
-        final List<Summit> visible = ReflexionUtil.invokeMethod(labelizer, "getVisibleSummits", new Class[] {PanoramaParameters.class}, new Object[] {PANORAMA.panoramaDisplayParameters()});
+
+        final Method method = Labelizer.class.getDeclaredMethod("getVisibleSummits", PanoramaParameters.class);
+        method.setAccessible(true);
+        final List list = (List) method.invoke(labelizer, PANORAMA.panoramaDisplayParameters());
 
         final String expected = "NIESEN (1223, 157)\n" +
                 "FROMBERGHORE (1437, 190)\n" +
@@ -57,12 +63,15 @@ public class LabelizerTest
         final StringBuilder builder = new StringBuilder();
         for(int i = 0; i < count; i++)
         {
-            final Summit summit = visible.get(i);
+            final Object o = list.get(i);
 
-            final double azimuth = PANORAMA.panoramaDisplayParameters().observerPosition().azimuthTo(summit.position());
-            final double verticalAngle = Math.atan2(summit.elevation() - PANORAMA.panoramaDisplayParameters().observerElevation(), PANORAMA.panoramaDisplayParameters().observerPosition().distanceTo(summit.position()));
-
-            final int x = (int) Math.round(PANORAMA.panoramaDisplayParameters().xForAzimuth(azimuth)), y = (int) Math.round(PANORAMA.panoramaDisplayParameters().yForAltitude(verticalAngle));
+            final Field fieldSummit = o.getClass().getDeclaredField("summit"), fieldX = o.getClass().getDeclaredField("x"), fieldY = o.getClass().getDeclaredField("y");
+            fieldSummit.setAccessible(true);
+            fieldX.setAccessible(true);
+            fieldY.setAccessible(true);
+            final Summit summit = (Summit) fieldSummit.get(o);
+            final int x = (int) fieldX.get(o);
+            final int y = (int) fieldY.get(o);
 
             builder.append(summit.name()).append(" (").append(x).append(", ").append(y).append(")");
             if(i != count - 1)
@@ -79,7 +88,7 @@ public class LabelizerTest
         final List<Node> nodes = labelizer.labels(PANORAMA.panoramaDisplayParameters());
 
         final String expected = "Text[text=\"FROMBERGHORE (2394 m)\", x=0.0, y=0.0,\n" +
-                "Line[startX=1437.0, startY=170.0, endX=1437.0,endY=190.0,\n" +
+                "Line[startX=1437.0, startY=170.0, endX=1437.0, endY=190.0,\n" +
                 "Text[text=\"DREISPITZ (2520 m)\", x=0.0, y=0.0,\n" +
                 "Line[startX=595.0, startY=170.0, endX=595.0, endY=258.0,\n" +
                 "Text[text=\"JUNGFRAU (4158 m)\", x=0.0, y=0.0,\n" +
