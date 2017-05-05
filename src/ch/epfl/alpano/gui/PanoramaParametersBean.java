@@ -5,62 +5,89 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleObjectProperty;
 
+import java.util.EnumMap;
+import java.util.Map;
+
+import static javafx.application.Platform.isFxApplicationThread;
+import static javafx.application.Platform.runLater;
+
 public class PanoramaParametersBean
 {
-    private final PanoramaUserParameters parameters;
+    private final ReadOnlyObjectWrapper<PanoramaUserParameters> parameters;
+
+    private final Map<UserParameter, ObjectProperty<Integer>> properties = new EnumMap<>(UserParameter.class);
 
     public PanoramaParametersBean(PanoramaUserParameters parameters)
     {
-        this.parameters = parameters;
+        this.parameters = new ReadOnlyObjectWrapper<>(parameters);
+
+        for(UserParameter parameter : UserParameter.values())
+        {
+            final ObjectProperty<Integer> property = new SimpleObjectProperty<>(parameters.get(parameter));
+            properties.put(parameter, property);
+
+            property.addListener((b, o, n) -> runLater(this::synchronizeParameters));
+        }
     }
 
     public ReadOnlyObjectProperty<PanoramaUserParameters> parametersProperty()
     {
-        return new ReadOnlyObjectWrapper<>(parameters);
+        return parameters;
     }
 
     public ObjectProperty<Integer> observerLongitudeProperty()
     {
-        return new SimpleObjectProperty<>(parameters.observerLongitude());
+        return properties.get(UserParameter.OBSERVER_LONGITUDE);
     }
 
     public ObjectProperty<Integer> observerLatitudeProperty()
     {
-        return new SimpleObjectProperty<>(parameters.observerLatitude());
+        return properties.get(UserParameter.OBSERVER_LATITUDE);
     }
 
     public ObjectProperty<Integer> observerElevationProperty()
     {
-        return new SimpleObjectProperty<>(parameters.observerElevation());
+        return properties.get(UserParameter.OBSERVER_ELEVATION);
     }
 
     public ObjectProperty<Integer> centerAzimuthProperty()
     {
-        return new SimpleObjectProperty<>(parameters.centerAzimuth());
+        return properties.get(UserParameter.CENTER_AZIMUTH);
     }
 
     public ObjectProperty<Integer> horizontalFieldOfViewProperty()
     {
-        return new SimpleObjectProperty<>(parameters.horizontalFieldOfView());
+        return properties.get(UserParameter.HORIZONTAL_FIELD_OF_VIEW);
     }
 
     public ObjectProperty<Integer> maxDistanceProperty()
     {
-        return new SimpleObjectProperty<>(parameters.maxDistance());
+        return properties.get(UserParameter.MAX_DISTANCE);
     }
 
     public ObjectProperty<Integer> widthProperty()
     {
-        return new SimpleObjectProperty<>(parameters.width());
+        return properties.get(UserParameter.WIDTH);
     }
 
     public ObjectProperty<Integer> heightProperty()
     {
-        return new SimpleObjectProperty<>(parameters.height());
+        return properties.get(UserParameter.HEIGHT);
     }
 
     public ObjectProperty<Integer> superSamplingExponentProperty()
     {
-        return new SimpleObjectProperty<>(parameters.supersamplingExponent());
+        return properties.get(UserParameter.SUPER_SAMPLING_EXPONENT);
+    }
+
+    private void synchronizeParameters()
+    {
+        final Map<UserParameter, Integer> map = new EnumMap<>(UserParameter.class);
+        for(UserParameter parameter : UserParameter.values())
+        {
+            map.put(parameter, properties.get(parameter).getValue());
+        }
+
+        parameters.set(new PanoramaUserParameters(map));
     }
 }
