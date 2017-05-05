@@ -8,20 +8,20 @@ import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.stage.Stage;
 
-public final class BeansUse extends Application {
-    public static void main(String[] args) {
+public final class BeansUse extends Application
+{
+    public static void main(String[] args)
+    {
         launch(args);
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        PanoramaParametersBean bean =
-                new PanoramaParametersBean(NIESEN);
-        ObjectProperty<Integer> prop =
-                bean.observerLatitudeProperty();
+    public void start(Stage primaryStage) throws Exception
+    {
+        PanoramaParametersBean bean = new PanoramaParametersBean(NIESEN);
+        ObjectProperty<Integer> prop = bean.observerLatitudeProperty();
 
-        prop.addListener((o, oV, nV) ->
-                System.out.printf("  %d -> %d (%s)%n", oV, nV, o));
+        prop.addListener((o, oV, nV) -> System.out.printf("  %d -> %d (%s)%n", oV, nV, o));
         System.out.println("set to 1");
         prop.set(1);
         System.out.println("set to 2");
@@ -29,4 +29,12 @@ public final class BeansUse extends Application {
 
         Platform.exit();
     }
+
+    /*
+    set to 1
+        467300 -> 1 (ObjectProperty [value: 1])
+    set to 2
+        1 -> 2 (ObjectProperty [value: 2])
+        2 -> 450000 (ObjectProperty [value: 450000])
+     */
 }

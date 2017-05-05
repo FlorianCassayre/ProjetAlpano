@@ -89,5 +89,10 @@ public class PanoramaParametersBean
         }
 
         parameters.set(new PanoramaUserParameters(map));
+
+        for(UserParameter parameter : UserParameter.values())
+        {
+            properties.get(parameter).set(parameters.getValue().get(parameter));
+        }
     }
 }
