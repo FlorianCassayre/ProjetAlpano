@@ -30,19 +30,19 @@ public class ElevationProfileTest
 
     private ElevationProfile createElevationProfile()
     {
-        return new ElevationProfile(new ContinuousElevationModel(new HgtDiscreteElevationModel(new File("res/data/N46E006.hgt"))), new GeoPoint(Math.toRadians(6), Math.toRadians(46)), Math.toRadians(45), 102400);
+        return new ElevationProfile(new ContinuousElevationModel(new HgtDiscreteElevationModel(new File("N46E006.hgt"))), new GeoPoint(Math.toRadians(6), Math.toRadians(46)), Math.toRadians(45), 102400);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testIllegalConstructorValues1()
     {
-        new ElevationProfile(new ContinuousElevationModel(new HgtDiscreteElevationModel(new File("res/data/N46E006.hgt"))), new GeoPoint(Math.toRadians(6), Math.toRadians(46)), Math.toRadians(45), 0);
+        new ElevationProfile(new ContinuousElevationModel(new HgtDiscreteElevationModel(new File("N46E006.hgt"))), new GeoPoint(Math.toRadians(6), Math.toRadians(46)), Math.toRadians(45), 0);
     }
 
     @Test(expected = NullPointerException.class)
     public void testIllegalConstructorValues2()
     {
-        new ElevationProfile(new ContinuousElevationModel(new HgtDiscreteElevationModel(new File("res/data/N46E006.hgt"))), null, Math.toRadians(45), 102400);
+        new ElevationProfile(new ContinuousElevationModel(new HgtDiscreteElevationModel(new File("N46E006.hgt"))), null, Math.toRadians(45), 102400);
     }
 
     @Test(expected = NullPointerException.class)

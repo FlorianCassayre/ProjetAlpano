@@ -17,4 +17,5 @@ log/
 target/
 /res/actual/*
 
-rec/*
+alps.txt
+*.hgt

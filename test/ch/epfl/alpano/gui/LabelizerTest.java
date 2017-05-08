@@ -25,8 +25,8 @@ import static org.junit.Assert.assertTrue;
 @RunWith(JfxRunner.class)
 public class LabelizerTest
 {
-    private static final File HGT_FILE = new File("res/data/N46E007.hgt");
-    private static final File SUMMIT_FILE = new File("res/data/alps.txt");
+    private static final File HGT_FILE = new File("N46E007.hgt");
+    private static final File SUMMIT_FILE = new File("alps.txt");
     private static final PanoramaUserParameters PANORAMA = PredefinedPanoramas.NIESEN;
 
     private static ContinuousElevationModel cDEM;

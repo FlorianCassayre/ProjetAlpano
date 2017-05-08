@@ -20,7 +20,7 @@ public class GazetteerParserTest
     @BeforeClass
     public static void parseFile() throws IOException
     {
-        parsed = GazetteerParser.readSummitsFrom(new File("res/data/alps.txt"));
+        parsed = GazetteerParser.readSummitsFrom(new File("alps.txt"));
     }
 
     @Test

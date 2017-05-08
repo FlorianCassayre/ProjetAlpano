@@ -57,7 +57,7 @@ public final class Labelizer
 
         final List<Node> nodes = new ArrayList<>();
 
-        final int labelsY = maxY - HORIZONTAL_LINE_SPACE;
+        final int labelsY = maxY - MIN_DISTANCE;
 
         for(PositionalSummit point : labelled)
         {
