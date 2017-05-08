@@ -20,7 +20,7 @@ public final class Labelizer
     private static final int HORIZONTAL_LINE_SPACE = 22;
     private static final int RAY_INTERVAL = 64;
     private static final int MIN_DISTANCE = 20;
-    private static final int ROTATION_ANGLE = 45;
+    private static final int ROTATION_ANGLE = -60;
 
     private final ContinuousElevationModel cDEM;
     private final List<Summit> summits;
@@ -57,7 +57,7 @@ public final class Labelizer
 
         final List<Node> nodes = new ArrayList<>();
 
-        final int labelsY = maxY - MIN_DISTANCE;
+        final int labelsY = maxY - HORIZONTAL_LINE_SPACE;
 
         for(PositionalSummit point : labelled)
         {
