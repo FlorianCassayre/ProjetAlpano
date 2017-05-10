@@ -18,6 +18,8 @@ public final class FixedPointStringConverter extends StringConverter<Integer>
     @Override
     public String toString(Integer n)
     {
+        if(n == null)
+            return ""; // FIXME
         return new BigDecimal(n).movePointLeft(i).toPlainString();
     }
 
