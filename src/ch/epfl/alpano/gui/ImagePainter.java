@@ -31,7 +31,7 @@ public interface ImagePainter
 
     /**
      * Creates an image painter from gray channels.
-     * @param gray the gray channe:
+     * @param gray the gray channel
      * @param opacity the opacity channel
      * @return the new image painter
      */

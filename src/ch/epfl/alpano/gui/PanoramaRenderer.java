@@ -7,12 +7,12 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
 /**
- * Utility class to render a panorama to an image.
+ * Utility class to render an image from a panorama.
  */
 public interface PanoramaRenderer
 {
     /**
-     * Renders a panorama to an image using the given parameters.
+     * Renders an image from a panorama using the given parameters.
      * @param panorama the panorama
      * @param painter the image painter
      * @return the rendered image
