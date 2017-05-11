@@ -18,21 +18,22 @@ public class PanoramaComputerBean
 {
     private final PanoramaComputer computer;
     private final Labelizer labelizer;
-    private final ObjectProperty<Panorama> panorama;
-    private final ObjectProperty<PanoramaUserParameters> parameters;
+    private final ObjectProperty<Panorama> panorama = new SimpleObjectProperty<>();
+    private final ObjectProperty<PanoramaUserParameters> parameters = new SimpleObjectProperty<>();
     private final ObjectProperty<Image> image = new SimpleObjectProperty<>();
-    private final ObjectProperty<ObservableList<Node>> labels = new SimpleObjectProperty<>();
+    private final ObjectProperty<ObservableList<Node>> labels;
 
     public PanoramaComputerBean(ContinuousElevationModel cDEM, PanoramaUserParameters parameters, List<Summit> summits)
     {
         this.computer = new PanoramaComputer(cDEM);
         this.labelizer = new Labelizer(cDEM, summits);
-        this.panorama = new SimpleObjectProperty<>();
-        this.parameters = new SimpleObjectProperty<>();
+
+        final ObservableList<Node> list = FXCollections.observableArrayList();
+        this.labels = new SimpleObjectProperty<>(FXCollections.unmodifiableObservableList(list));
 
         this.parameters.addListener((observable, oldValue, newValue) ->
         {
-            final Panorama p = computer.computePanorama(getParameters().panoramaDisplayParameters());
+            final Panorama p = computer.computePanorama(newValue.panoramaDisplayParameters());
             panorama.set(p);
 
             ChannelPainter h = ChannelPainter.distanceAt(p).div(100_000).cycling().mul(360);
@@ -47,8 +48,8 @@ public class PanoramaComputerBean
             final Image i = PanoramaRenderer.renderPanorama(p, painter);
             image.set(i);
 
-            final List<Node> l = labelizer.labels(getParameters().panoramaDisplayParameters());
-            labels.set(FXCollections.observableArrayList(l));
+            final List<Node> l = labelizer.labels(newValue.panoramaDisplayParameters());
+            list.setAll(l);
         });
 
         this.parameters.set(parameters);
@@ -96,6 +97,6 @@ public class PanoramaComputerBean
 
     public ObservableList<Node> getLabels()
     {
-        return FXCollections.unmodifiableObservableList(labels.get());
+        return labels.get();
     }
 }

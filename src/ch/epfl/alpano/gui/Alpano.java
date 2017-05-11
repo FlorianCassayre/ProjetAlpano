@@ -10,6 +10,9 @@ import ch.epfl.alpano.summit.Summit;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -27,6 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -53,8 +57,7 @@ public final class Alpano extends Application
         loadData();
 
         final PanoramaParametersBean parametersBean = new PanoramaParametersBean(INITIAL_PANORAMA);
-        final PanoramaComputerBean computerBean = new PanoramaComputerBean(cdem, INITIAL_PANORAMA, summits); // FIXME
-
+        final PanoramaComputerBean computerBean = new PanoramaComputerBean(cdem, INITIAL_PANORAMA, summits);
 
 
         final BorderPane root = new BorderPane();
@@ -119,7 +122,7 @@ public final class Alpano extends Application
             labelsPane.prefWidthProperty().bind(parametersBean.widthProperty());
             labelsPane.prefHeightProperty().bind(parametersBean.heightProperty());
             labelsPane.setMouseTransparent(true);
-            Bindings.bindContent(labelsPane.getChildren(), computerBean.getLabels()); // FIXME (NPE)
+            Bindings.bindContent(labelsPane.getChildren(), computerBean.getLabels());
 
 
             final StackPane updateNotice = new StackPane();
@@ -129,7 +132,7 @@ public final class Alpano extends Application
             text.setTextAlignment(TextAlignment.CENTER);
             updateNotice.getChildren().add(text);
 
-            updateNotice.visibleProperty().bind(parametersBean.parametersProperty().isNotEqualTo(computerBean.getParameters()));
+            updateNotice.visibleProperty().bind(computerBean.parametersProperty().isNotEqualTo(parametersBean.parametersProperty()));
 
             updateNotice.setOnMouseClicked(event -> computerBean.setParameters(parametersBean.parametersProperty().get()));
 
@@ -141,10 +144,8 @@ public final class Alpano extends Application
             panoPane.getChildren().addAll(panoScrollPane, updateNotice);
         }
 
-
         {
-            final TextField f = createTextField(new FixedPointStringConverter(4), parametersBean.observerLatitudeProperty(), 7);
-            addParameterToGrid(paramsGrid, "Latitude (°) :", f, 0, 0);
+            addParameterToGrid(paramsGrid, "Latitude (°) :", createTextField(new FixedPointStringConverter(4), parametersBean.observerLatitudeProperty(), 7), 0, 0);
             addParameterToGrid(paramsGrid, "Longitude (°) :", createTextField(new FixedPointStringConverter(4), parametersBean.observerLongitudeProperty(), 7), 1, 0);
             addParameterToGrid(paramsGrid, "Altitude (m) :", createTextField(new FixedPointStringConverter(0), parametersBean.observerElevationProperty(), 4), 2, 0);
             addParameterToGrid(paramsGrid, "Azimuth (°) :", createTextField(new FixedPointStringConverter(0), parametersBean.centerAzimuthProperty(), 3), 0, 1);
@@ -155,17 +156,20 @@ public final class Alpano extends Application
 
 
             final ChoiceBox<Integer> choiceBox = new ChoiceBox<>();
-            final StringConverter stringConverter = new LabeledListStringConverter("non", "2×", "4×");
-            choiceBox.setConverter(stringConverter);
+            choiceBox.setConverter(new LabeledListStringConverter("non", "2×", "4×"));
+            choiceBox.setItems(FXCollections.observableArrayList(Arrays.asList(0, 1, 2)));
             choiceBox.valueProperty().bindBidirectional(parametersBean.superSamplingExponentProperty());
             addParameterToGrid(paramsGrid, "Suréchantillonnage :", choiceBox, 2, 2);
 
             textArea.setEditable(false);
             textArea.setPrefRowCount(2);
-            paramsGrid.add(textArea, 6, 0);
+            paramsGrid.add(textArea, 6, 0, 6, 3);
+
+            paramsGrid.setHgap(10);
+            paramsGrid.setVgap(3);
+            paramsGrid.setPadding(new Insets(3, 3, 3, 3));
+            paramsGrid.setAlignment(Pos.CENTER);
         }
-
-
 
 
         final Scene scene = new Scene(root);
@@ -178,6 +182,7 @@ public final class Alpano extends Application
     private void addParameterToGrid(GridPane gridPane, String name, Node node, int column, int row)
     {
         final Label label = new Label(name);
+        GridPane.setHalignment(label, HPos.RIGHT);
         gridPane.add(label, column * 2, row);
         gridPane.add(node, column * 2 + 1, row);
     }
