@@ -33,7 +33,7 @@ public class PanoramaComputerBean
 
         this.parameters.addListener((observable, oldValue, newValue) ->
         {
-            final Panorama p = computer.computePanorama(newValue.panoramaDisplayParameters());
+            final Panorama p = computer.computePanorama(newValue.panoramaParameters());
             panorama.set(p);
 
             ChannelPainter h = ChannelPainter.distanceAt(p).div(100_000).cycling().mul(360);
