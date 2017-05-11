@@ -18,7 +18,7 @@ import static java.lang.Math.toRadians;
 
 public class PanoramaHDDraw
 {
-    final static File HGT_FILE = new File("res/data/N46E007.hgt");
+    final static File HGT_FILE = new File("N46E007.hgt");
 
     final static int IMAGE_WIDTH = 500 * 5 * 4;
     final static int IMAGE_HEIGHT = 200 * 5 * 4;

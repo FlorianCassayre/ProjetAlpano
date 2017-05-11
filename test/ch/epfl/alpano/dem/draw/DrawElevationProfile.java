@@ -14,7 +14,7 @@ import static java.awt.image.BufferedImage.TYPE_INT_RGB;
 
 public final class DrawElevationProfile
 {
-    final static File HGT_FILE = new File("res/data/N46E006.hgt");
+    final static File HGT_FILE = new File("N46E006.hgt");
     final static double MAX_ELEVATION = 1_500;
     final static int LENGTH = 111_000;
     final static double AZIMUTH = Math.toRadians(27.97);

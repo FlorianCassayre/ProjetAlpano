@@ -13,7 +13,7 @@ import static java.awt.image.BufferedImage.TYPE_INT_RGB;
 
 public final class DrawHgtDEM
 {
-    final static File HGT_FILE = new File("res/data/N46E006.hgt");
+    final static File HGT_FILE = new File("N46E006.hgt");
     final static double ORIGIN_LON = Math.toRadians(6.25);
     final static double ORIGIN_LAT = Math.toRadians(46.25);
     final static double WIDTH = Math.toRadians(0.5);

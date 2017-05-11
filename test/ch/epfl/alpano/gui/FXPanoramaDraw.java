@@ -19,10 +19,10 @@ import java.util.List;
 
 public class FXPanoramaDraw extends Application
 {
-    private static final File HGT_FILE_1 = new File("res/data/N46E006.hgt");
-    private static final File HGT_FILE_2 = new File("res/data/N46E007.hgt");
+    private static final File HGT_FILE_1 = new File("N46E006.hgt");
+    private static final File HGT_FILE_2 = new File("N46E007.hgt");
 
-    private static final File SUMMIT_FILE = new File("res/data/alps.txt");
+    private static final File SUMMIT_FILE = new File("alps.txt");
     private static final PanoramaUserParameters PARAMETERS = PredefinedPanoramas.NIESEN;
 
     public static void main(String[] args)
