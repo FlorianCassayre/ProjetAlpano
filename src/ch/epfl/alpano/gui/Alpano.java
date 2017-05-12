@@ -195,17 +195,15 @@ public final class Alpano extends Application
 
     private TextField createTextField(StringConverter<Integer> converter, ObjectProperty<Integer> property, int columns)
     {
-        final TextField field = new TextField("0");
+        final TextField field = new TextField();
         field.setAlignment(Pos.CENTER_RIGHT);
         field.setPrefColumnCount(columns);
-        field.setText("0"); // FIXME
-
-        field.setText(converter.toString(property.get()));
 
         final TextFormatter<Integer> formatter = new TextFormatter<>(converter);
-        field.setTextFormatter(formatter);
 
         formatter.valueProperty().bindBidirectional(property);
+
+        field.setTextFormatter(formatter);
 
         return field;
     }
