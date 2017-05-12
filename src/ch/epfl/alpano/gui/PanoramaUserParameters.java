@@ -86,8 +86,8 @@ public final class PanoramaUserParameters
                 Math.toRadians(centerAzimuth()),
                 Math.toRadians(horizontalFieldOfView()),
                 maxDistance() * 1_000,
-                width() * (1 << supersamplingExponent()),
-                height() * (1 << supersamplingExponent())
+                width() << supersamplingExponent(),
+                height() << supersamplingExponent()
         );
     }
 

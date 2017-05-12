@@ -83,12 +83,14 @@ public final class Alpano extends Application
 
             panoView.setOnMouseMoved(e ->
             {
-                final int x = (int) Math.round(e.getX()), y = (int) Math.round(e.getY());
+                final int supersampling = computerBean.getParameters().supersamplingExponent();
+
+                final int x = ((int) Math.round(e.getX()) << supersampling), y = ((int) Math.round(e.getY()) << supersampling);
                 final Panorama panorama = computerBean.getPanorama();
                 final double longitude = Math.toDegrees(panorama.longitudeAt(x, y)), latitude = Math.toDegrees(panorama.latitudeAt(x, y));
                 final double distance = panorama.distanceAt(x, y) / 1000.0;
                 final int elevation = Math.round(panorama.elevationAt(x, y));
-                final double azimuth = Math.toDegrees(Azimuth.toMath(computerBean.getParameters().panoramaDisplayParameters().azimuthForX(x))), verticalAngle = Math.toDegrees(computerBean.getParameters().panoramaDisplayParameters().altitudeForY(y));
+                final double azimuth = Math.toDegrees(Azimuth.toMath(computerBean.getParameters().panoramaParameters().azimuthForX(x))), verticalAngle = Math.toDegrees(computerBean.getParameters().panoramaParameters().altitudeForY(y));
 
                 final String octantAzimuth = Azimuth.toOctantString(Math.toRadians(azimuth), "N", "E", "S", "O");
 
@@ -103,7 +105,9 @@ public final class Alpano extends Application
 
             panoView.setOnMouseClicked(e ->
             {
-                final int x = (int) Math.round(e.getX()), y = (int) Math.round(e.getY());
+                final int supersampling = computerBean.getParameters().supersamplingExponent();
+
+                final int x = ((int) Math.round(e.getX()) << supersampling), y = ((int) Math.round(e.getY()) << supersampling);
                 final double longitude = Math.toDegrees(computerBean.getPanorama().longitudeAt(x, y)), latitude = Math.toDegrees(computerBean.getPanorama().latitudeAt(x, y));
 
                 final String qy = "mlat=" + latitude + "&mlon=" + longitude;
