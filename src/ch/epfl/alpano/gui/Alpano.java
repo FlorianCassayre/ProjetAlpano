@@ -90,11 +90,13 @@ public final class Alpano extends Application
                 final int elevation = Math.round(panorama.elevationAt(x, y));
                 final double azimuth = Math.toDegrees(Azimuth.toMath(computerBean.getParameters().panoramaDisplayParameters().azimuthForX(x))), verticalAngle = Math.toDegrees(computerBean.getParameters().panoramaDisplayParameters().altitudeForY(y));
 
+                final String octantAzimuth = Azimuth.toOctantString(Math.toRadians(azimuth), "N", "E", "S", "O");
+
                 final StringBuilder builder = new StringBuilder();
                 builder.append("Position : ").append(String.format((Locale) null, "%.4f", longitude)).append("°N ").append(String.format((Locale) null, "%.4f", latitude)).append("°E\n");
                 builder.append("Distance : ").append(String.format((Locale) null, "%.1f", distance)).append(" km\n");
                 builder.append("Altitude : ").append(elevation).append(" m\n");
-                builder.append("Azimuth : ").append(String.format((Locale) null, "%.1f", azimuth)).append("° (S) Elévation : ").append(String.format((Locale) null, "%.1f", verticalAngle)).append("°");
+                builder.append("Azimuth : ").append(String.format((Locale) null, "%.1f", azimuth)).append("° (").append(octantAzimuth).append(") Elévation : ").append(String.format((Locale) null, "%.1f", verticalAngle)).append("°");
 
                 textArea.setText(builder.toString());
             });
