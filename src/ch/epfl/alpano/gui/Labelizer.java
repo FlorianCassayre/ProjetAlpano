@@ -25,12 +25,22 @@ public final class Labelizer
     private final ContinuousElevationModel cDEM;
     private final List<Summit> summits;
 
+    /**
+     * Creates a labelizer from a continuous elevation model and a summit list.
+     * @param cDEM the continuous elevation model
+     * @param summits the summits list
+     */
     public Labelizer(ContinuousElevationModel cDEM, List<Summit> summits)
     {
         this.cDEM = Objects.requireNonNull(cDEM);
         this.summits = Collections.unmodifiableList(new ArrayList<>(summits));
     }
 
+    /**
+     * Labelizes the visible summits
+     * @param parameters the panorama parameters
+     * @return the list of nodes representing the labels
+     */
     public List<Node> labels(PanoramaParameters parameters)
     {
         final List<PositionalSummit> points = getVisibleSummits(parameters);
@@ -74,6 +84,11 @@ public final class Labelizer
         return nodes;
     }
 
+    /**
+     * Gives the visible summits based on panorama parameters.
+     * @param parameters the panorama parameters
+     * @return the list of the visible summits
+     */
     private List<PositionalSummit> getVisibleSummits(PanoramaParameters parameters)
     {
         final List<PositionalSummit> visible = new ArrayList<>();
