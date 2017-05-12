@@ -36,11 +36,12 @@ public class PanoramaComputerBean
             final Panorama p = computer.computePanorama(newValue.panoramaParameters());
             panorama.set(p);
 
-            ChannelPainter h = ChannelPainter.distanceAt(p).div(100_000).cycling().mul(360);
-            ChannelPainter s = ChannelPainter.distanceAt(p).div(200_000).clamped().inverted();
-            ChannelPainter b = ChannelPainter.slopeAt(p).mul(2).div((float) Math.PI).inverted().mul(0.7f).add(0.3f);
+            final ChannelPainter distance = p::distanceAt, slope = p::slopeAt;
 
-            ChannelPainter distance = p::distanceAt;
+            ChannelPainter h = distance.div(100_000).cycling().mul(360);
+            ChannelPainter s = distance.div(200_000).clamped().inverted();
+            ChannelPainter b = slope.mul(2).div((float) Math.PI).inverted().mul(0.7f).add(0.3f);
+
             ChannelPainter opacity = distance.map(d -> d == Float.POSITIVE_INFINITY ? 0 : 1);
 
             ImagePainter painter = ImagePainter.hsb(h, s, b, opacity);
