@@ -79,6 +79,11 @@ public class PanoramaParametersBean
         return properties.get(UserParameter.SUPER_SAMPLING_EXPONENT);
     }
 
+    public ObjectProperty<Integer> painterProperty()
+    {
+        return properties.get(UserParameter.PAINTER);
+    }
+
     private void synchronizeParameters()
     {
         final Map<UserParameter, Integer> map = new EnumMap<>(UserParameter.class);

@@ -184,9 +184,10 @@ public final class Alpano extends Application
         addParameterToGrid(paramsGrid, "Étiquettes :", choiceShowLabels, 3, 0);
 
         final ChoiceBox<Integer> choicePainter = new ChoiceBox<>();
-        choicePainter.setConverter(new LabeledListStringConverter("couleur", "noir et blanc"));
-        choicePainter.setItems(FXCollections.observableArrayList(0, 1));
-        choicePainter.setValue(0);
+        choicePainter.setConverter(new LabeledListStringConverter("couleur", "noir et blanc", "bordure uniquement"));
+        choicePainter.valueProperty().bindBidirectional(parametersBean.painterProperty());
+        choicePainter.setItems(FXCollections.observableArrayList(0, 1, 2));
+
         addParameterToGrid(paramsGrid, "Style :", choicePainter, 3, 1);
 
         final Button saveImage = new Button("...");

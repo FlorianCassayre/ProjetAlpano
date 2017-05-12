@@ -46,7 +46,7 @@ public final class PanoramaUserParameters
      * @param height the height of the panorama
      * @param supersamplingExponent the supersampling exponent
      */
-    public PanoramaUserParameters(int observerLongitude, int observerLatitude, int observerElevation, int centerAzimuth, int horizontalFieldOfView, int maxDistance, int width, int height, int supersamplingExponent)
+    public PanoramaUserParameters(int observerLongitude, int observerLatitude, int observerElevation, int centerAzimuth, int horizontalFieldOfView, int maxDistance, int width, int height, int supersamplingExponent, int painter)
     {
         this(new EnumMap<UserParameter, Integer>(UserParameter.class)
         {
@@ -60,6 +60,7 @@ public final class PanoramaUserParameters
                 put(UserParameter.WIDTH, width);
                 put(UserParameter.HEIGHT, height);
                 put(UserParameter.SUPER_SAMPLING_EXPONENT, supersamplingExponent);
+                put(UserParameter.PAINTER, painter);
             }
         });
     }
@@ -160,6 +161,11 @@ public final class PanoramaUserParameters
     public int supersamplingExponent()
     {
         return get(UserParameter.SUPER_SAMPLING_EXPONENT);
+    }
+
+    public int painter()
+    {
+        return get(UserParameter.PAINTER);
     }
 
     @Override

@@ -13,7 +13,8 @@ public enum UserParameter
     MAX_DISTANCE(10, 600),
     WIDTH(30, 16_000),
     HEIGHT(10, 4_000),
-    SUPER_SAMPLING_EXPONENT(0, 2);
+    SUPER_SAMPLING_EXPONENT(0, 2),
+    PAINTER(0, 2);
 
     private final int min, max;
 
