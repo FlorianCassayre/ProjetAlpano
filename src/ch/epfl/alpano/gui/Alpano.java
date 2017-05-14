@@ -17,8 +17,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -202,7 +204,8 @@ public final class Alpano extends Application
             {
                 try
                 {
-                    ImageIO.write(SwingFXUtils.fromFXImage(computerBean.getImage(), null), "png", file);
+                    final WritableImage image = panoGroup.snapshot(new SnapshotParameters(), null);
+                    ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
                 }
                 catch(IOException e)
                 {
