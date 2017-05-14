@@ -26,7 +26,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
@@ -36,7 +35,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -155,7 +153,7 @@ public final class Alpano extends Application
 
         panoPane.getChildren().addAll(panoScrollPane, updateNotice);
 
-        // ----------------
+
 
         addParameterToGrid(paramsGrid, "Latitude (°) :", createTextField(new FixedPointStringConverter(4), parametersBean.observerLatitudeProperty(), 7), 0, 0);
         addParameterToGrid(paramsGrid, "Longitude (°) :", createTextField(new FixedPointStringConverter(4), parametersBean.observerLongitudeProperty(), 7), 1, 0);
@@ -173,9 +171,25 @@ public final class Alpano extends Application
         choiceBox.valueProperty().bindBidirectional(parametersBean.superSamplingExponentProperty());
         addParameterToGrid(paramsGrid, "Suréchantillonnage :", choiceBox, 2, 2);
 
+        final Label predefinedTitle = new Label("Panoramas prédéfinis");
+        GridPane.setHalignment(predefinedTitle, HPos.CENTER);
+        paramsGrid.add(predefinedTitle, 8, 0);
+
+        final ListView<String> listView = new ListView<>();
+        listView.setItems(FXCollections.unmodifiableObservableList(FXCollections.observableArrayList(PredefinedPanoramas.LIST.keySet())));
+        listView.maxWidthProperty().bind(predefinedTitle.widthProperty());
+        listView.setPrefHeight(0);
+        listView.setOnMouseClicked(event ->
+        {
+            final String key = listView.getSelectionModel().getSelectedItem();
+            parametersBean.setAll(PredefinedPanoramas.LIST.get(key));
+        });
+        paramsGrid.add(listView, 8, 1, 8, 2);
+
+
         textArea.setEditable(false);
         textArea.setPrefRowCount(2);
-        paramsGrid.add(textArea, 8, 0, 8, 3);
+        paramsGrid.add(textArea, 9, 0, 9, 3);
 
 
         final ChoiceBox<Integer> choiceShowLabels = new ChoiceBox<>();

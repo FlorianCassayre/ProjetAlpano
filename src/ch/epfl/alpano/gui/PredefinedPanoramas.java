@@ -1,5 +1,9 @@
 package ch.epfl.alpano.gui;
 
+import java.util.Collections;
+import java.util.Map;
+import java.util.TreeMap;
+
 /**
  * A class containing preset panorama parameters examples.
  * The presets are namely:
@@ -20,4 +24,14 @@ public interface PredefinedPanoramas
     PanoramaUserParameters FINSTERAARHORN = new PanoramaUserParameters(8_1260, 46_5374, 4300, 205, 20, 300, 2500, 800, 0, 0);
     PanoramaUserParameters TOUR_DE_SAUVABELIN = new PanoramaUserParameters(6_6385, 46_5353, 700, 135, 100, 300, 2500, 800, 0, 0);
     PanoramaUserParameters PLAGE_DU_PELICAN = new PanoramaUserParameters(6_5728, 46_5132, 380, 135, 60, 300, 2500, 800, 0, 0);
+
+    Map<String, PanoramaUserParameters> LIST = Collections.unmodifiableMap(new TreeMap<String, PanoramaUserParameters>()
+    {{
+        put("Niesen", NIESEN);
+        put("Alpes du Jura", ALPES_JURA);
+        put("Mont Racine", MONT_RACINE);
+        put("Finsteraarhorn", FINSTERAARHORN);
+        put("Tour de Sauvabelin", TOUR_DE_SAUVABELIN);
+        put("Plage du Pélican", PLAGE_DU_PELICAN);
+    }});
 }

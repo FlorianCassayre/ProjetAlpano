@@ -34,6 +34,14 @@ public class PanoramaParametersBean
         return parameters;
     }
 
+    public void setAll(PanoramaUserParameters parameters)
+    {
+        for(UserParameter p : UserParameter.values())
+        {
+            this.properties.get(p).set(parameters.get(p));
+        }
+    }
+
     public ObjectProperty<Integer> observerLongitudeProperty()
     {
         return properties.get(UserParameter.OBSERVER_LONGITUDE);
