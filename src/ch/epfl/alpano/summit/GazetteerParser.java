@@ -14,8 +14,7 @@ import java.util.List;
 public final class GazetteerParser
 {
     private GazetteerParser() // Not instantiable
-    {
-    }
+    {}
 
     /**
      * Returns a {@link List} of {@link Summit} read from a file.

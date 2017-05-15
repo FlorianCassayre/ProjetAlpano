@@ -5,10 +5,17 @@ import javafx.util.StringConverter;
 
 import java.util.Arrays;
 
+/**
+ * A class used to translate an integer into a string from a list and vice versa.
+ */
 public final class LabeledListStringConverter extends StringConverter<Integer>
 {
     private final String[] strings;
 
+    /**
+     * Creates a new translator, according to the array.
+     * @param strings the string array
+     */
     public LabeledListStringConverter(String... strings)
     {
         this.strings = Arrays.copyOf(strings, strings.length);

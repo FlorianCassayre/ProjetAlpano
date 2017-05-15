@@ -10,12 +10,19 @@ import java.util.Map;
 
 import static javafx.application.Platform.runLater;
 
+/**
+ * A bean for the panorama parameters.
+ */
 public class PanoramaParametersBean
 {
     private final ReadOnlyObjectWrapper<PanoramaUserParameters> parameters;
 
     private final Map<UserParameter, ObjectProperty<Integer>> properties = new EnumMap<>(UserParameter.class);
 
+    /**
+     * Creates a new bean with some initial parameters.
+     * @param parameters the parameters for this bean
+     */
     public PanoramaParametersBean(PanoramaUserParameters parameters)
     {
         this.parameters = new ReadOnlyObjectWrapper<>(parameters);
@@ -79,6 +86,9 @@ public class PanoramaParametersBean
         return properties.get(UserParameter.SUPER_SAMPLING_EXPONENT);
     }
 
+    /**
+     * Replaces the instance of the parameters property.
+     */
     private void synchronizeParameters()
     {
         final Map<UserParameter, Integer> map = new EnumMap<>(UserParameter.class);

@@ -11,6 +11,16 @@ public final class Panorama
     private final PanoramaParameters parameters;
     private final float[] distance, longitudes, latitudes, elevations, slopes;
 
+    /**
+     * Creates a new immutable panorama. This constructor should only be called by its {@link Builder}.
+     * Note that for optimality reasons, the arrays are not copied.
+     * @param parameters the parameters
+     * @param distances an array containing the distances
+     * @param longitudes an array containing the longitudes
+     * @param latitudes an array containing the latitudes
+     * @param elevations an array containing the elevations
+     * @param slopes an array containing the slopes
+     */
     private Panorama(PanoramaParameters parameters, float[] distances, float[] longitudes, float[] latitudes, float[] elevations, float[] slopes)
     {
         this.parameters = Objects.requireNonNull(parameters);
@@ -132,6 +142,10 @@ public final class Panorama
 
         private boolean built = false;
 
+        /**
+         * Creates a new panorama builder.
+         * @param parameters the parameters (they cannot be changed later on)
+         */
         public Builder(PanoramaParameters parameters)
         {
             this.parameters = Objects.requireNonNull(parameters);

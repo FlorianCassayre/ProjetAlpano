@@ -13,6 +13,9 @@ import javafx.scene.transform.Translate;
 import java.util.*;
 import java.util.function.DoubleUnaryOperator;
 
+/**
+ * A class used to get the visible labels for a given panorama, from a {@link Summit} list.
+ */
 public final class Labelizer
 {
     private static final int MAX_Y = 170;
@@ -128,20 +131,36 @@ public final class Labelizer
         return visible;
     }
 
-    private static boolean doesNotContainSimilar(Set<Integer> set, double value, double distance)
+    /**
+     * Checks if a set contains a specified value or similar.
+     * @param collection the collection to check
+     * @param value the value to find
+     * @param distance the maximum distance between the value
+     * @return <code>false</code> no similar value was found, <code>true</code> else
+     */
+    private static boolean doesNotContainSimilar(Iterable<Integer> collection, double value, double distance)
     {
-        for(Integer i : set)
+        for(Integer i : collection)
             if(Math.abs(i - value) < distance)
                 return false;
 
         return true;
     }
 
+    /**
+     * Represents a summit and its coordinates on the screen.
+     */
     private static final class PositionalSummit
     {
         private final Summit summit;
         private final int x, y;
 
+        /**
+         * Creates a new instance.
+         * @param summit the summit
+         * @param x the x coordinate
+         * @param y the y coordinate
+         */
         public PositionalSummit(Summit summit, int x, int y)
         {
             this.summit = summit;

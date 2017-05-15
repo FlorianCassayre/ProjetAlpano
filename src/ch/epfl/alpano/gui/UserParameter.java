@@ -17,6 +17,11 @@ public enum UserParameter
 
     private final int min, max;
 
+    /**
+     * Creates a new parameter type.
+     * @param min the minimum value (included)
+     * @param max the maximum value (included)
+     */
     UserParameter(int min, int max)
     {
         this.min = min;

@@ -13,6 +13,12 @@ public final class Summit
     private final GeoPoint position;
     private final int elevation;
 
+    /**
+     * Creates a new summit immutable instance.
+     * @param name the summit name
+     * @param position the summit position
+     * @param elevation the summit elevation
+     */
     public Summit(String name, GeoPoint position, int elevation)
     {
         this.name = Objects.requireNonNull(name);

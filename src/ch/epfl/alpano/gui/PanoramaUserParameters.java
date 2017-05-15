@@ -117,46 +117,82 @@ public final class PanoramaUserParameters
         return new EnumMap<>(userParameters);
     }
 
+    /**
+     * The observer longitude.
+     * @return the observer longitude
+     */
     public int observerLongitude()
     {
         return get(UserParameter.OBSERVER_LONGITUDE);
     }
 
+    /**
+     * The observer latitude.
+     * @return the observer latitude
+     */
     public int observerLatitude()
     {
         return get(UserParameter.OBSERVER_LATITUDE);
     }
 
+    /**
+     * The observer elevation.
+     * @return the observer elevation
+     */
     public int observerElevation()
     {
         return get(UserParameter.OBSERVER_ELEVATION);
     }
 
+    /**
+     * The center azimuth.
+     * @return the center azimuth
+     */
     public int centerAzimuth()
     {
         return get(UserParameter.CENTER_AZIMUTH);
     }
 
+    /**
+     * The horizontal field of view.
+     * @return the horizontal field of view
+     */
     public int horizontalFieldOfView()
     {
         return get(UserParameter.HORIZONTAL_FIELD_OF_VIEW);
     }
 
+    /**
+     * The maximum distance.
+     * @return the maximum distance
+     */
     public int maxDistance()
     {
         return get(UserParameter.MAX_DISTANCE);
     }
 
+    /**
+     * The width.
+     * @return the width
+     */
     public int width()
     {
         return get(UserParameter.WIDTH);
     }
 
+    /**
+     * The height.
+     * @return the height
+     */
     public int height()
     {
         return get(UserParameter.HEIGHT);
     }
 
+    /**
+     * The supersampling exponent.
+     * @return the supersampling exponent
+     */
     public int supersamplingExponent()
     {
         return get(UserParameter.SUPER_SAMPLING_EXPONENT);
