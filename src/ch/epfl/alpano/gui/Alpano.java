@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -44,6 +45,7 @@ public final class Alpano extends Application
 
     private static final String OSM_PROTOCOL = "http", OSM_DOMAIN = "www.openstreetmap.org";
     private static final String TEXT_PARAMETERS_MODIFIED = "Les paramètres du panorama ont changé.\nCliquez ici pour mettre le dessin à jour.";
+    private static final String TEXT_PANORAMA_COMPUTING = "Calcul du panorama en cours...\nVeuillez patienter.";
 
     private static final PanoramaUserParameters INITIAL_PANORAMA = PredefinedPanoramas.ALPES_JURA;
 
@@ -70,10 +72,15 @@ public final class Alpano extends Application
 
         final StackPane panoPane = new StackPane();
         final GridPane paramsGrid = new GridPane();
+        final BorderPane splitPane = new BorderPane();
+        final ProgressBar progressBar = new ProgressBar();
+
 
         root.setCenter(panoPane);
-        root.setBottom(paramsGrid);
+        root.setBottom(splitPane);
 
+        splitPane.setTop(progressBar);
+        splitPane.setBottom(paramsGrid);
 
         final TextArea textArea = new TextArea();
 
@@ -137,14 +144,30 @@ public final class Alpano extends Application
 
         final StackPane updateNotice = new StackPane();
         updateNotice.setBackground(new Background(new BackgroundFill(Color.gray(1.0, 0.9), null, null)));
-        final Text text = new Text(TEXT_PARAMETERS_MODIFIED);
-        text.setFont(new Font(40.0));
-        text.setTextAlignment(TextAlignment.CENTER);
-        updateNotice.getChildren().add(text);
 
-        updateNotice.visibleProperty().bind(computerBean.parametersProperty().isNotEqualTo(parametersBean.parametersProperty()));
+        final Font font = new Font(40.0);
 
-        updateNotice.setOnMouseClicked(event -> computerBean.setParameters(parametersBean.parametersProperty().get()));
+        final Text updateText = new Text(TEXT_PARAMETERS_MODIFIED);
+        updateText.setFont(font);
+        updateText.setTextAlignment(TextAlignment.CENTER);
+        updateNotice.getChildren().add(updateText);
+
+        final Text computingText = new Text(TEXT_PANORAMA_COMPUTING);
+        computingText.setFont(font);
+        computingText.setTextAlignment(TextAlignment.CENTER);
+        updateNotice.getChildren().add(computingText);
+
+        updateText.visibleProperty().bind(computerBean.parametersProperty().isNotEqualTo(parametersBean.parametersProperty()).and(computerBean.computingProperty().not()));
+        computingText.visibleProperty().bind(computerBean.computingProperty());
+
+        updateNotice.visibleProperty().bind(updateText.visibleProperty().or(computingText.visibleProperty()));
+
+
+        updateNotice.setOnMouseClicked(event ->
+        {
+            if(!computerBean.computingProperty().getValue())
+                computerBean.setParameters(parametersBean.parametersProperty().get());
+        });
 
         final StackPane panoGroup = new StackPane();
         panoGroup.getChildren().addAll(panoView, labelsPane);
@@ -241,6 +264,10 @@ public final class Alpano extends Application
         paramsGrid.setAlignment(Pos.CENTER);
 
 
+        progressBar.setMaxWidth(Double.MAX_VALUE);
+        progressBar.progressProperty().bind(computerBean.progressProperty());
+
+
         stage.setTitle("Alpano");
         stage.setScene(scene);
         stage.show();
@@ -256,15 +283,17 @@ public final class Alpano extends Application
 
     private TextField createTextField(StringConverter<Integer> converter, ObjectProperty<Integer> property, int columns)
     {
-        final TextField field = new TextField();
+        final TextField field = new TextField("0");
         field.setAlignment(Pos.CENTER_RIGHT);
         field.setPrefColumnCount(columns);
+        field.setText("0"); // FIXME
+
+        field.setText(converter.toString(property.get()));
 
         final TextFormatter<Integer> formatter = new TextFormatter<>(converter);
+        field.setTextFormatter(formatter);
 
         formatter.valueProperty().bindBidirectional(property);
-
-        field.setTextFormatter(formatter);
 
         return field;
     }

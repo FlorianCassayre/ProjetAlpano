@@ -2,8 +2,15 @@ package ch.epfl.alpano;
 
 import ch.epfl.alpano.dem.ContinuousElevationModel;
 import ch.epfl.alpano.dem.ElevationProfile;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyProperty;
+import javafx.beans.property.SimpleObjectProperty;
 
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.DoubleUnaryOperator;
 
 /**
@@ -13,6 +20,8 @@ public final class PanoramaComputer
 {
     private static final int SEARCH_INTERVAL = 64;
     private static final int DICHOTOMY_STEP = 4;
+
+    private final ObjectProperty<Double> progress = new SimpleObjectProperty<>(0.0);
 
     private final ContinuousElevationModel dem;
 
@@ -34,41 +43,64 @@ public final class PanoramaComputer
     {
         final Panorama.Builder builder = new Panorama.Builder(parameters);
 
+        final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+
+        final AtomicInteger progression = new AtomicInteger(0);
+        progress.set(0.0);
+
         for(int x = 0; x < parameters.width(); x++)
         {
             final double azimuth = parameters.azimuthForX(x);
 
             final ElevationProfile profile = new ElevationProfile(dem, parameters.observerPosition(), azimuth, parameters.maxDistance());
 
-            double lastRoot = 0;
+            final int x1 = x;
 
-            for(int y = parameters.height() - 1; y >= 0; y--)
+            executor.execute(() ->
             {
-                final double altitude = parameters.altitudeForY(y);
+                double lastRoot = 0;
 
-                final DoubleUnaryOperator function = rayToGroundDistance(profile, parameters.observerElevation(), Math.tan(altitude));
-
-                final double firstInterval = Math2.firstIntervalContainingRoot(function, lastRoot, parameters.maxDistance() - SEARCH_INTERVAL, SEARCH_INTERVAL);
-
-                if(firstInterval != Double.POSITIVE_INFINITY)
+                for(int y = parameters.height() - 1; y >= 0; y--)
                 {
-                    final double root = Math2.improveRoot(function, firstInterval, firstInterval + SEARCH_INTERVAL, DICHOTOMY_STEP);
+                    final double altitude = parameters.altitudeForY(y);
 
-                    final GeoPoint position = profile.positionAt(root);
+                    final DoubleUnaryOperator function = rayToGroundDistance(profile, parameters.observerElevation(), Math.tan(altitude));
 
-                    builder.setDistanceAt(x, y, (float) (root / Math.cos(altitude)));
-                    builder.setLongitudeAt(x, y, (float) position.longitude());
-                    builder.setLatitudeAt(x, y, (float) position.latitude());
-                    builder.setElevationAt(x, y, (float) profile.elevationAt(root));
-                    builder.setSlopeAt(x, y, (float) profile.slopeAt(root));
+                    final double firstInterval = Math2.firstIntervalContainingRoot(function, lastRoot, parameters.maxDistance() - SEARCH_INTERVAL, SEARCH_INTERVAL);
 
-                    lastRoot = root;
+                    if(firstInterval != Double.POSITIVE_INFINITY)
+                    {
+                        final double root = Math2.improveRoot(function, firstInterval, firstInterval + SEARCH_INTERVAL, DICHOTOMY_STEP);
+
+                        final GeoPoint position = profile.positionAt(root);
+
+                        builder.setDistanceAt(x1, y, (float) (root / Math.cos(altitude)));
+                        builder.setLongitudeAt(x1, y, (float) position.longitude());
+                        builder.setLatitudeAt(x1, y, (float) position.latitude());
+                        builder.setElevationAt(x1, y, (float) profile.elevationAt(root));
+                        builder.setSlopeAt(x1, y, (float) profile.slopeAt(root));
+
+                        lastRoot = root;
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
-                else
-                {
-                    break;
-                }
-            }
+
+                progress.set((double) progression.incrementAndGet() / parameters.width());
+            });
+        }
+
+        executor.shutdown();
+
+        try
+        {
+            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+        }
+        catch(InterruptedException e)
+        {
+            e.printStackTrace();
         }
 
         return builder.build();
@@ -88,5 +120,10 @@ public final class PanoramaComputer
         final double d = (1 - refraction) / (2 * Distance.EARTH_RADIUS);
 
         return x -> ray0 + x * raySlope - profile.elevationAt(x) + d * Math2.sq(x);
+    }
+
+    public ReadOnlyProperty<Double> progressProperty()
+    {
+        return progress;
     }
 }

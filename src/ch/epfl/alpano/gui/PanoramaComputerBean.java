@@ -4,15 +4,17 @@ import ch.epfl.alpano.Panorama;
 import ch.epfl.alpano.PanoramaComputer;
 import ch.epfl.alpano.dem.ContinuousElevationModel;
 import ch.epfl.alpano.summit.Summit;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.application.Platform;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class PanoramaComputerBean
 {
@@ -22,6 +24,8 @@ public class PanoramaComputerBean
     private final ObjectProperty<PanoramaUserParameters> parameters = new SimpleObjectProperty<>();
     private final ObjectProperty<Image> image = new SimpleObjectProperty<>();
     private final ObjectProperty<ObservableList<Node>> labels;
+    private final ObjectProperty<Double> progress = new SimpleObjectProperty<>(0.0);
+    private final BooleanProperty computing = new SimpleBooleanProperty(false);
 
     public PanoramaComputerBean(ContinuousElevationModel cDEM, PanoramaUserParameters parameters, List<Summit> summits)
     {
@@ -33,27 +37,50 @@ public class PanoramaComputerBean
 
         this.parameters.addListener((observable, oldValue, newValue) ->
         {
-            final Panorama p = computer.computePanorama(newValue.panoramaParameters());
-            panorama.set(p);
+            computing.set(true);
 
-            final ImagePainter painter;
-            switch(newValue.painter())
-            {
-                case 0:
-                    painter = PanoramaRenderer.coloredImagePainter(p);
-                    break;
-                case 1:
-                    painter = PanoramaRenderer.blackWhiteBorderedImagePainter(p);
-                    break;
-                default:
-                    painter = PanoramaRenderer.borderedImagePainter(p);
-            }
+            final ExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
-            final Image i = PanoramaRenderer.renderPanorama(p, painter);
-            image.set(i);
+            executor.execute(() ->
+                    {
+                        progress.bind(computer.progressProperty());
 
-            final List<Node> l = labelizer.labels(newValue.panoramaDisplayParameters());
-            list.setAll(l);
+                        final Panorama p = computer.computePanorama(newValue.panoramaParameters());
+
+                        progress.unbind();
+                        Platform.runLater(() -> progress.set(ProgressBar.INDETERMINATE_PROGRESS));
+
+                        final ImagePainter painter;
+                        switch(newValue.painter())
+                        {
+                            case 0:
+                                painter = PanoramaRenderer.coloredImagePainter(p);
+                                break;
+                            case 1:
+                                painter = PanoramaRenderer.blackWhiteBorderedImagePainter(p);
+                                break;
+                            default:
+                                painter = PanoramaRenderer.borderedImagePainter(p);
+                        }
+
+                        final Image i = PanoramaRenderer.renderPanorama(p, painter);
+
+                        final List<Node> l = labelizer.labels(newValue.panoramaDisplayParameters());
+
+                        Platform.runLater(() ->
+                        {
+                            progress.set(1.0);
+
+                            panorama.set(p);
+                            image.set(i);
+                            list.setAll(l);
+                        });
+
+                        computing.set(false);
+                    });
+
+            executor.shutdown();
+
         });
 
         this.parameters.set(parameters);
@@ -102,5 +129,15 @@ public class PanoramaComputerBean
     public ObservableList<Node> getLabels()
     {
         return labels.get();
+    }
+
+    public BooleanProperty computingProperty()
+    {
+        return computing;
+    }
+
+    public ReadOnlyProperty<Double> progressProperty()
+    {
+        return progress;
     }
 }
