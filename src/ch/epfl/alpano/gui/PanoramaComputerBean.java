@@ -42,42 +42,42 @@ public class PanoramaComputerBean
             final ExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
             executor.execute(() ->
-                    {
-                        progress.bind(computer.progressProperty());
+            {
+                progress.bind(computer.progressProperty());
 
-                        final Panorama p = computer.computePanorama(newValue.panoramaParameters());
+                final Panorama p = computer.computePanorama(newValue.panoramaParameters());
 
-                        progress.unbind();
-                        Platform.runLater(() -> progress.set(ProgressBar.INDETERMINATE_PROGRESS));
+                progress.unbind();
+                Platform.runLater(() -> progress.set(ProgressBar.INDETERMINATE_PROGRESS));
 
-                        final ImagePainter painter;
-                        switch(newValue.painter())
-                        {
-                            case 0:
-                                painter = PanoramaRenderer.coloredImagePainter(p);
-                                break;
-                            case 1:
-                                painter = PanoramaRenderer.blackWhiteBorderedImagePainter(p);
-                                break;
-                            default:
-                                painter = PanoramaRenderer.borderedImagePainter(p);
-                        }
+                final ImagePainter painter;
+                switch(newValue.painter())
+                {
+                    case 0:
+                        painter = PanoramaRenderer.coloredImagePainter(p);
+                        break;
+                    case 1:
+                        painter = PanoramaRenderer.blackWhiteBorderedImagePainter(p);
+                        break;
+                    default:
+                        painter = PanoramaRenderer.borderedImagePainter(p);
+                }
 
-                        final Image i = PanoramaRenderer.renderPanorama(p, painter);
+                final Image i = PanoramaRenderer.renderPanorama(p, painter);
 
-                        final List<Node> l = labelizer.labels(newValue.panoramaDisplayParameters());
+                final List<Node> l = labelizer.labels(newValue.panoramaDisplayParameters());
 
-                        Platform.runLater(() ->
-                        {
-                            progress.set(1.0);
+                Platform.runLater(() ->
+                {
+                    progress.set(1.0);
 
-                            panorama.set(p);
-                            image.set(i);
-                            list.setAll(l);
-                        });
+                    panorama.set(p);
+                    image.set(i);
+                    list.setAll(l);
+                });
 
-                        computing.set(false);
-                    });
+                computing.set(false);
+            });
 
             executor.shutdown();
 

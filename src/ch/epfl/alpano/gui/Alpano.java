@@ -177,7 +177,6 @@ public final class Alpano extends Application
         panoPane.getChildren().addAll(panoScrollPane, updateNotice);
 
 
-
         addParameterToGrid(paramsGrid, "Latitude (°) :", createTextField(new FixedPointStringConverter(4), parametersBean.observerLatitudeProperty(), 7), 0, 0);
         addParameterToGrid(paramsGrid, "Longitude (°) :", createTextField(new FixedPointStringConverter(4), parametersBean.observerLongitudeProperty(), 7), 1, 0);
         addParameterToGrid(paramsGrid, "Altitude (m) :", createTextField(new FixedPointStringConverter(0), parametersBean.observerElevationProperty(), 4), 2, 0);
@@ -283,17 +282,15 @@ public final class Alpano extends Application
 
     private TextField createTextField(StringConverter<Integer> converter, ObjectProperty<Integer> property, int columns)
     {
-        final TextField field = new TextField("0");
+        final TextField field = new TextField();
         field.setAlignment(Pos.CENTER_RIGHT);
         field.setPrefColumnCount(columns);
-        field.setText("0"); // FIXME
-
-        field.setText(converter.toString(property.get()));
 
         final TextFormatter<Integer> formatter = new TextFormatter<>(converter);
-        field.setTextFormatter(formatter);
 
         formatter.valueProperty().bindBidirectional(property);
+
+        field.setTextFormatter(formatter);
 
         return field;
     }
