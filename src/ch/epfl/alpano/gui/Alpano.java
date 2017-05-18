@@ -196,7 +196,7 @@ public final class Alpano extends Application
         choiceShowLabels.setConverter(new LabeledListStringConverter("non", "oui"));
         choiceShowLabels.setItems(FXCollections.observableArrayList(0, 1));
         choiceShowLabels.setValue(1);
-        choiceShowLabels.valueProperty().addListener(((observable, oldValue, newValue) -> labelsPane.setVisible(newValue == 1)));
+        labelsPane.visibleProperty().bind(choiceShowLabels.valueProperty().isEqualTo(1));
         addParameterToGrid(paramsGrid, "Étiquettes :", choiceShowLabels, 3, 0);
 
         final ChoiceBox<Integer> choicePainter = new ChoiceBox<>();
