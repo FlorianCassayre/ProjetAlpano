@@ -2,11 +2,15 @@ package ch.epfl.alpano;
 
 import ch.epfl.alpano.dem.ContinuousElevationModel;
 import ch.epfl.alpano.dem.ElevationProfile;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyProperty;
+import javafx.beans.property.SimpleObjectProperty;
 
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.DoubleUnaryOperator;
 
 /**
@@ -16,6 +20,8 @@ public final class PanoramaComputer
 {
     private static final int SEARCH_INTERVAL = 64;
     private static final int DICHOTOMY_STEP = 4;
+
+    private final ObjectProperty<Double> progress = new SimpleObjectProperty<>(0.0);
 
     private final ContinuousElevationModel dem;
 
@@ -38,6 +44,9 @@ public final class PanoramaComputer
         final Panorama.Builder builder = new Panorama.Builder(parameters);
 
         final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+
+        final AtomicInteger progression = new AtomicInteger(0);
+        progress.set(0.0);
 
         for(int x = 0; x < parameters.width(); x++)
         {
@@ -78,6 +87,8 @@ public final class PanoramaComputer
                         break;
                     }
                 }
+
+                progress.set((double) progression.incrementAndGet() / parameters.width());
             });
         }
 
@@ -109,5 +120,10 @@ public final class PanoramaComputer
         final double d = (1 - refraction) / (2 * Distance.EARTH_RADIUS);
 
         return x -> ray0 + x * raySlope - profile.elevationAt(x) + d * Math2.sq(x);
+    }
+
+    public ReadOnlyProperty<Double> progressProperty()
+    {
+        return progress;
     }
 }

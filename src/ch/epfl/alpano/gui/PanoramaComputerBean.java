@@ -4,15 +4,16 @@ import ch.epfl.alpano.Panorama;
 import ch.epfl.alpano.PanoramaComputer;
 import ch.epfl.alpano.dem.ContinuousElevationModel;
 import ch.epfl.alpano.summit.Summit;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.application.Platform;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class PanoramaComputerBean
 {
@@ -22,6 +23,8 @@ public class PanoramaComputerBean
     private final ObjectProperty<PanoramaUserParameters> parameters = new SimpleObjectProperty<>();
     private final ObjectProperty<Image> image = new SimpleObjectProperty<>();
     private final ObjectProperty<ObservableList<Node>> labels;
+    private final ObjectProperty<Double> progress = new SimpleObjectProperty<>(0.0);
+    private final BooleanProperty computing = new SimpleBooleanProperty(false);
 
     public PanoramaComputerBean(ContinuousElevationModel cDEM, PanoramaUserParameters parameters, List<Summit> summits)
     {
@@ -33,23 +36,41 @@ public class PanoramaComputerBean
 
         this.parameters.addListener((observable, oldValue, newValue) ->
         {
-            final Panorama p = computer.computePanorama(newValue.panoramaParameters());
-            panorama.set(p);
+            computing.set(true);
 
-            ChannelPainter h = ChannelPainter.distanceAt(p).div(100_000).cycling().mul(360);
-            ChannelPainter s = ChannelPainter.distanceAt(p).div(200_000).clamped().inverted();
-            ChannelPainter b = ChannelPainter.slopeAt(p).mul(2).div((float) Math.PI).inverted().mul(0.7f).add(0.3f);
+            final ExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
-            ChannelPainter distance = p::distanceAt;
-            ChannelPainter opacity = distance.map(d -> d == Float.POSITIVE_INFINITY ? 0 : 1);
+            executor.execute(() ->
+                    {
+                        progress.bind(computer.progressProperty());
 
-            ImagePainter painter = ImagePainter.hsb(h, s, b, opacity);
+                        final Panorama p = computer.computePanorama(newValue.panoramaParameters());
+                        panorama.set(p);
 
-            final Image i = PanoramaRenderer.renderPanorama(p, painter);
-            image.set(i);
+                        ChannelPainter h = ChannelPainter.distanceAt(p).div(100_000).cycling().mul(360);
+                        ChannelPainter s = ChannelPainter.distanceAt(p).div(200_000).clamped().inverted();
+                        ChannelPainter b = ChannelPainter.slopeAt(p).mul(2).div((float) Math.PI).inverted().mul(0.7f).add(0.3f);
 
-            final List<Node> l = labelizer.labels(newValue.panoramaDisplayParameters());
-            list.setAll(l);
+                        ChannelPainter distance = p::distanceAt;
+                        ChannelPainter opacity = distance.map(d -> d == Float.POSITIVE_INFINITY ? 0 : 1);
+
+                        ImagePainter painter = ImagePainter.hsb(h, s, b, opacity);
+
+                        final Image i = PanoramaRenderer.renderPanorama(p, painter);
+
+                        final List<Node> l = labelizer.labels(newValue.panoramaDisplayParameters());
+
+                        Platform.runLater(() ->
+                        {
+                            image.set(i);
+                            list.setAll(l);
+                        });
+
+                        computing.set(false);
+                    });
+
+            executor.shutdown();
+
         });
 
         this.parameters.set(parameters);
@@ -98,5 +119,15 @@ public class PanoramaComputerBean
     public ObservableList<Node> getLabels()
     {
         return labels.get();
+    }
+
+    public BooleanProperty computingProperty()
+    {
+        return computing;
+    }
+
+    public ReadOnlyProperty<Double> progressProperty()
+    {
+        return progress;
     }
 }
