@@ -41,6 +41,14 @@ public class PanoramaParametersBean
         return parameters;
     }
 
+    public void setAll(PanoramaUserParameters parameters)
+    {
+        for(UserParameter p : UserParameter.values())
+        {
+            this.properties.get(p).set(parameters.get(p));
+        }
+    }
+
     public ObjectProperty<Integer> observerLongitudeProperty()
     {
         return properties.get(UserParameter.OBSERVER_LONGITUDE);
@@ -84,6 +92,11 @@ public class PanoramaParametersBean
     public ObjectProperty<Integer> superSamplingExponentProperty()
     {
         return properties.get(UserParameter.SUPER_SAMPLING_EXPONENT);
+    }
+
+    public ObjectProperty<Integer> painterProperty()
+    {
+        return properties.get(UserParameter.PAINTER);
     }
 
     /**
