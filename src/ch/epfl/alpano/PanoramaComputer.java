@@ -37,7 +37,7 @@ public final class PanoramaComputer
     {
         final Panorama.Builder builder = new Panorama.Builder(parameters);
 
-        final ExecutorService executor = Executors.newFixedThreadPool(8);
+        final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
         for(int x = 0; x < parameters.width(); x++)
         {
