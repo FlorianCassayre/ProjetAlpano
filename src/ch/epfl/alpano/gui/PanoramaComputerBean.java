@@ -9,6 +9,7 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 
 import java.util.List;
@@ -45,7 +46,9 @@ public class PanoramaComputerBean
                         progress.bind(computer.progressProperty());
 
                         final Panorama p = computer.computePanorama(newValue.panoramaParameters());
-                        panorama.set(p);
+
+                        progress.unbind();
+                        Platform.runLater(() -> progress.set(ProgressBar.INDETERMINATE_PROGRESS));
 
                         ChannelPainter h = ChannelPainter.distanceAt(p).div(100_000).cycling().mul(360);
                         ChannelPainter s = ChannelPainter.distanceAt(p).div(200_000).clamped().inverted();
@@ -62,6 +65,9 @@ public class PanoramaComputerBean
 
                         Platform.runLater(() ->
                         {
+                            progress.set(1.0);
+
+                            panorama.set(p);
                             image.set(i);
                             list.setAll(l);
                         });
