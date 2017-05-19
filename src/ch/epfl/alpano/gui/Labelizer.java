@@ -13,6 +13,9 @@ import javafx.scene.transform.Translate;
 import java.util.*;
 import java.util.function.DoubleUnaryOperator;
 
+/**
+ * Represents a panorama labelizer.
+ */
 public final class Labelizer
 {
     private static final int MAX_Y = 170;

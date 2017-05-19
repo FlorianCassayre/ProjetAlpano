@@ -5,15 +5,27 @@ import javafx.util.StringConverter;
 
 import java.util.Arrays;
 
+/**
+ * Represents a labeled list of string, and offers a conversion between the index and the string.
+ */
 public final class LabeledListStringConverter extends StringConverter<Integer>
 {
     private final String[] strings;
 
+    /**
+     * Creates a list of convertible strings, with a variable number of arguments.
+     * @param strings the list of strings
+     */
     public LabeledListStringConverter(String... strings)
     {
         this.strings = Arrays.copyOf(strings, strings.length);
     }
 
+    /**
+     * Gives us the string at the index provided.
+     * @param i the index to be converted
+     * @return the corresponding string
+     */
     @Override
     public String toString(Integer i)
     {
@@ -22,6 +34,11 @@ public final class LabeledListStringConverter extends StringConverter<Integer>
         return strings[i];
     }
 
+    /**
+     * Gives us the index of the string provided.
+     * @param string the string to be converted
+     * @return the corresponding integer
+     */
     @Override
     public Integer fromString(String string)
     {
