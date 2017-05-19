@@ -7,6 +7,10 @@ import ch.epfl.alpano.summit.Summit;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.beans.value.WritableObjectValue;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -24,10 +28,10 @@ public class PanoramaComputerBean
 {
     private final PanoramaComputer computer;
     private final Labelizer labelizer;
-    private final ObjectProperty<Panorama> panorama = new SimpleObjectProperty<>();
+    private final ReadOnlyObjectWrapper<Panorama> panorama = new ReadOnlyObjectWrapper<>();
     private final ObjectProperty<PanoramaUserParameters> parameters = new SimpleObjectProperty<>();
-    private final ObjectProperty<Image> image = new SimpleObjectProperty<>();
-    private final ObjectProperty<ObservableList<Node>> labels;
+    private final ReadOnlyObjectWrapper<Image> image = new ReadOnlyObjectWrapper<>();
+    private final ReadOnlyObjectWrapper<ObservableList<Node>> labels;
     private final ObjectProperty<Double> progress = new SimpleObjectProperty<>(0.0);
     private final BooleanProperty computing = new SimpleBooleanProperty(false);
 
@@ -43,7 +47,7 @@ public class PanoramaComputerBean
         this.labelizer = new Labelizer(cDEM, summits);
 
         final ObservableList<Node> list = FXCollections.observableArrayList();
-        this.labels = new SimpleObjectProperty<>(FXCollections.unmodifiableObservableList(list));
+        this.labels = new ReadOnlyObjectWrapper<>(FXCollections.unmodifiableObservableList(list));
 
         this.parameters.addListener((observable, oldValue, newValue) ->
         {
@@ -130,7 +134,7 @@ public class PanoramaComputerBean
      */
     public ReadOnlyObjectProperty<Panorama> panoramaProperty()
     {
-        return panorama;
+        return panorama.getReadOnlyProperty();
     }
 
     /**
@@ -148,7 +152,7 @@ public class PanoramaComputerBean
      */
     public ReadOnlyObjectProperty<Image> imageProperty()
     {
-        return image;
+        return image.getReadOnlyProperty();
     }
 
     /**
@@ -166,7 +170,7 @@ public class PanoramaComputerBean
      */
     public ReadOnlyObjectProperty<ObservableList<Node>> labelsProperty()
     {
-        return labels;
+        return labels.getReadOnlyProperty();
     }
 
     /**

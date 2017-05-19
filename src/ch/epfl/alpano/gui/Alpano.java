@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -69,22 +70,28 @@ public final class Alpano extends Application
 
         for(int i = 45; i < 47; i++)
         {
-            DiscreteElevationModel composition2 = null;
+            List<DiscreteElevationModel> list = new ArrayList<>();
+            DiscreteElevationModel last = null;
 
             for(int j = 6; j < 10; j++)
             {
                 final DiscreteElevationModel dem = new HgtDiscreteElevationModel(new File("N" + i + "E00" + j + ".hgt"));
 
-                if(composition2 == null)
-                    composition2 = dem;
+                if(last == null)
+                    last = dem;
                 else
-                    composition2 = composition2.union(dem);
+                {
+                    list.add(last.union(dem));
+                    last = null;
+                }
             }
+
+            DiscreteElevationModel composition2 = list.get(0).union(list.get(1));
 
             if(composition1 == null)
                 composition1 = composition2;
             else
-                composition1 = composition2.union(composition2);
+                composition1 = composition1.union(composition2);
         }
 
         final ContinuousElevationModel cdem = new ContinuousElevationModel(composition1);

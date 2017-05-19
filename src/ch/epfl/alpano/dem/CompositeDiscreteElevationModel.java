@@ -21,8 +21,6 @@ final class CompositeDiscreteElevationModel implements DiscreteElevationModel
      */
     public CompositeDiscreteElevationModel(DiscreteElevationModel dem1, DiscreteElevationModel dem2)
     {
-        Preconditions.checkArgument(dem1.extent().isUnionableWith(dem2.extent()), "The two models must be unionable.");
-
         this.dem1 = Objects.requireNonNull(dem1);
         this.dem2 = Objects.requireNonNull(dem2);
 
