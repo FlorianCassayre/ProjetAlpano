@@ -21,6 +21,7 @@ public final class Labelizer
     private static final int MAX_Y = 170;
     private static final double DISTANCE_THRESHOLD = 200;
     private static final int HORIZONTAL_LINE_SPACE = 22;
+    private static final int LABEL_LINE_SPACE = 2;
     private static final int RAY_INTERVAL = 64;
     private static final int MIN_DISTANCE = 20;
     private static final int ROTATION_ANGLE = -60;
@@ -70,7 +71,8 @@ public final class Labelizer
 
         final List<Node> nodes = new ArrayList<>();
 
-        final int labelsY = maxY - MIN_DISTANCE;
+        final int labelsY = maxY - HORIZONTAL_LINE_SPACE;
+
 
         for(PositionalSummit point : labelled)
         {
@@ -80,7 +82,7 @@ public final class Labelizer
             text.getTransforms().addAll(new Translate(point.x, labelsY), new Rotate(ROTATION_ANGLE, 0, 0));
             nodes.add(text);
 
-            Line line = new Line(point.x, labelsY, point.x, point.y);
+            Line line = new Line(point.x, labelsY + LABEL_LINE_SPACE, point.x, point.y);
             nodes.add(line);
         }
 
@@ -119,7 +121,7 @@ public final class Labelizer
                 final double firstInterval = Math2.firstIntervalContainingRoot(function, 0, parameters.maxDistance(), RAY_INTERVAL);
 
                 if(firstInterval == Double.POSITIVE_INFINITY
-                        || (firstInterval < parameters.maxDistance() && profile.positionAt(firstInterval).distanceTo(summit.position()) <= DISTANCE_THRESHOLD))
+                        || firstInterval >= distance - DISTANCE_THRESHOLD)
                 {
                     visible.add(new PositionalSummit(summit, (int) Math.round(parameters.xForAzimuth(azimuth)), (int) Math.round(parameters.yForAltitude(angle))));
                 }
