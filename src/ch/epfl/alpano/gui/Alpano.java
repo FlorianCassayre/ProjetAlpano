@@ -46,8 +46,6 @@ public final class Alpano extends Application
 
     private static final PanoramaUserParameters INITIAL_PANORAMA = PredefinedPanoramas.ALPES_JURA;
 
-    private List<Summit> summits;
-    private ContinuousElevationModel cdem;
 
     public static void main(String[] args)
     {
@@ -57,7 +55,35 @@ public final class Alpano extends Application
     @Override
     public void start(Stage primaryStage) throws Exception
     {
-        loadData();
+        // Data loading
+
+        final List<Summit> summits = GazetteerParser.readSummitsFrom(new File(FILE_SUMMITS));
+
+        DiscreteElevationModel composition1 = null;
+
+        for(int i = 45; i < 47; i++)
+        {
+            DiscreteElevationModel composition2 = null;
+
+            for(int j = 6; j < 10; j++)
+            {
+                final DiscreteElevationModel dem = new HgtDiscreteElevationModel(new File("N" + i + "E00" + j + ".hgt"));
+
+                if(composition2 == null)
+                    composition2 = dem;
+                else
+                    composition2 = composition2.union(dem);
+            }
+
+            if(composition1 == null)
+                composition1 = composition2;
+            else
+                composition1 = composition2.union(composition2);
+        }
+
+        final ContinuousElevationModel cdem = new ContinuousElevationModel(composition1);
+
+        // GUI
 
         final PanoramaParametersBean parametersBean = new PanoramaParametersBean(INITIAL_PANORAMA);
         final PanoramaComputerBean computerBean = new PanoramaComputerBean(cdem, INITIAL_PANORAMA, summits);
@@ -75,110 +101,106 @@ public final class Alpano extends Application
         final TextArea textArea = new TextArea();
 
 
+        final ImageView panoView = new ImageView();
+        panoView.preserveRatioProperty().setValue(true);
+        panoView.smoothProperty().setValue(true);
+        panoView.fitWidthProperty().bind(parametersBean.widthProperty());
+        panoView.imageProperty().bind(computerBean.imageProperty());
+
+
+        panoView.setOnMouseMoved(e ->
         {
+            final int supersampling = computerBean.getParameters().supersamplingExponent();
 
-            final ImageView panoView = new ImageView();
-            panoView.preserveRatioProperty().setValue(true);
-            panoView.smoothProperty().setValue(true);
-            panoView.fitWidthProperty().bind(parametersBean.widthProperty());
-            panoView.imageProperty().bind(computerBean.imageProperty());
+            final int x = ((int) Math.round(e.getX()) << supersampling), y = ((int) Math.round(e.getY()) << supersampling);
+            final Panorama panorama = computerBean.getPanorama();
+            final double longitude = Math.toDegrees(panorama.longitudeAt(x, y)), latitude = Math.toDegrees(panorama.latitudeAt(x, y));
+            final double distance = panorama.distanceAt(x, y) / 1000.0;
+            final int elevation = Math.round(panorama.elevationAt(x, y));
+            final double azimuth = Math.toDegrees(Azimuth.toMath(computerBean.getParameters().panoramaParameters().azimuthForX(x))), verticalAngle = Math.toDegrees(computerBean.getParameters().panoramaParameters().altitudeForY(y));
 
+            final String octantAzimuth = Azimuth.toOctantString(Math.toRadians(azimuth), "N", "E", "S", "O");
 
-            panoView.setOnMouseMoved(e ->
-            {
-                final int supersampling = computerBean.getParameters().supersamplingExponent();
+            final StringBuilder builder = new StringBuilder();
+            builder.append("Position : ").append(String.format((Locale) null, "%.4f", longitude)).append("°N ").append(String.format((Locale) null, "%.4f", latitude)).append("°E\n");
+            builder.append("Distance : ").append(String.format((Locale) null, "%.1f", distance)).append(" km\n");
+            builder.append("Altitude : ").append(elevation).append(" m\n");
+            builder.append("Azimuth : ").append(String.format((Locale) null, "%.1f", azimuth)).append("° (").append(octantAzimuth).append(") Elévation : ").append(String.format((Locale) null, "%.1f", verticalAngle)).append("°");
 
-                final int x = ((int) Math.round(e.getX()) << supersampling), y = ((int) Math.round(e.getY()) << supersampling);
-                final Panorama panorama = computerBean.getPanorama();
-                final double longitude = Math.toDegrees(panorama.longitudeAt(x, y)), latitude = Math.toDegrees(panorama.latitudeAt(x, y));
-                final double distance = panorama.distanceAt(x, y) / 1000.0;
-                final int elevation = Math.round(panorama.elevationAt(x, y));
-                final double azimuth = Math.toDegrees(Azimuth.toMath(computerBean.getParameters().panoramaParameters().azimuthForX(x))), verticalAngle = Math.toDegrees(computerBean.getParameters().panoramaParameters().altitudeForY(y));
+            textArea.setText(builder.toString());
+        });
 
-                final String octantAzimuth = Azimuth.toOctantString(Math.toRadians(azimuth), "N", "E", "S", "O");
-
-                final StringBuilder builder = new StringBuilder();
-                builder.append("Position : ").append(String.format((Locale) null, "%.4f", longitude)).append("°N ").append(String.format((Locale) null, "%.4f", latitude)).append("°E\n");
-                builder.append("Distance : ").append(String.format((Locale) null, "%.1f", distance)).append(" km\n");
-                builder.append("Altitude : ").append(elevation).append(" m\n");
-                builder.append("Azimuth : ").append(String.format((Locale) null, "%.1f", azimuth)).append("° (").append(octantAzimuth).append(") Elévation : ").append(String.format((Locale) null, "%.1f", verticalAngle)).append("°");
-
-                textArea.setText(builder.toString());
-            });
-
-            panoView.setOnMouseClicked(e ->
-            {
-                final int supersampling = computerBean.getParameters().supersamplingExponent();
-
-                final int x = ((int) Math.round(e.getX()) << supersampling), y = ((int) Math.round(e.getY()) << supersampling);
-                final double longitude = Math.toDegrees(computerBean.getPanorama().longitudeAt(x, y)), latitude = Math.toDegrees(computerBean.getPanorama().latitudeAt(x, y));
-
-                final String qy = "mlat=" + latitude + "&mlon=" + longitude;
-                final String fg = "map=15/" + latitude + "/" + longitude;
-
-                try
-                {
-                    final URI osmURI = new URI(OSM_PROTOCOL, OSM_DOMAIN, "/", qy, fg);
-                    java.awt.Desktop.getDesktop().browse(osmURI);
-                }
-                catch(URISyntaxException | IOException e1)
-                {
-                    e1.printStackTrace();
-                }
-            });
-
-            final Pane labelsPane = new Pane();
-            labelsPane.prefWidthProperty().bind(parametersBean.widthProperty());
-            labelsPane.prefHeightProperty().bind(parametersBean.heightProperty());
-            labelsPane.setMouseTransparent(true);
-            Bindings.bindContent(labelsPane.getChildren(), computerBean.getLabels());
-
-
-            final StackPane updateNotice = new StackPane();
-            updateNotice.setBackground(new Background(new BackgroundFill(Color.gray(1.0, 0.9), null, null)));
-            final Text text = new Text(TEXT_PARAMETERS_MODIFIED);
-            text.setFont(new Font(40.0));
-            text.setTextAlignment(TextAlignment.CENTER);
-            updateNotice.getChildren().add(text);
-
-            updateNotice.visibleProperty().bind(computerBean.parametersProperty().isNotEqualTo(parametersBean.parametersProperty()));
-
-            updateNotice.setOnMouseClicked(event -> computerBean.setParameters(parametersBean.parametersProperty().get()));
-
-            final StackPane panoGroup = new StackPane();
-            panoGroup.getChildren().addAll(panoView, labelsPane);
-
-            final ScrollPane panoScrollPane = new ScrollPane(panoGroup);
-
-            panoPane.getChildren().addAll(panoScrollPane, updateNotice);
-        }
-
+        panoView.setOnMouseClicked(e ->
         {
-            addParameterToGrid(paramsGrid, "Latitude (°) :", createTextField(new FixedPointStringConverter(4), parametersBean.observerLatitudeProperty(), 7), 0, 0);
-            addParameterToGrid(paramsGrid, "Longitude (°) :", createTextField(new FixedPointStringConverter(4), parametersBean.observerLongitudeProperty(), 7), 1, 0);
-            addParameterToGrid(paramsGrid, "Altitude (m) :", createTextField(new FixedPointStringConverter(0), parametersBean.observerElevationProperty(), 4), 2, 0);
-            addParameterToGrid(paramsGrid, "Azimuth (°) :", createTextField(new FixedPointStringConverter(0), parametersBean.centerAzimuthProperty(), 3), 0, 1);
-            addParameterToGrid(paramsGrid, "Angle de vue (°) :", createTextField(new FixedPointStringConverter(0), parametersBean.horizontalFieldOfViewProperty(), 3), 1, 1);
-            addParameterToGrid(paramsGrid, "Visibilité (km) :", createTextField(new FixedPointStringConverter(0), parametersBean.maxDistanceProperty(), 3), 2, 1);
-            addParameterToGrid(paramsGrid, "Largeur (px) :", createTextField(new FixedPointStringConverter(0), parametersBean.widthProperty(), 4), 0, 2);
-            addParameterToGrid(paramsGrid, "Hauteur (px) :", createTextField(new FixedPointStringConverter(0), parametersBean.heightProperty(), 4), 1, 2);
+            final int supersampling = computerBean.getParameters().supersamplingExponent();
+
+            final int x = ((int) Math.round(e.getX()) << supersampling), y = ((int) Math.round(e.getY()) << supersampling);
+            final double longitude = Math.toDegrees(computerBean.getPanorama().longitudeAt(x, y)), latitude = Math.toDegrees(computerBean.getPanorama().latitudeAt(x, y));
+
+            final String qy = "mlat=" + latitude + "&mlon=" + longitude;
+            final String fg = "map=15/" + latitude + "/" + longitude;
+
+            try
+            {
+                final URI osmURI = new URI(OSM_PROTOCOL, OSM_DOMAIN, "/", qy, fg);
+                java.awt.Desktop.getDesktop().browse(osmURI);
+            }
+            catch(URISyntaxException | IOException e1)
+            {
+                e1.printStackTrace();
+            }
+        });
+
+        final Pane labelsPane = new Pane();
+        labelsPane.prefWidthProperty().bind(parametersBean.widthProperty());
+        labelsPane.prefHeightProperty().bind(parametersBean.heightProperty());
+        labelsPane.setMouseTransparent(true);
+        Bindings.bindContent(labelsPane.getChildren(), computerBean.getLabels());
 
 
-            final ChoiceBox<Integer> choiceBox = new ChoiceBox<>();
-            choiceBox.setConverter(new LabeledListStringConverter("non", "2×", "4×"));
-            choiceBox.setItems(FXCollections.observableArrayList(Arrays.asList(0, 1, 2)));
-            choiceBox.valueProperty().bindBidirectional(parametersBean.superSamplingExponentProperty());
-            addParameterToGrid(paramsGrid, "Suréchantillonnage :", choiceBox, 2, 2);
+        final StackPane updateNotice = new StackPane();
+        updateNotice.setBackground(new Background(new BackgroundFill(Color.gray(1.0, 0.9), null, null)));
+        final Text text = new Text(TEXT_PARAMETERS_MODIFIED);
+        text.setFont(new Font(40.0));
+        text.setTextAlignment(TextAlignment.CENTER);
+        updateNotice.getChildren().add(text);
 
-            textArea.setEditable(false);
-            textArea.setPrefRowCount(2);
-            paramsGrid.add(textArea, 6, 0, 6, 3);
+        updateNotice.visibleProperty().bind(computerBean.parametersProperty().isNotEqualTo(parametersBean.parametersProperty()));
 
-            paramsGrid.setHgap(10);
-            paramsGrid.setVgap(3);
-            paramsGrid.setPadding(new Insets(3, 3, 3, 3));
-            paramsGrid.setAlignment(Pos.CENTER);
-        }
+        updateNotice.setOnMouseClicked(event -> computerBean.setParameters(parametersBean.parametersProperty().get()));
+
+        final StackPane panoGroup = new StackPane();
+        panoGroup.getChildren().addAll(panoView, labelsPane);
+
+        final ScrollPane panoScrollPane = new ScrollPane(panoGroup);
+
+        panoPane.getChildren().addAll(panoScrollPane, updateNotice);
+
+
+        addParameterToGrid(paramsGrid, "Latitude (°) :", createTextField(new FixedPointStringConverter(4), parametersBean.observerLatitudeProperty(), 7), 0, 0);
+        addParameterToGrid(paramsGrid, "Longitude (°) :", createTextField(new FixedPointStringConverter(4), parametersBean.observerLongitudeProperty(), 7), 1, 0);
+        addParameterToGrid(paramsGrid, "Altitude (m) :", createTextField(new FixedPointStringConverter(0), parametersBean.observerElevationProperty(), 4), 2, 0);
+        addParameterToGrid(paramsGrid, "Azimuth (°) :", createTextField(new FixedPointStringConverter(0), parametersBean.centerAzimuthProperty(), 3), 0, 1);
+        addParameterToGrid(paramsGrid, "Angle de vue (°) :", createTextField(new FixedPointStringConverter(0), parametersBean.horizontalFieldOfViewProperty(), 3), 1, 1);
+        addParameterToGrid(paramsGrid, "Visibilité (km) :", createTextField(new FixedPointStringConverter(0), parametersBean.maxDistanceProperty(), 3), 2, 1);
+        addParameterToGrid(paramsGrid, "Largeur (px) :", createTextField(new FixedPointStringConverter(0), parametersBean.widthProperty(), 4), 0, 2);
+        addParameterToGrid(paramsGrid, "Hauteur (px) :", createTextField(new FixedPointStringConverter(0), parametersBean.heightProperty(), 4), 1, 2);
+
+
+        final ChoiceBox<Integer> choiceBox = new ChoiceBox<>();
+        choiceBox.setConverter(new LabeledListStringConverter("non", "2×", "4×"));
+        choiceBox.setItems(FXCollections.observableArrayList(Arrays.asList(0, 1, 2)));
+        choiceBox.valueProperty().bindBidirectional(parametersBean.superSamplingExponentProperty());
+        addParameterToGrid(paramsGrid, "Suréchantillonnage :", choiceBox, 2, 2);
+
+        textArea.setEditable(false);
+        textArea.setPrefRowCount(2);
+        paramsGrid.add(textArea, 6, 0, 6, 3);
+
+        paramsGrid.setHgap(10);
+        paramsGrid.setVgap(3);
+        paramsGrid.setPadding(new Insets(3, 3, 3, 3));
+        paramsGrid.setAlignment(Pos.CENTER);
 
 
         final Scene scene = new Scene(root);
@@ -224,35 +246,5 @@ public final class Alpano extends Application
         field.setTextFormatter(formatter);
 
         return field;
-    }
-
-    @Deprecated
-    private void loadData() throws IOException
-    {
-        summits = GazetteerParser.readSummitsFrom(new File(FILE_SUMMITS));
-
-        DiscreteElevationModel composition1 = null;
-
-        for(int i = 45; i < 47; i++)
-        {
-            DiscreteElevationModel composition2 = null;
-
-            for(int j = 6; j < 10; j++)
-            {
-                final DiscreteElevationModel dem = new HgtDiscreteElevationModel(new File("N" + i + "E00" + j + ".hgt"));
-
-                if(composition2 == null)
-                    composition2 = dem;
-                else
-                    composition2 = composition2.union(dem);
-            }
-
-            if(composition1 == null)
-                composition1 = composition2;
-            else
-                composition1 = composition2.union(composition2);
-        }
-
-        cdem = new ContinuousElevationModel(composition1);
     }
 }
