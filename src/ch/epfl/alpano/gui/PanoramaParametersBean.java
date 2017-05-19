@@ -7,6 +7,7 @@ import javafx.beans.property.SimpleObjectProperty;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static javafx.application.Platform.runLater;
 
@@ -25,7 +26,7 @@ public class PanoramaParametersBean
      */
     public PanoramaParametersBean(PanoramaUserParameters parameters)
     {
-        this.parameters = new ReadOnlyObjectWrapper<>(parameters);
+        this.parameters = new ReadOnlyObjectWrapper<>(Objects.requireNonNull(parameters));
 
         for(UserParameter parameter : UserParameter.values())
         {

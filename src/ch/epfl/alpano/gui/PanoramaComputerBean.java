@@ -14,6 +14,7 @@ import javafx.scene.Node;
 import javafx.scene.image.Image;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A bean for the panorama computer.
@@ -63,7 +64,7 @@ public class PanoramaComputerBean
             list.setAll(l);
         });
 
-        this.parameters.set(parameters);
+        this.parameters.set(Objects.requireNonNull(parameters));
     }
 
     /**
