@@ -45,6 +45,9 @@ public final class Alpano extends Application
     private static final String OSM_PROTOCOL = "http", OSM_DOMAIN = "www.openstreetmap.org";
     private static final String TEXT_PARAMETERS_MODIFIED = "Les paramètres du panorama ont changé.\nCliquez ici pour mettre le dessin à jour.";
 
+    private static final int MIN_LATITUDE = 45, MAX_LATITUDE = 47;
+    private static final int MIN_LONGITUDE = 6, MAX_LONGITUDE = 10;
+
     private static final PanoramaUserParameters INITIAL_PANORAMA = PredefinedPanoramas.ALPES_JURA;
 
 
@@ -62,12 +65,12 @@ public final class Alpano extends Application
 
         DiscreteElevationModel composition1 = null;
 
-        for(int i = 45; i < 47; i++)
+        for(int i = MIN_LATITUDE; i < MAX_LATITUDE; i++)
         {
             List<DiscreteElevationModel> list = new ArrayList<>();
             DiscreteElevationModel last = null;
 
-            for(int j = 6; j < 10; j++)
+            for(int j = MIN_LONGITUDE; j < MAX_LONGITUDE; j++)
             {
                 final DiscreteElevationModel dem = new HgtDiscreteElevationModel(new File("N" + i + "E00" + j + ".hgt"));
 
