@@ -42,11 +42,12 @@ public class FXPanoramaDraw extends Application
         final Panorama panorama = computer.computePanorama(PARAMETERS.panoramaDisplayParameters());
 
 
-        ChannelPainter h = ChannelPainter.distanceAt(panorama).div(100_000).cycling().mul(360);
-        ChannelPainter s = ChannelPainter.distanceAt(panorama).div(200_000).clamped().inverted();
-        ChannelPainter b = ChannelPainter.slopeAt(panorama).mul(2).div((float) Math.PI).inverted().mul(0.7f).add(0.3f);
+        final ChannelPainter distance = panorama::distanceAt, slope = panorama::slopeAt;
 
-        ChannelPainter distance = panorama::distanceAt;
+        ChannelPainter h = distance.div(100_000).cycling().mul(360);
+        ChannelPainter s = distance.div(200_000).clamped().inverted();
+        ChannelPainter b = slope.mul(2).div((float) Math.PI).inverted().mul(0.7f).add(0.3f);
+
         ChannelPainter opacity = distance.map(d -> d == Float.POSITIVE_INFINITY ? 0 : 1);
 
         ImagePainter l = ImagePainter.hsb(h, s, b, opacity);
