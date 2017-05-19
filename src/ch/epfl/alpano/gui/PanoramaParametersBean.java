@@ -36,51 +36,91 @@ public class PanoramaParametersBean
         }
     }
 
+    /**
+     * The panorama parameters property.
+     * @return the read-only panorama parameters property
+     */
     public ReadOnlyObjectProperty<PanoramaUserParameters> parametersProperty()
     {
         return parameters;
     }
 
+    /**
+     * The observer longitude property.
+     * @return the longitude property
+     */
     public ObjectProperty<Integer> observerLongitudeProperty()
     {
         return properties.get(UserParameter.OBSERVER_LONGITUDE);
     }
 
+    /**
+     * The observer latitude property.
+     * @return the latitude property
+     */
     public ObjectProperty<Integer> observerLatitudeProperty()
     {
         return properties.get(UserParameter.OBSERVER_LATITUDE);
     }
 
+    /**
+     * The observer elevation property.
+     * @return the elevation property
+     */
     public ObjectProperty<Integer> observerElevationProperty()
     {
         return properties.get(UserParameter.OBSERVER_ELEVATION);
     }
 
+    /**
+     * The center azimuth property.
+     * @return the center azimuth property
+     */
     public ObjectProperty<Integer> centerAzimuthProperty()
     {
         return properties.get(UserParameter.CENTER_AZIMUTH);
     }
 
+    /**
+     * The horizontal field of view property.
+     * @return the horizontal field of view property
+     */
     public ObjectProperty<Integer> horizontalFieldOfViewProperty()
     {
         return properties.get(UserParameter.HORIZONTAL_FIELD_OF_VIEW);
     }
 
+    /**
+     * The maximum distance property.
+     * @return the maximum distance property.
+     */
     public ObjectProperty<Integer> maxDistanceProperty()
     {
         return properties.get(UserParameter.MAX_DISTANCE);
     }
 
+    /**
+     * The width property.
+     * @return the width property
+     */
     public ObjectProperty<Integer> widthProperty()
     {
         return properties.get(UserParameter.WIDTH);
     }
 
+    /**
+     * The height property.
+     * @return the height property
+     */
     public ObjectProperty<Integer> heightProperty()
     {
         return properties.get(UserParameter.HEIGHT);
     }
 
+    /**
+     * The supersampling property.
+     * @return the supersampling property
+     */
     public ObjectProperty<Integer> superSamplingExponentProperty()
     {
         return properties.get(UserParameter.SUPER_SAMPLING_EXPONENT);

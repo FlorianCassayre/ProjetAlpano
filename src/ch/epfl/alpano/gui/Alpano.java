@@ -34,6 +34,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * The main application class.
+ */
 public final class Alpano extends Application
 {
     private static final String FILE_SUMMITS = "alps.txt";
@@ -185,6 +188,14 @@ public final class Alpano extends Application
         primaryStage.show();
     }
 
+    /**
+     * Adds a parameter to the grid with its corresponding label.
+     * @param gridPane the grid pane
+     * @param name the name of this field
+     * @param node the node (text field, group box, etc)
+     * @param column the column index
+     * @param row the row index
+     */
     private void addParameterToGrid(GridPane gridPane, String name, Node node, int column, int row)
     {
         final Label label = new Label(name);
@@ -193,6 +204,13 @@ public final class Alpano extends Application
         gridPane.add(node, column * 2 + 1, row);
     }
 
+    /**
+     * Creates a centered text field bound with the specified property.
+     * @param converter the integer string converter
+     * @param property the property to be bound
+     * @param columns the columns count
+     * @return a new text field
+     */
     private TextField createTextField(StringConverter<Integer> converter, ObjectProperty<Integer> property, int columns)
     {
         final TextField field = new TextField();
@@ -208,6 +226,7 @@ public final class Alpano extends Application
         return field;
     }
 
+    @Deprecated
     private void loadData() throws IOException
     {
         summits = GazetteerParser.readSummitsFrom(new File(FILE_SUMMITS));
