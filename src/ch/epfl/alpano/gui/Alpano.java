@@ -209,7 +209,7 @@ public final class Alpano extends Application
 
         paramsGrid.setHgap(10);
         paramsGrid.setVgap(3);
-        paramsGrid.setPadding(new Insets(3, 3, 3, 3));
+        paramsGrid.setPadding(new Insets(7, 5, 5, 5));
         paramsGrid.setAlignment(Pos.CENTER);
 
 
