@@ -39,6 +39,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * The main application class.
+ */
 public final class Alpano extends Application
 {
     private static final String FILE_SUMMITS = "alps.txt";
@@ -49,8 +52,6 @@ public final class Alpano extends Application
 
     private static final PanoramaUserParameters INITIAL_PANORAMA = PredefinedPanoramas.ALPES_JURA;
 
-    private List<Summit> summits;
-    private ContinuousElevationModel cdem;
 
     public static void main(String[] args)
     {
@@ -60,7 +61,35 @@ public final class Alpano extends Application
     @Override
     public void start(Stage stage) throws Exception
     {
-        loadData();
+        // Data loading
+
+        final List<Summit> summits = GazetteerParser.readSummitsFrom(new File(FILE_SUMMITS));
+
+        DiscreteElevationModel composition1 = null;
+
+        for(int i = 45; i < 47; i++)
+        {
+            DiscreteElevationModel composition2 = null;
+
+            for(int j = 6; j < 10; j++)
+            {
+                final DiscreteElevationModel dem = new HgtDiscreteElevationModel(new File("N" + i + "E00" + j + ".hgt"));
+
+                if(composition2 == null)
+                    composition2 = dem;
+                else
+                    composition2 = composition2.union(dem);
+            }
+
+            if(composition1 == null)
+                composition1 = composition2;
+            else
+                composition1 = composition2.union(composition2);
+        }
+
+        final ContinuousElevationModel cdem = new ContinuousElevationModel(composition1);
+
+        // GUI
 
         final PanoramaParametersBean parametersBean = new PanoramaParametersBean(INITIAL_PANORAMA);
         final PanoramaComputerBean computerBean = new PanoramaComputerBean(cdem, INITIAL_PANORAMA, summits);
@@ -193,7 +222,7 @@ public final class Alpano extends Application
         choiceBox.valueProperty().bindBidirectional(parametersBean.superSamplingExponentProperty());
         addParameterToGrid(paramsGrid, "Suréchantillonnage :", choiceBox, 2, 2);
 
-        final Label predefinedTitle = new Label("Panoramas prédéfinis");
+            final Label predefinedTitle = new Label("Panoramas prédéfinis");
         GridPane.setHalignment(predefinedTitle, HPos.CENTER);
         paramsGrid.add(predefinedTitle, 8, 0);
 
@@ -206,15 +235,9 @@ public final class Alpano extends Application
             final String key = listView.getSelectionModel().getSelectedItem();
             parametersBean.setAll(PredefinedPanoramas.LIST.get(key));
         });
-        paramsGrid.add(listView, 8, 1, 8, 2);
-
-
-        textArea.setEditable(false);
-        textArea.setPrefRowCount(2);
-        paramsGrid.add(textArea, 9, 0, 9, 3);
-
-
-        final ChoiceBox<Integer> choiceShowLabels = new ChoiceBox<>();
+        paramsGrid.add(listView, 8, 1, 8, 2);textArea.setEditable(false);
+            textArea.setPrefRowCount(2);
+            paramsGrid.add(textArea, 9, 0, 9, 3);final ChoiceBox<Integer> choiceShowLabels = new ChoiceBox<>();
         choiceShowLabels.setConverter(new LabeledListStringConverter("non", "oui"));
         choiceShowLabels.setItems(FXCollections.observableArrayList(0, 1));
         choiceShowLabels.setValue(1);
@@ -256,7 +279,6 @@ public final class Alpano extends Application
         });
         addParameterToGrid(paramsGrid, "Sauvegarder :", saveImage, 3, 2);
 
-
         paramsGrid.setHgap(10);
         paramsGrid.setVgap(3);
         paramsGrid.setPadding(new Insets(3, 3, 3, 3));
@@ -272,6 +294,14 @@ public final class Alpano extends Application
         stage.show();
     }
 
+    /**
+     * Adds a parameter to the grid with its corresponding label.
+     * @param gridPane the grid pane
+     * @param name the name of this field
+     * @param node the node (text field, group box, etc)
+     * @param column the column index
+     * @param row the row index
+     */
     private void addParameterToGrid(GridPane gridPane, String name, Node node, int column, int row)
     {
         final Label label = new Label(name);
@@ -280,6 +310,13 @@ public final class Alpano extends Application
         gridPane.add(node, column * 2 + 1, row);
     }
 
+    /**
+     * Creates a centered text field bound with the specified property.
+     * @param converter the integer string converter
+     * @param property the property to be bound
+     * @param columns the columns count
+     * @return a new text field
+     */
     private TextField createTextField(StringConverter<Integer> converter, ObjectProperty<Integer> property, int columns)
     {
         final TextField field = new TextField();
@@ -293,34 +330,5 @@ public final class Alpano extends Application
         field.setTextFormatter(formatter);
 
         return field;
-    }
-
-    private void loadData() throws IOException
-    {
-        summits = GazetteerParser.readSummitsFrom(new File(FILE_SUMMITS));
-
-        DiscreteElevationModel composition1 = null;
-
-        for(int i = 45; i < 47; i++)
-        {
-            DiscreteElevationModel composition2 = null;
-
-            for(int j = 6; j < 10; j++)
-            {
-                final DiscreteElevationModel dem = new HgtDiscreteElevationModel(new File("N" + i + "E00" + j + ".hgt"));
-
-                if(composition2 == null)
-                    composition2 = dem;
-                else
-                    composition2 = composition2.union(dem);
-            }
-
-            if(composition1 == null)
-                composition1 = composition2;
-            else
-                composition1 = composition2.union(composition2);
-        }
-
-        cdem = new ContinuousElevationModel(composition1);
     }
 }
