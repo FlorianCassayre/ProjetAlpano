@@ -2,6 +2,7 @@ package ch.epfl.alpano.dem;
 
 import ch.epfl.alpano.Interval2D;
 import ch.epfl.alpano.Math2;
+import ch.epfl.alpano.Preconditions;
 
 /**
  * Represents a discrete DTM (Digital Terrain Model).
@@ -51,6 +52,9 @@ public interface DiscreteElevationModel extends AutoCloseable
      */
     default DiscreteElevationModel union(DiscreteElevationModel that)
     {
+        Preconditions.checkArgument(this.extent().isUnionableWith(that.extent()), "The two models must be unionable.");
+        Preconditions.checkArgument(!(this.extent().equals(that.extent()) || this == that), "You shouldn't be doing this...");
+
         return new CompositeDiscreteElevationModel(this, that);
     }
 }
