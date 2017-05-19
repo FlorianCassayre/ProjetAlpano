@@ -42,7 +42,7 @@ public class PanoramaParametersBean
      */
     public ReadOnlyObjectProperty<PanoramaUserParameters> parametersProperty()
     {
-        return parameters;
+        return parameters.getReadOnlyProperty();
     }
 
     /**
