@@ -22,12 +22,22 @@ public final class FixedPointStringConverter extends StringConverter<Integer>
         this.i = i;
     }
 
+    /**
+     * Converts an integer to a string.
+     * @param n the integer to be converted
+     * @return the converted string
+     */
     @Override
     public String toString(Integer n)
     {
         return new BigDecimal(n).movePointLeft(i).toPlainString();
     }
 
+    /**
+     * Converts a string to an integer.
+     * @param string the string to be converted
+     * @return the converted integer
+     */
     @Override
     public Integer fromString(String string)
     {
