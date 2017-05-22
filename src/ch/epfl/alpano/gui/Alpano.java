@@ -169,7 +169,7 @@ public final class Alpano extends Application
         final ImageView panoView = new ImageView();
         panoView.preserveRatioProperty().setValue(true);
         panoView.smoothProperty().setValue(true);
-        panoView.fitWidthProperty().bind(parametersBean.widthProperty());
+        computerBean.parametersProperty().addListener((o) -> panoView.setFitWidth(computerBean.getParameters().width()));
         panoView.imageProperty().bind(computerBean.imageProperty());
 
         panoView.setOnMouseMoved(e ->
