@@ -57,41 +57,13 @@ public final class Alpano extends Application
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception
+    public void start(Stage stage) throws Exception
     {
         // Data loading
 
         final List<Summit> summits = GazetteerParser.readSummitsFrom(new File(FILE_SUMMITS));
 
-        DiscreteElevationModel composition1 = null;
-
-        for(int i = MIN_LATITUDE; i < MAX_LATITUDE; i++)
-        {
-            List<DiscreteElevationModel> list = new ArrayList<>();
-            DiscreteElevationModel last = null;
-
-            for(int j = MIN_LONGITUDE; j < MAX_LONGITUDE; j++)
-            {
-                final DiscreteElevationModel dem = new HgtDiscreteElevationModel(new File("N" + i + "E00" + j + ".hgt"));
-
-                if(last == null)
-                    last = dem;
-                else
-                {
-                    list.add(last.union(dem));
-                    last = null;
-                }
-            }
-
-            DiscreteElevationModel composition2 = list.get(0).union(list.get(1));
-
-            if(composition1 == null)
-                composition1 = composition2;
-            else
-                composition1 = composition1.union(composition2);
-        }
-
-        final ContinuousElevationModel cdem = new ContinuousElevationModel(composition1);
+        final ContinuousElevationModel cdem = loadCDEM();
 
         // GUI
 
@@ -101,22 +73,104 @@ public final class Alpano extends Application
 
         final BorderPane root = new BorderPane();
 
-        final StackPane panoPane = new StackPane();
-        final GridPane paramsGrid = new GridPane();
 
+        final StackPane panoPane = new StackPane();
         root.setCenter(panoPane);
+
+
+        final GridPane paramsGrid = new GridPane();
+        paramsGrid.setHgap(10);
+        paramsGrid.setVgap(3);
+        paramsGrid.setPadding(new Insets(7, 5, 5, 5));
+        paramsGrid.setAlignment(Pos.CENTER);
+
         root.setBottom(paramsGrid);
 
 
         final TextArea textArea = new TextArea();
+        textArea.setEditable(false);
+        textArea.setPrefRowCount(2);
+        paramsGrid.add(textArea, 6, 0, 6, 3);
+
+        final ImageView panoView = createPanoView(parametersBean, computerBean, textArea);
+
+        final Pane labelsPane = createLabelsPane(parametersBean, computerBean);
+
+        final StackPane panoGroup = new StackPane();
+        panoGroup.getChildren().addAll(panoView, labelsPane);
 
 
+        final StackPane updateNotice = createUpdateNotice(parametersBean, computerBean);
+
+        final ScrollPane panoScrollPane = new ScrollPane(panoGroup);
+
+        panoPane.getChildren().addAll(panoScrollPane, updateNotice);
+
+
+        addParameterToGrid(paramsGrid, "Latitude (°) :", createTextField(new FixedPointStringConverter(4), parametersBean.observerLatitudeProperty(), 7), 0, 0);
+        addParameterToGrid(paramsGrid, "Longitude (°) :", createTextField(new FixedPointStringConverter(4), parametersBean.observerLongitudeProperty(), 7), 1, 0);
+        addParameterToGrid(paramsGrid, "Altitude (m) :", createTextField(new FixedPointStringConverter(0), parametersBean.observerElevationProperty(), 4), 2, 0);
+        addParameterToGrid(paramsGrid, "Azimuth (°) :", createTextField(new FixedPointStringConverter(0), parametersBean.centerAzimuthProperty(), 3), 0, 1);
+        addParameterToGrid(paramsGrid, "Angle de vue (°) :", createTextField(new FixedPointStringConverter(0), parametersBean.horizontalFieldOfViewProperty(), 3), 1, 1);
+        addParameterToGrid(paramsGrid, "Visibilité (km) :", createTextField(new FixedPointStringConverter(0), parametersBean.maxDistanceProperty(), 3), 2, 1);
+        addParameterToGrid(paramsGrid, "Largeur (px) :", createTextField(new FixedPointStringConverter(0), parametersBean.widthProperty(), 4), 0, 2);
+        addParameterToGrid(paramsGrid, "Hauteur (px) :", createTextField(new FixedPointStringConverter(0), parametersBean.heightProperty(), 4), 1, 2);
+
+        final ChoiceBox<Integer> choiceBox = createChoiceBox(parametersBean);
+        addParameterToGrid(paramsGrid, "Suréchantillonnage :", choiceBox, 2, 2);
+
+
+        final Scene scene = new Scene(root);
+
+        stage.setTitle("Alpano");
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    private ChoiceBox<Integer> createChoiceBox(PanoramaParametersBean parametersBean)
+    {
+        final ChoiceBox<Integer> choiceBox = new ChoiceBox<>();
+        choiceBox.setConverter(new LabeledListStringConverter("non", "2×", "4×"));
+        choiceBox.setItems(FXCollections.observableArrayList(Arrays.asList(0, 1, 2)));
+        choiceBox.valueProperty().bindBidirectional(parametersBean.superSamplingExponentProperty());
+
+        return choiceBox;
+    }
+
+    private StackPane createUpdateNotice(PanoramaParametersBean parametersBean, PanoramaComputerBean computerBean)
+    {
+        final StackPane updateNotice = new StackPane();
+        updateNotice.setBackground(new Background(new BackgroundFill(Color.gray(1.0, 0.9), null, null)));
+        final Text text = new Text(TEXT_PARAMETERS_MODIFIED);
+        text.setFont(new Font(40.0));
+        text.setTextAlignment(TextAlignment.CENTER);
+        updateNotice.getChildren().add(text);
+
+        updateNotice.visibleProperty().bind(computerBean.parametersProperty().isNotEqualTo(parametersBean.parametersProperty()));
+
+        updateNotice.setOnMouseClicked(event -> computerBean.setParameters(parametersBean.parametersProperty().get()));
+
+        return updateNotice;
+    }
+
+    private Pane createLabelsPane(PanoramaParametersBean parametersBean, PanoramaComputerBean computerBean)
+    {
+        final Pane labelsPane = new Pane();
+        labelsPane.prefWidthProperty().bind(parametersBean.widthProperty());
+        labelsPane.prefHeightProperty().bind(parametersBean.heightProperty());
+        labelsPane.setMouseTransparent(true);
+        Bindings.bindContent(labelsPane.getChildren(), computerBean.getLabels());
+
+        return labelsPane;
+    }
+
+    private ImageView createPanoView(PanoramaParametersBean parametersBean, PanoramaComputerBean computerBean, TextArea textArea)
+    {
         final ImageView panoView = new ImageView();
         panoView.preserveRatioProperty().setValue(true);
         panoView.smoothProperty().setValue(true);
         panoView.fitWidthProperty().bind(parametersBean.widthProperty());
         panoView.imageProperty().bind(computerBean.imageProperty());
-
 
         panoView.setOnMouseMoved(e ->
         {
@@ -161,63 +215,7 @@ public final class Alpano extends Application
             }
         });
 
-        final Pane labelsPane = new Pane();
-        labelsPane.prefWidthProperty().bind(parametersBean.widthProperty());
-        labelsPane.prefHeightProperty().bind(parametersBean.heightProperty());
-        labelsPane.setMouseTransparent(true);
-        Bindings.bindContent(labelsPane.getChildren(), computerBean.getLabels());
-
-
-        final StackPane updateNotice = new StackPane();
-        updateNotice.setBackground(new Background(new BackgroundFill(Color.gray(1.0, 0.9), null, null)));
-        final Text text = new Text(TEXT_PARAMETERS_MODIFIED);
-        text.setFont(new Font(40.0));
-        text.setTextAlignment(TextAlignment.CENTER);
-        updateNotice.getChildren().add(text);
-
-        updateNotice.visibleProperty().bind(computerBean.parametersProperty().isNotEqualTo(parametersBean.parametersProperty()));
-
-        updateNotice.setOnMouseClicked(event -> computerBean.setParameters(parametersBean.parametersProperty().get()));
-
-        final StackPane panoGroup = new StackPane();
-        panoGroup.getChildren().addAll(panoView, labelsPane);
-
-        final ScrollPane panoScrollPane = new ScrollPane(panoGroup);
-
-        panoPane.getChildren().addAll(panoScrollPane, updateNotice);
-
-
-        addParameterToGrid(paramsGrid, "Latitude (°) :", createTextField(new FixedPointStringConverter(4), parametersBean.observerLatitudeProperty(), 7), 0, 0);
-        addParameterToGrid(paramsGrid, "Longitude (°) :", createTextField(new FixedPointStringConverter(4), parametersBean.observerLongitudeProperty(), 7), 1, 0);
-        addParameterToGrid(paramsGrid, "Altitude (m) :", createTextField(new FixedPointStringConverter(0), parametersBean.observerElevationProperty(), 4), 2, 0);
-        addParameterToGrid(paramsGrid, "Azimuth (°) :", createTextField(new FixedPointStringConverter(0), parametersBean.centerAzimuthProperty(), 3), 0, 1);
-        addParameterToGrid(paramsGrid, "Angle de vue (°) :", createTextField(new FixedPointStringConverter(0), parametersBean.horizontalFieldOfViewProperty(), 3), 1, 1);
-        addParameterToGrid(paramsGrid, "Visibilité (km) :", createTextField(new FixedPointStringConverter(0), parametersBean.maxDistanceProperty(), 3), 2, 1);
-        addParameterToGrid(paramsGrid, "Largeur (px) :", createTextField(new FixedPointStringConverter(0), parametersBean.widthProperty(), 4), 0, 2);
-        addParameterToGrid(paramsGrid, "Hauteur (px) :", createTextField(new FixedPointStringConverter(0), parametersBean.heightProperty(), 4), 1, 2);
-
-
-        final ChoiceBox<Integer> choiceBox = new ChoiceBox<>();
-        choiceBox.setConverter(new LabeledListStringConverter("non", "2×", "4×"));
-        choiceBox.setItems(FXCollections.observableArrayList(Arrays.asList(0, 1, 2)));
-        choiceBox.valueProperty().bindBidirectional(parametersBean.superSamplingExponentProperty());
-        addParameterToGrid(paramsGrid, "Suréchantillonnage :", choiceBox, 2, 2);
-
-        textArea.setEditable(false);
-        textArea.setPrefRowCount(2);
-        paramsGrid.add(textArea, 6, 0, 6, 3);
-
-        paramsGrid.setHgap(10);
-        paramsGrid.setVgap(3);
-        paramsGrid.setPadding(new Insets(7, 5, 5, 5));
-        paramsGrid.setAlignment(Pos.CENTER);
-
-
-        final Scene scene = new Scene(root);
-
-        primaryStage.setTitle("Alpano");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        return panoView;
     }
 
     /**
@@ -256,5 +254,38 @@ public final class Alpano extends Application
         field.setTextFormatter(formatter);
 
         return field;
+    }
+
+    private ContinuousElevationModel loadCDEM()
+    {
+        DiscreteElevationModel composition1 = null;
+
+        for(int i = MIN_LATITUDE; i < MAX_LATITUDE; i++)
+        {
+            List<DiscreteElevationModel> list = new ArrayList<>();
+            DiscreteElevationModel last = null;
+
+            for(int j = MIN_LONGITUDE; j < MAX_LONGITUDE; j++)
+            {
+                final DiscreteElevationModel dem = new HgtDiscreteElevationModel(new File("N" + i + "E00" + j + ".hgt"));
+
+                if(last == null)
+                    last = dem;
+                else
+                {
+                    list.add(last.union(dem));
+                    last = null;
+                }
+            }
+
+            DiscreteElevationModel composition2 = list.get(0).union(list.get(1));
+
+            if(composition1 == null)
+                composition1 = composition2;
+            else
+                composition1 = composition1.union(composition2);
+        }
+
+        return new ContinuousElevationModel(composition1);
     }
 }
