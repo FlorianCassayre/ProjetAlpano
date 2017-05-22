@@ -127,6 +127,11 @@ public final class Alpano extends Application
         stage.show();
     }
 
+    /**
+     * Creates the choice box component.
+     * @param parametersBean the parameters bean
+     * @return a new instance of this component
+     */
     private ChoiceBox<Integer> createChoiceBox(PanoramaParametersBean parametersBean)
     {
         final ChoiceBox<Integer> choiceBox = new ChoiceBox<>();
@@ -137,6 +142,12 @@ public final class Alpano extends Application
         return choiceBox;
     }
 
+    /**
+     * Creates the update notice component.
+     * @param parametersBean the parameters bean
+     * @param computerBean the computer bean
+     * @return a new instance of this component
+     */
     private StackPane createUpdateNotice(PanoramaParametersBean parametersBean, PanoramaComputerBean computerBean)
     {
         final StackPane updateNotice = new StackPane();
@@ -153,6 +164,12 @@ public final class Alpano extends Application
         return updateNotice;
     }
 
+    /**
+     * Creates the labels pane component.
+     * @param parametersBean the parameters bean
+     * @param computerBean the computer bean
+     * @return a new instance of this component
+     */
     private Pane createLabelsPane(PanoramaParametersBean parametersBean, PanoramaComputerBean computerBean)
     {
         final Pane labelsPane = new Pane();
@@ -164,6 +181,13 @@ public final class Alpano extends Application
         return labelsPane;
     }
 
+    /**
+     * Creates the pano view component.
+     * @param parametersBean the parameters bean
+     * @param computerBean the computer bean
+     * @param textArea the information text area
+     * @return a new instance of this component
+     */
     private ImageView createPanoView(PanoramaParametersBean parametersBean, PanoramaComputerBean computerBean, TextArea textArea)
     {
         final ImageView panoView = new ImageView();
@@ -256,6 +280,10 @@ public final class Alpano extends Application
         return field;
     }
 
+    /**
+     * Loads the elevations models files into a continuous elevation model object.
+     * @return a continuous elevation model
+     */
     private ContinuousElevationModel loadCDEM()
     {
         DiscreteElevationModel composition1 = null;
