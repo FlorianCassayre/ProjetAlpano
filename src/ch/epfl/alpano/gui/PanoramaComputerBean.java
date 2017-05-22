@@ -29,12 +29,11 @@ public class PanoramaComputerBean
     private final ReadOnlyObjectWrapper<ObservableList<Node>> labels;
 
     /**
-     * Creates a new bean from a continuous elevation model, a list of summits and some initial panorama parameters.
+     * Creates a new bean from a continuous elevation model and a list of summits.
      * @param cDEM the continuous elevation model
-     * @param parameters the panorama user parameters
      * @param summits the list of summits
      */
-    public PanoramaComputerBean(ContinuousElevationModel cDEM, PanoramaUserParameters parameters, List<Summit> summits)
+    public PanoramaComputerBean(ContinuousElevationModel cDEM, List<Summit> summits)
     {
         this.computer = new PanoramaComputer(cDEM);
         this.labelizer = new Labelizer(cDEM, summits);
@@ -63,8 +62,6 @@ public class PanoramaComputerBean
             final List<Node> l = labelizer.labels(newValue.panoramaDisplayParameters());
             list.setAll(l);
         });
-
-        this.parameters.set(Objects.requireNonNull(parameters));
     }
 
     /**

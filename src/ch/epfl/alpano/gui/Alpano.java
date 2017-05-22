@@ -68,7 +68,7 @@ public final class Alpano extends Application
         // GUI
 
         final PanoramaParametersBean parametersBean = new PanoramaParametersBean(INITIAL_PANORAMA);
-        final PanoramaComputerBean computerBean = new PanoramaComputerBean(cdem, INITIAL_PANORAMA, summits);
+        final PanoramaComputerBean computerBean = new PanoramaComputerBean(cdem, summits);
 
 
         final BorderPane root = new BorderPane();
