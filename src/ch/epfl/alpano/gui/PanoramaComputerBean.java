@@ -20,6 +20,7 @@ import javafx.scene.image.Image;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.Objects;
 
 /**
  * A bean for the panorama computer.
@@ -36,12 +37,11 @@ public class PanoramaComputerBean
     private final BooleanProperty computing = new SimpleBooleanProperty(false);
 
     /**
-     * Creates a new bean from a continuous elevation model, a list of summits and some initial panorama parameters.
+     * Creates a new bean from a continuous elevation model and a list of summits.
      * @param cDEM the continuous elevation model
-     * @param parameters the panorama user parameters
      * @param summits the list of summits
      */
-    public PanoramaComputerBean(ContinuousElevationModel cDEM, PanoramaUserParameters parameters, List<Summit> summits)
+    public PanoramaComputerBean(ContinuousElevationModel cDEM, List<Summit> summits)
     {
         this.computer = new PanoramaComputer(cDEM);
         this.labelizer = new Labelizer(cDEM, summits);
@@ -94,10 +94,7 @@ public class PanoramaComputerBean
             });
 
             executor.shutdown();
-
         });
-
-        this.parameters.set(parameters);
     }
 
     /**
