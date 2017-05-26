@@ -120,13 +120,13 @@ public final class Alpano extends Application
 
         final ScrollPane panoScrollPane = new ScrollPane(panoGroup);
 
-        final Pane canvasPane = new Pane();
+        final BorderPane canvasPane = new BorderPane();
         canvasPane.setMouseTransparent(true);
         canvasPane.setOpacity(0.9);
 
         computerBean.minimapProperty().addListener((o) ->
         {
-            canvasPane.getChildren().setAll(FXCollections.observableArrayList(computerBean.minimapProperty().getValue()));
+            canvasPane.setBottom(computerBean.minimapProperty().getValue());
         });
 
         panoPane.getChildren().addAll(panoScrollPane, canvasPane, updateNotice);

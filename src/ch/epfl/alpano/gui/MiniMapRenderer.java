@@ -22,7 +22,7 @@ public interface MiniMapRenderer
 
     static Canvas render(ContinuousElevationModel cdem, PanoramaParameters parameters)
     {
-        final Canvas canvas = new Canvas(parameters.width(), parameters.height());
+        final Canvas canvas = new Canvas(MARGIN_X * 2 + DIAMETER, MARGIN_Y * 3 + DIAMETER);
         GraphicsContext g = canvas.getGraphicsContext2D();
 
         g.setFill(Color.WHITE);
