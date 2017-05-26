@@ -14,6 +14,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 
@@ -33,6 +34,7 @@ public class PanoramaComputerBean
     private final ObjectProperty<PanoramaUserParameters> parameters = new SimpleObjectProperty<>();
     private final ReadOnlyObjectWrapper<Image> image = new ReadOnlyObjectWrapper<>();
     private final ReadOnlyObjectWrapper<ObservableList<Node>> labels;
+    private final ReadOnlyObjectWrapper<Canvas> minimap = new ReadOnlyObjectWrapper<>();
     private final ObjectProperty<Double> progress = new SimpleObjectProperty<>(0.0);
     private final BooleanProperty computing = new SimpleBooleanProperty(false);
 
@@ -81,6 +83,8 @@ public class PanoramaComputerBean
 
                 final List<Node> l = labelizer.labels(newValue.panoramaDisplayParameters());
 
+                final Canvas canvas = MiniMapRenderer.render(cDEM, newValue.panoramaParameters());
+
                 Platform.runLater(() ->
                 {
                     progress.set(1.0);
@@ -88,6 +92,7 @@ public class PanoramaComputerBean
                     panorama.set(p);
                     image.set(i);
                     list.setAll(l);
+                    minimap.set(canvas);
                 });
 
                 computing.set(false);
@@ -187,5 +192,10 @@ public class PanoramaComputerBean
     public ReadOnlyProperty<Double> progressProperty()
     {
         return progress;
+    }
+
+    public ReadOnlyProperty<Canvas> minimapProperty()
+    {
+        return minimap.getReadOnlyProperty();
     }
 }

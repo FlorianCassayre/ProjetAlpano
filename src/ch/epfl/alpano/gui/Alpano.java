@@ -11,6 +11,7 @@ import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -18,6 +19,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -118,7 +120,16 @@ public final class Alpano extends Application
 
         final ScrollPane panoScrollPane = new ScrollPane(panoGroup);
 
-        panoPane.getChildren().addAll(panoScrollPane, updateNotice);
+        final Pane canvasPane = new Pane();
+        canvasPane.setMouseTransparent(true);
+        canvasPane.setOpacity(0.9);
+
+        computerBean.minimapProperty().addListener((o) ->
+        {
+            canvasPane.getChildren().setAll(FXCollections.observableArrayList(computerBean.minimapProperty().getValue()));
+        });
+
+        panoPane.getChildren().addAll(panoScrollPane, canvasPane, updateNotice);
 
 
         addParameterToGrid(paramsGrid, "Latitude (°) :", createTextField(new FixedPointStringConverter(4), parametersBean.observerLatitudeProperty(), 7), 0, 0);
