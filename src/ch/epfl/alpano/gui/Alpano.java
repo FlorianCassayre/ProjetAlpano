@@ -11,7 +11,6 @@ import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -19,8 +18,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.*;
@@ -34,6 +33,7 @@ import javafx.util.StringConverter;
 
 import javax.imageio.ImageIO;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -179,6 +179,12 @@ public final class Alpano extends Application
         final Scene scene = new Scene(root);
 
         stage.setTitle("Alpano");
+        final String[] sizes = new String[] {"16", "32", "48", "256"};
+        for(String size : sizes)
+        {
+            stage.getIcons().add(new Image(new FileInputStream("icon_" + size + ".png")));
+        }
+
         stage.setScene(scene);
         stage.show();
     }
