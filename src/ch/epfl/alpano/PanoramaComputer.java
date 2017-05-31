@@ -21,6 +21,8 @@ public final class PanoramaComputer
     private static final int SEARCH_INTERVAL = 64;
     private static final int DICHOTOMY_STEP = 4;
 
+    private static final double PROGRESSBAR_STEPS = 100.0;
+
     private final ObjectProperty<Double> progress = new SimpleObjectProperty<>(0.0);
 
     private final ContinuousElevationModel dem;
@@ -43,10 +45,12 @@ public final class PanoramaComputer
     {
         final Panorama.Builder builder = new Panorama.Builder(parameters);
 
-        final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        final ExecutorService executor = Executors.newFixedThreadPool(Math.max(Runtime.getRuntime().availableProcessors() - 1, 1));
 
         final AtomicInteger progression = new AtomicInteger(0);
         progress.set(0.0);
+
+        final double inverseSteps = 1.0 / PROGRESSBAR_STEPS;
 
         for(int x = 0; x < parameters.width(); x++)
         {
@@ -88,7 +92,7 @@ public final class PanoramaComputer
                     }
                 }
 
-                progress.set((double) progression.incrementAndGet() / parameters.width());
+                progress.set(inverseSteps * Math.round(PROGRESSBAR_STEPS * progression.incrementAndGet() / parameters.width()));
             });
         }
 

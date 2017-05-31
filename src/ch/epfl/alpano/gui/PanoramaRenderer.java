@@ -27,7 +27,7 @@ public interface PanoramaRenderer
         final WritableImage image = new WritableImage(panorama.parameters().width(), panorama.parameters().height());
         final PixelWriter writer = image.getPixelWriter();
 
-        final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        final ExecutorService executor = Executors.newFixedThreadPool(Math.max(Runtime.getRuntime().availableProcessors() - 1, 1));
 
         for(int x = 0; x < image.getWidth(); x++)
         {
